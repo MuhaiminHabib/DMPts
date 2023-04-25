@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
 import { useState, useEffect, MouseEvent, useCallback } from 'react'
-import useSWR from 'swr'
+
 // ** Next Imports
 import Link from 'next/link'
-import { GetStaticProps, InferGetStaticPropsType } from 'next/types'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -21,6 +21,11 @@ import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -31,7 +36,8 @@ import { useDispatch, useSelector } from 'react-redux'
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-stats-horizontal'
+
+// import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-stats-horizontal'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
@@ -44,15 +50,19 @@ import axios from 'axios'
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
-import { CardStatsType } from 'src/@fake-db/types'
+
+// import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
-import { CardStatsHorizontalProps } from 'src/@core/components/card-statistics/types'
+
+// import { CardStatsHorizontalProps } from 'src/@core/components/card-statistics/types'
 
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-import axiosConfig from 'src/configs/axios'
+import { Paper, Table, TableContainer } from '@mui/material'
+
+// import axiosConfig from 'src/configs/axios'
 
 interface UserRoleType {
   [key: string]: { icon: string; color: string }
@@ -179,13 +189,14 @@ const columns: GridColDef[] = [
     field: 'fullName',
     headerName: 'User',
     renderCell: ({ row }: CellType) => {
-      const { fullName, email } = row
+      const { username, email } = row
+      console.log(username, email)
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {renderClient(row)}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <LinkStyled href='/apps/user/view/account'>{fullName}</LinkStyled>
+            <LinkStyled href='/apps/user/view/account'>{username}</LinkStyled>
             <Typography noWrap variant='caption' sx={{ color: 'text.disabled' }}>
               {email}
             </Typography>
@@ -193,75 +204,76 @@ const columns: GridColDef[] = [
         </Box>
       )
     }
-  },
-  {
-    flex: 0.2,
-    field: 'role',
-    minWidth: 160,
-    headerName: 'Role',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <CustomAvatar
-            skin='light'
-            sx={{ mr: 3, width: 30, height: 30 }}
-            color={userRoleObj[row.role].color as ThemeColor}
-          >
-            <Icon fontSize={18} icon={userRoleObj[row.role].icon} />
-          </CustomAvatar>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role}
-          </Typography>
-        </Box>
-      )
-    }
-  },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Plan',
-    field: 'currentPlan',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'capitalize' }}>
-          {row.currentPlan}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.2,
-    minWidth: 185,
-    field: 'billing',
-    headerName: 'Billing',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{ color: 'text.secondary' }}>
-          {row.billing}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'status',
-    headerName: 'Status',
-    renderCell: ({ row }: CellType) => {
-      return <CustomChip rounded skin='light' size='small' label={row.status} color={userStatusObj[row.status]} />
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: 'actions',
-    headerName: 'Actions',
-    renderCell: ({ row }: CellType) => <RowOptions id={row.id} />
   }
+
+  // {
+  //   flex: 0.2,
+  //   field: 'role',
+  //   minWidth: 160,
+  //   headerName: 'Role',
+  //   renderCell: ({ row }: CellType) => {
+  //     return (
+  //       <Box sx={{ display: 'flex', alignItems: 'center' }}>
+  //         <CustomAvatar
+  //           skin='light'
+  //           sx={{ mr: 3, width: 30, height: 30 }}
+  //           color={userRoleObj[row.role].color as ThemeColor}
+  //         >
+  //           <Icon fontSize={18} icon={userRoleObj[row.role].icon} />
+  //         </CustomAvatar>
+  //         <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
+  //           {row.role}
+  //         </Typography>
+  //       </Box>
+  //     )
+  //   }
+  // },
+  // {
+  //   flex: 0.15,
+  //   minWidth: 120,
+  //   headerName: 'Plan',
+  //   field: 'currentPlan',
+  //   renderCell: ({ row }: CellType) => {
+  //     return (
+  //       <Typography noWrap sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'capitalize' }}>
+  //         {row.currentPlan}
+  //       </Typography>
+  //     )
+  //   }
+  // },
+  // {
+  //   flex: 0.2,
+  //   minWidth: 185,
+  //   field: 'billing',
+  //   headerName: 'Billing',
+  //   renderCell: ({ row }: CellType) => {
+  //     return (
+  //       <Typography noWrap sx={{ color: 'text.secondary' }}>
+  //         {row.billing}
+  //       </Typography>
+  //     )
+  //   }
+  // },
+  // {
+  //   flex: 0.1,
+  //   minWidth: 110,
+  //   field: 'status',
+  //   headerName: 'Status',
+  //   renderCell: ({ row }: CellType) => {
+  //     return <CustomChip rounded skin='light' size='small' label={row.status} color={userStatusObj[row.status]} />
+  //   }
+  // },
+  // {
+  //   flex: 0.1,
+  //   minWidth: 90,
+  //   sortable: false,
+  //   field: 'actions',
+  //   headerName: 'Actions',
+  //   renderCell: ({ row }: CellType) => <RowOptions id={row.id} />
+  // }
 ]
 
-const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const UserList = () => {
   // ** State
   const [role, setRole] = useState<string>('')
   const [plan, setPlan] = useState<string>('')
@@ -269,6 +281,7 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
   const [status, setStatus] = useState<string>('')
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
+  const [userList, setUserList] = useState<any>([])
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
@@ -290,12 +303,13 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
   axios.defaults.headers.common['DMPToken'] = localStorage.getItem('DMPToken')
   axios.defaults.withCredentials = true
 
-  const [userList, setUserList] = useState<any>(null)
-
   useEffect(() => {
-    const res = axios.get('/auth/ba-list')
-    console.log(res.data)
-    setUserList(res.data)
+    const fetchBAList = async () => {
+      const res = await axios.get('/auth/ba-list')
+      console.log(res.data)
+      setUserList(res.data)
+    }
+    fetchBAList()
   }, [])
 
   const handleFilter = useCallback((val: string) => {
@@ -318,7 +332,7 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         {apiData && (
           <Grid container spacing={6}>
             {apiData.map((item: CardStatsHorizontalProps, index: number) => {
@@ -330,11 +344,11 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
             })}
           </Grid>
         )}
-      </Grid>
+      </Grid> */}
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Search Filters' />
-          <CardContent>
+          {/* <CardContent>
             <Grid container spacing={5}>
               <Grid item sm={4} xs={12}>
                 <FormControl fullWidth>
@@ -398,17 +412,51 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
               </Grid>
             </Grid>
           </CardContent>
-          <Divider sx={{ m: '0 !important' }} />
+          <Divider sx={{ m: '0 !important' }} /> */}
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
-          <DataGrid
+          {/* <DataGrid
             autoHeight
-            rows={store.data}
+            rows={userList}
             columns={columns}
             disableRowSelectionOnClick
             pageSizeOptions={[10, 25, 50]}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
-          />
+            
+          /> */}
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+              <TableHead>
+                <TableRow>
+                  <TableCell>username</TableCell>
+                  <TableCell align='right'>Email</TableCell>
+                  <TableCell align='right'>FirstName</TableCell>
+                  <TableCell align='right'>LastName</TableCell>
+                  <TableCell align='right'>type</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {userList.map(user => (
+                  <TableRow key={user._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell component='th' scope='row'>
+                      {user.username}
+                    </TableCell>
+                    <TableCell align='right'>{user.email}</TableCell>
+                    <TableCell align='right'>{user.firstName}</TableCell>
+                    <TableCell align='right'>{user.lastName}</TableCell>
+                    <TableCell align='right'>{user.type}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* {userList.map(user => (
+            <div key={user._id}>
+              <h1>{`Customer Id: ${user.customerID}`}</h1>
+              <h1>{`User Name: ${user.username}`}</h1>
+              <Divider sx={{ m: '0 !important' }} />
+            </div>
+          ))} */}
         </Card>
       </Grid>
 
@@ -416,18 +464,5 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
     </Grid>
   )
 }
-
-// export const getStaticProps: GetStaticProps = async () => {
-//   console.log('ha ha ha')
-//   const res = await axios.get('http://192.168.1.35/API/auth/ba-list')
-//   console.log(res)
-//   // const apiData: CardStatsType['statsHorizontal'] = res.data
-
-//   return {
-//     props: {
-//       // apiData
-//     }
-//   }
-// }
 
 export default UserList

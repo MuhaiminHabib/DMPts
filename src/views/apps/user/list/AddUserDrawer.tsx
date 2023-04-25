@@ -144,6 +144,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
+
     //WE NEED THIS LINE OF CODE===============================
   })
   const onSubmit = (data: UserData) => {
@@ -191,9 +192,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
         </IconButton>
       </Header>
       <Box sx={{ p: 5 }}>
-        <form
-        // onSubmit={handleSubmit(onSubmit)}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='firstName'

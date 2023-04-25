@@ -39,13 +39,13 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      if (!storedToken) {
+      const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)!
+      if (storedToken) {
         setLoading(true)
         await axios
           .get(authConfig.meEndpoint, {
             headers: {
-              Authorization: storedToken
+              DMPToken: localStorage.getItem('DMPToken')
             }
           })
           .then(async response => {
