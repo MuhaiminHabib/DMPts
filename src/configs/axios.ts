@@ -6,6 +6,7 @@ import axios from 'axios'
 // axios.defaults.withCredentials = true
 
 const axiosConfig = axios.create({
+  // baseURL: 'http://192.168.110.16:3030/API',
   baseURL: 'http://192.168.1.35/API',
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' }

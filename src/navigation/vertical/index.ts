@@ -38,8 +38,20 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'bx:user',
       children: [
         {
-          title: 'List',
-          path: '/apps/user/list'
+          title: 'BA List',
+          path: '/apps/user/ba-list'
+        },
+        {
+          title: 'DM List',
+          path: '/apps/user/dm-list'
+        },
+        {
+          title: 'C List',
+          path: '/apps/user/c-list'
+        },
+        {
+          title: 'CM List',
+          path: '/apps/user/cm-list'
         },
         {
           title: 'View',

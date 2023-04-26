@@ -12,6 +12,7 @@ import authConfig from 'src/configs/auth'
 
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
+import axiosConfig from 'src/configs/axios'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -42,7 +43,7 @@ const AuthProvider = ({ children }: Props) => {
       const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)!
       if (storedToken) {
         setLoading(true)
-        await axios
+        await axiosConfig
           .get(authConfig.meEndpoint, {
             headers: {
               DMPToken: localStorage.getItem('DMPToken')
@@ -72,7 +73,7 @@ const AuthProvider = ({ children }: Props) => {
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
+    axiosConfig
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
         params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.DMPToken) : null

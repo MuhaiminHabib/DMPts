@@ -1,6 +1,8 @@
+import axiosConfig from './axios'
+
 export default {
-  meEndpoint: 'http://192.168.1.35/API/auth/info',
-  loginEndpoint: 'http://192.168.1.35/API/auth/login',
+  meEndpoint: '/auth/info',
+  loginEndpoint: '/auth/login',
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'DMPToken',
   onTokenExpiration: 'refreshToken' // logout | refreshToken
