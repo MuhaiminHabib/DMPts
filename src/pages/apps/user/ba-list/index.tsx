@@ -280,7 +280,7 @@ const UserList = () => {
     //   <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
     // </Grid>
 
-    <UserListTable title={'BA List'} userList={userList} />
+    <UserListTable title={'BA List'} userList={userList} showAccociatedBtn={true} />
   )
 }
 

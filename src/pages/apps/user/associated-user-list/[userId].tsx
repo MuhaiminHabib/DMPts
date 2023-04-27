@@ -58,9 +58,15 @@ const Hello = (props: TabPanelProps) => {
   const [value, setValue] = React.useState(0)
 
   const handleFetchDMList = async () => {
-    const res = await axiosConfig.get('/auth/dm-list')
-    console.log(res.data)
-    setDMList(res.data)
+    try {
+      const res = await axiosConfig.post('/auth/dms-belong-to-ba', {
+        BAID: userId
+      })
+      console.log(res.data)
+      setDMList(res.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleFetchCList = async () => {

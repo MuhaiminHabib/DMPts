@@ -83,35 +83,8 @@ const schema = yup.object().shape({
   firstName: yup.string().required(),
   lastName: yup.string().required(),
   type: yup.string().required()
-
-  // company: yup.string().required(),
-  // country: yup.string().required(),
-  // billing: yup.string().required(),
-  // email: yup.string().email().required(),
-  // contact: yup
-  //   .number()
-  //   .typeError('Contact Number field is required')
-  //   .min(10, obj => showErrors('Contact Number', obj.value.length, obj.min))
-  //   .required(),
-  // fullName: yup
-  //   .string()
-  //   .min(3, obj => showErrors('First Name', obj.value.length, obj.min))
-  //   .required(),
-  // username: yup
-  //   .string()
-  //   .min(3, obj => showErrors('Username', obj.value.length, obj.min))
-  //   .required()
 })
 
-// const defaultValues = {
-//   email: '',
-//   company: '',
-//   country: '',
-//   billing: '',
-//   fullName: '',
-//   username: '',
-//   contact: Number('')
-// }
 const defaultValues = {
   username: '',
   password: '',

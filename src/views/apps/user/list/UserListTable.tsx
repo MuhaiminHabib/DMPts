@@ -16,22 +16,40 @@ import TableHeader from './TableHeader'
 import Link from 'src/@core/theme/overrides/link'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+import axiosConfig from 'src/configs/axios'
 
 type props = {
   title: string
   userList: UsersType[]
+  showAccociatedBtn?: boolean
 }
 
-const UserListTable = ({ title, userList }: props) => {
+const UserListTable = ({ title, userList, showAccociatedBtn = false }: props) => {
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+
+  const handleInactivateUser = async (userID: string, username: string) => {
+    console.log(`i will inactive user ${userID}, and ${username}`)
+
+    try {
+      const res = await axiosConfig.post('/auth/inactive-ba', {
+        BAID: userID,
+        username: username
+      })
+      console.log(res)
+      console.log('done')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={title} />
-          {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
+          <TableHeader toggle={toggleAddUserDrawer} />
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
@@ -45,7 +63,13 @@ const UserListTable = ({ title, userList }: props) => {
               </TableHead>
               <TableBody>
                 {userList.map(user => (
-                  <TableRow key={user._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableRow
+                    key={user._id}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 },
+                      background: !user.active && '#c1c1c1'
+                    }}
+                  >
                     <TableCell component='th' scope='row'>
                       {user.username}
                     </TableCell>
@@ -55,9 +79,11 @@ const UserListTable = ({ title, userList }: props) => {
                     <TableCell align='right'>{user.type}</TableCell>
                     <Button>Profile</Button>
 
-                    <Button href={`/apps/user/associated-user-list/${user._id}`}>Accociated Users</Button>
+                    {showAccociatedBtn ? (
+                      <Button href={`/apps/user/associated-user-list/${user._id}`}>Accociated Users</Button>
+                    ) : null}
 
-                    <Button>Inactive User</Button>
+                    <Button onClick={() => handleInactivateUser(user._id, user.username)}>Inactive User</Button>
                   </TableRow>
                 ))}
               </TableBody>
@@ -70,5 +96,9 @@ const UserListTable = ({ title, userList }: props) => {
     </Grid>
   )
 }
+
+// UserListTable.defaultProps = {
+//   showAccociatedBtn: false
+// }
 
 export default UserListTable

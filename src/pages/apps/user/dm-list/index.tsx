@@ -236,7 +236,7 @@ const UserList = () => {
   //   setStatus(e.target.value)
   // }, [])
 
-  return <UserListTable title={'DM List'} userList={userList} />
+  return <UserListTable title={'DM List'} userList={userList} showAccociatedBtn={true} />
 }
 
 export default UserList
