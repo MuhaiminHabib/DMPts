@@ -24,7 +24,7 @@ import UsersInvoiceListTable from 'src/views/apps/user/view/UsersInvoiceListTabl
 import UsersProjectListTable from 'src/views/apps/user/view/UsersProjectListTable'
 
 interface Props {
-  invoiceData: InvoiceType[]
+  // invoiceData: InvoiceType[]
 }
 
 // Styled Timeline component
@@ -42,10 +42,11 @@ const Timeline = styled(MuiTimeline)<TimelineProps>(({ theme }) => ({
   }
 }))
 
-const UserViewOverview = ({ invoiceData }: Props) => {
+const UserViewOverview = () => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <h1>hi</h1>
+      {/* <Grid item xs={12}>
         <UsersProjectListTable />
       </Grid>
       <Grid item xs={12}>
@@ -189,7 +190,7 @@ const UserViewOverview = ({ invoiceData }: Props) => {
 
       <Grid item xs={12}>
         <UsersInvoiceListTable invoiceData={invoiceData} />
-      </Grid>
+      </Grid> */}
     </Grid>
   )
 }

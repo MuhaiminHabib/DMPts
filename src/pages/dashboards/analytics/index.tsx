@@ -17,6 +17,7 @@ import AnalyticsActivityTimeline from 'src/views/dashboards/analytics/AnalyticsA
 
 // ** Styled Component Import
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
+import AnalyticsBACount from 'src/views/dashboards/analytics/dmp/AnalyticsBACount'
 
 const AnalyticsDashboard = () => {
   return (
@@ -24,6 +25,16 @@ const AnalyticsDashboard = () => {
       <Grid container spacing={6}>
         <Grid item xs={12} lg={8} sx={{ order: -1 }}>
           <AnalyticsCongratulations />
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ order: -1 }}>
+          <Grid container spacing={6}>
+            <Grid item xs={6} md={12} lg={6}>
+              <AnalyticsBACount />
+            </Grid>
+            <Grid item xs={6} md={12} lg={6}>
+              <AnalyticsSales />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12} md={4} sx={{ order: -1 }}>
           <Grid container spacing={6}>

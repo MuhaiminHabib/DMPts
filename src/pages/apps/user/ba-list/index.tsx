@@ -43,7 +43,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/user'
+import user, { fetchData, deleteUser } from 'src/store/apps/user'
 
 // ** Third Party Components
 import axios from 'axios'
@@ -60,8 +60,9 @@ import { UsersType } from 'src/types/apps/userTypes'
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-import { Paper, Table, TableContainer } from '@mui/material'
+import { Button, Paper, Table, TableContainer } from '@mui/material'
 import axiosConfig from 'src/configs/axios'
+import UserListTable from 'src/views/apps/user/list/UserListTable'
 
 // import axiosConfig from 'src/configs/axios'
 
@@ -92,96 +93,7 @@ const userStatusObj: UserStatusType = {
   inactive: 'secondary'
 }
 
-const LinkStyled = styled(Link)(({ theme }) => ({
-  fontWeight: 600,
-  fontSize: '1rem',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  color: theme.palette.text.secondary,
-  '&:hover': {
-    color: theme.palette.primary.main
-  }
-}))
-
 // ** renders client column
-const renderClient = (row: UsersType) => {
-  if (row.avatar.length) {
-    return <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 32, height: 32 }} />
-  } else {
-    return (
-      <CustomAvatar
-        skin='light'
-        color={row.avatarColor || 'primary'}
-        sx={{ mr: 3, width: 32, height: 32, fontSize: '.875rem' }}
-      >
-        {getInitials(row.fullName ? row.fullName : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
-}
-
-const RowOptions = ({ id }: { id: number | string }) => {
-  // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-
-  // ** State
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const rowOptionsOpen = Boolean(anchorEl)
-
-  const handleRowOptionsClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleRowOptionsClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handleDelete = () => {
-    dispatch(deleteUser(id))
-    handleRowOptionsClose()
-  }
-
-  return (
-    <>
-      <IconButton size='small' onClick={handleRowOptionsClick}>
-        <Icon icon='bx:dots-vertical-rounded' />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        PaperProps={{ style: { minWidth: '8rem' } }}
-      >
-        <MenuItem
-          component={Link}
-          sx={{ '& svg': { mr: 2 } }}
-          href='/apps/user/view/account'
-          onClick={handleRowOptionsClose}
-        >
-          <Icon icon='bx:show' fontSize={20} />
-          View
-        </MenuItem>
-        <MenuItem onClick={handleRowOptionsClose} sx={{ '& svg': { mr: 2 } }}>
-          <Icon icon='bx:pencil' fontSize={20} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
-          <Icon icon='bx:trash-alt' fontSize={20} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
-  )
-}
 
 const columns: GridColDef[] = [
   {
@@ -280,9 +192,9 @@ const UserList = () => {
   const [plan, setPlan] = useState<string>('')
   const [value, setValue] = useState<string>('')
   const [status, setStatus] = useState<string>('')
-  const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
+
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
-  const [userList, setUserList] = useState<any>([])
+  const [userList, setUserList] = useState<UsersType[]>([])
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
@@ -299,11 +211,6 @@ const UserList = () => {
     )
   }, [dispatch, plan, role, status, value])
 
-  // axios.defaults.baseURL = 'http://192.168.1.35/API'
-  // axios.defaults.headers.common['Content-Type'] = 'application/json'
-  // axios.defaults.headers.common['DMPToken'] = localStorage.getItem('DMPToken')
-  // axios.defaults.withCredentials = true
-
   useEffect(() => {
     const fetchBAList = async () => {
       const res = await axiosConfig.get('/auth/ba-list')
@@ -313,156 +220,67 @@ const UserList = () => {
     fetchBAList()
   }, [])
 
-  const handleFilter = useCallback((val: string) => {
-    setValue(val)
-  }, [])
+  // const handleFilter = useCallback((val: string) => {
+  //   setValue(val)
+  // }, [])
 
-  const handleRoleChange = useCallback((e: SelectChangeEvent) => {
-    setRole(e.target.value)
-  }, [])
+  // const handleRoleChange = useCallback((e: SelectChangeEvent) => {
+  //   setRole(e.target.value)
+  // }, [])
 
-  const handlePlanChange = useCallback((e: SelectChangeEvent) => {
-    setPlan(e.target.value)
-  }, [])
+  // const handlePlanChange = useCallback((e: SelectChangeEvent) => {
+  //   setPlan(e.target.value)
+  // }, [])
 
-  const handleStatusChange = useCallback((e: SelectChangeEvent) => {
-    setStatus(e.target.value)
-  }, [])
-
-  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+  // const handleStatusChange = useCallback((e: SelectChangeEvent) => {
+  //   setStatus(e.target.value)
+  // }, [])
 
   return (
-    <Grid container spacing={6}>
-      {/* <Grid item xs={12}>
-        {apiData && (
-          <Grid container spacing={6}>
-            {apiData.map((item: CardStatsHorizontalProps, index: number) => {
-              return (
-                <Grid item xs={12} md={3} sm={6} key={index}>
-                  <CardStatisticsHorizontal {...item} />
-                </Grid>
-              )
-            })}
-          </Grid>
-        )}
-      </Grid> */}
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='BA List' />
-          {/* <CardContent>
-            <Grid container spacing={5}>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='role-select'>Select Role</InputLabel>
-                  <Select
-                    fullWidth
-                    value={role}
-                    id='select-role'
-                    label='Select Role'
-                    labelId='role-select'
-                    onChange={handleRoleChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='admin'>Admin</MenuItem>
-                    <MenuItem value='author'>Author</MenuItem>
-                    <MenuItem value='editor'>Editor</MenuItem>
-                    <MenuItem value='maintainer'>Maintainer</MenuItem>
-                    <MenuItem value='subscriber'>Subscriber</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='plan-select'>Select Plan</InputLabel>
-                  <Select
-                    fullWidth
-                    value={plan}
-                    id='select-plan'
-                    label='Select Plan'
-                    labelId='plan-select'
-                    onChange={handlePlanChange}
-                    inputProps={{ placeholder: 'Select Plan' }}
-                  >
-                    <MenuItem value=''>Select Plan</MenuItem>
-                    <MenuItem value='basic'>Basic</MenuItem>
-                    <MenuItem value='company'>Company</MenuItem>
-                    <MenuItem value='enterprise'>Enterprise</MenuItem>
-                    <MenuItem value='team'>Team</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='status-select'>Select Status</InputLabel>
-                  <Select
-                    fullWidth
-                    value={status}
-                    id='select-status'
-                    label='Select Status'
-                    labelId='status-select'
-                    onChange={handleStatusChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='pending'>Pending</MenuItem>
-                    <MenuItem value='active'>Active</MenuItem>
-                    <MenuItem value='inactive'>Inactive</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </CardContent>
-          <Divider sx={{ m: '0 !important' }} /> */}
-          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
-          {/* <DataGrid
-            autoHeight
-            rows={userList}
-            columns={columns}
-            disableRowSelectionOnClick
-            pageSizeOptions={[10, 25, 50]}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            
-          /> */}
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-              <TableHead>
-                <TableRow>
-                  <TableCell>username</TableCell>
-                  <TableCell align='right'>Email</TableCell>
-                  <TableCell align='right'>FirstName</TableCell>
-                  <TableCell align='right'>LastName</TableCell>
-                  <TableCell align='right'>type</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userList.map(user => (
-                  <TableRow key={user._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell component='th' scope='row'>
-                      {user.username}
-                    </TableCell>
-                    <TableCell align='right'>{user.email}</TableCell>
-                    <TableCell align='right'>{user.firstName}</TableCell>
-                    <TableCell align='right'>{user.lastName}</TableCell>
-                    <TableCell align='right'>{user.type}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {/* {userList.map(user => (
-            <div key={user._id}>
-              <h1>{`Customer Id: ${user.customerID}`}</h1>
-              <h1>{`User Name: ${user.username}`}</h1>
-              <Divider sx={{ m: '0 !important' }} />
-            </div>
-          ))} */}
-        </Card>
-      </Grid>
+    // <Grid container spacing={6}>
+    //   <Grid item xs={12}>
+    //     <Card>
+    //       <CardHeader title='BA List' />
+    //       <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
+    //       <TableContainer component={Paper}>
+    //         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+    //           <TableHead>
+    //             <TableRow>
+    //               <TableCell>username</TableCell>
+    //               <TableCell align='right'>Email</TableCell>
+    //               <TableCell align='right'>FirstName</TableCell>
+    //               <TableCell align='right'>LastName</TableCell>
+    //               <TableCell align='right'>type</TableCell>
+    //             </TableRow>
+    //           </TableHead>
+    //           <TableBody>
+    //             {userList.map(user => (
+    //               <TableRow key={user._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    //                 <TableCell component='th' scope='row'>
+    //                   {user.username}
+    //                 </TableCell>
+    //                 <TableCell align='right'>{user.email}</TableCell>
+    //                 <TableCell align='right'>{user.firstName}</TableCell>
+    //                 <TableCell align='right'>{user.lastName}</TableCell>
+    //                 <TableCell align='right'>{user.type}</TableCell>
+    //                 <TableCell align='right'>{user}</TableCell>
+    //                 <Button>Profile</Button>
+    //                 <Link href={`/apps/user/associated-user-list/${user._id}`}>
+    //                   <Button>Accociated Users</Button>
+    //                 </Link>
+    //                 <Button>Inactive User</Button>
+    //               </TableRow>
+    //             ))}
+    //           </TableBody>
+    //         </Table>
+    //       </TableContainer>
+    //     </Card>
+    //   </Grid>
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
-    </Grid>
+    //   <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+    // </Grid>
+
+    <UserListTable title={'BA List'} userList={userList} />
   )
 }
 

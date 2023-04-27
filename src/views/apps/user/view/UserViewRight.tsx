@@ -27,10 +27,11 @@ import UserViewNotification from 'src/views/apps/user/view/UserViewNotification'
 
 // ** Types
 import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import UsersViewTable from './dmp/UsersViewTable'
 
 interface Props {
   tab: string
-  invoiceData: InvoiceType[]
+  // invoiceData: InvoiceType[]
 }
 
 //  ** Styled TabList component
@@ -53,23 +54,17 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const UserViewRight = ({ tab, invoiceData }: Props) => {
+const UserViewRight = ({ tab }: Props) => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>(tab)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // ** Hooks
   const router = useRouter()
   const hideText = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
   const handleChange = (event: SyntheticEvent, value: string) => {
-    setIsLoading(true)
     setActiveTab(value)
-    router
-      .push({
-        pathname: `/apps/user/view/${value.toLowerCase()}`
-      })
-      .then(() => setIsLoading(false))
   }
 
   useEffect(() => {
@@ -80,12 +75,6 @@ const UserViewRight = ({ tab, invoiceData }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab])
 
-  useEffect(() => {
-    if (invoiceData) {
-      setIsLoading(false)
-    }
-  }, [invoiceData])
-
   return activeTab ? (
     <TabContext value={activeTab}>
       <TabList
@@ -94,48 +83,30 @@ const UserViewRight = ({ tab, invoiceData }: Props) => {
         onChange={handleChange}
         aria-label='forced scroll tabs example'
       >
-        <Tab
-          value='account'
+        {/* <Tab
+          value='BA'
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
               <Icon icon='bx:user' />
-              {!hideText && 'Account'}
+              {!hideText && 'BA'}
             </Box>
           }
-        />
+        /> */}
         <Tab
-          value='security'
+          value='DM'
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
               <Icon icon='bx:lock-alt' />
-              {!hideText && 'Security'}
+              {!hideText && 'DM'}
             </Box>
           }
         />
         <Tab
-          value='billing-plan'
+          value='Clients'
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
               <Icon icon='bx:detail' />
-              {!hideText && 'Billing & Plans'}
-            </Box>
-          }
-        />
-        <Tab
-          value='notification'
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
-              <Icon icon='bx:bell' />
-              {!hideText && 'Notifications'}
-            </Box>
-          }
-        />
-        <Tab
-          value='connection'
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
-              <Icon icon='bx:link-alt' />
-              {!hideText && 'Connections'}
+              {!hideText && 'Clients'}
             </Box>
           }
         />
@@ -148,20 +119,17 @@ const UserViewRight = ({ tab, invoiceData }: Props) => {
           </Box>
         ) : (
           <>
-            <TabPanel value='account'>
-              <UserViewAccount invoiceData={invoiceData} />
+            {/* <TabPanel value='BA'>
+              <h1>Show BA list</h1>
+              <UsersViewTable />
+            </TabPanel> */}
+            <TabPanel value='DM'>
+              <h1>Show DM list</h1>
+              <UsersViewTable />
             </TabPanel>
-            <TabPanel value='security'>
-              <UserViewSecurity />
-            </TabPanel>
-            <TabPanel value='billing-plan'>
-              <UserViewBilling />
-            </TabPanel>
-            <TabPanel value='notification'>
-              <UserViewNotification />
-            </TabPanel>
-            <TabPanel value='connection'>
-              <UserViewConnection />
+            <TabPanel value='Clients'>
+              <h1>Show Clients list</h1>
+              <UsersViewTable />
             </TabPanel>
           </>
         )}
