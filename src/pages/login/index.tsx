@@ -144,7 +144,6 @@ const LoginPage = () => {
                 lineHeight: 1,
                 fontWeight: 700,
                 letterSpacing: '-0.45px',
-                textTransform: 'lowercase',
                 fontSize: '1.75rem !important'
               }}
             >
@@ -157,14 +156,6 @@ const LoginPage = () => {
           <Typography sx={{ mb: 6, color: 'text.secondary' }}>
             Please sign-in to your account and start the adventure
           </Typography>
-          <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
-            <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>
-              Admin: <strong>admin@sneat.com</strong> / Pass: <strong>admin</strong>
-            </Typography>
-            <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
-              Client: <strong>client@sneat.com</strong> / Pass: <strong>client</strong>
-            </Typography>
-          </Alert>
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth sx={{ mb: 4 }}>
               <Controller
@@ -244,41 +235,6 @@ const LoginPage = () => {
               <Typography>
                 <LinkStyled href='/register'>Create an account</LinkStyled>
               </Typography>
-            </Box>
-            <Divider sx={{ my: `${theme.spacing(6)} !important` }}>or</Divider>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <IconButton
-                href='/'
-                component={Link}
-                sx={{ color: '#497ce2' }}
-                onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-              >
-                <Icon icon='bxl:facebook-circle' />
-              </IconButton>
-              <IconButton
-                href='/'
-                component={Link}
-                sx={{ color: '#1da1f2' }}
-                onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-              >
-                <Icon icon='bxl:twitter' />
-              </IconButton>
-              <IconButton
-                href='/'
-                component={Link}
-                onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                sx={{ color: theme.palette.mode === 'light' ? '#272727' : 'grey.300' }}
-              >
-                <Icon icon='bxl:github' />
-              </IconButton>
-              <IconButton
-                href='/'
-                component={Link}
-                sx={{ color: '#db4437' }}
-                onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-              >
-                <Icon icon='bxl:google' />
-              </IconButton>
             </Box>
           </form>
         </Box>

@@ -46,7 +46,7 @@ const AuthProvider = ({ children }: Props) => {
         await axiosConfig
           .get(authConfig.meEndpoint, {
             headers: {
-              DMPToken: localStorage.getItem('DMPToken')
+              accessToken: localStorage.getItem(authConfig.storageTokenKeyName)
             }
           })
           .then(async response => {
@@ -76,7 +76,10 @@ const AuthProvider = ({ children }: Props) => {
     axiosConfig
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.DMPToken) : null
+        if (params.rememberMe) {
+          window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accesstoken)
+          window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshtoken)
+        }
         const returnUrl = router.query.returnUrl
 
         // setUser({ ...response.data.userData })

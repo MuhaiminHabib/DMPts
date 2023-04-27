@@ -24,7 +24,6 @@ import MuiAutocomplete, { AutocompleteRenderInputParams } from '@mui/material/Au
 import axios from 'axios'
 
 // ** Types Imports
-import { AppBarSearchType } from 'src/@fake-db/types'
 import { Settings } from 'src/@core/context/settingsContext'
 
 // ** Icon Imports

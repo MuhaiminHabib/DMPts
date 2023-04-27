@@ -23,12 +23,8 @@ import 'src/configs/i18n'
 import { defaultACLObj } from 'src/configs/acl'
 import themeConfig from 'src/configs/themeConfig'
 
-// ** Fake-DB Import
-// import 'src/@fake-db'
-
 //axios
 import axios from 'axios'
-axios.defaults.baseURL = 'http://192.168.1.35'
 
 // ** Third Party Import
 import { Toaster } from 'react-hot-toast'

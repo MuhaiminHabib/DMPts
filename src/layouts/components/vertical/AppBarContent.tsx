@@ -73,57 +73,6 @@ const notifications: NotificationsType[] = [
   }
 ]
 
-const shortcuts: ShortcutsType[] = [
-  {
-    title: 'Calendar',
-    icon: 'bx:calendar',
-    url: '/apps/calendar',
-    subtitle: 'Appointments'
-  },
-  {
-    icon: 'bx:book',
-    title: 'Invoice App',
-    url: '/apps/invoice/list',
-    subtitle: 'Manage Accounts'
-  },
-  {
-    title: 'Users',
-    icon: 'bx:user',
-    url: '/apps/user/list',
-    subtitle: 'Manage Users'
-  },
-  {
-    url: '/apps/roles',
-    icon: 'bx:check-shield',
-    title: 'Role Management',
-    subtitle: 'Permissions'
-  },
-  {
-    url: '/',
-    title: 'Dashboard',
-    subtitle: 'User Dashboard',
-    icon: 'bx:pie-chart-alt-2'
-  },
-  {
-    icon: 'bx:cog',
-    title: 'Settings',
-    subtitle: 'Account Settings',
-    url: '/pages/account-settings/account'
-  },
-  {
-    title: 'Help Center',
-    icon: 'bx:help-circle',
-    url: '/pages/help-center',
-    subtitle: 'FAQs & Articles'
-  },
-  {
-    title: 'Dialogs',
-    icon: 'bx:window-open',
-    subtitle: 'Useful Dialogs',
-    url: '/pages/dialog-examples'
-  }
-]
-
 const AppBarContent = (props: Props) => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
@@ -139,14 +88,11 @@ const AppBarContent = (props: Props) => {
             <Icon icon='bx:menu' />
           </IconButton>
         ) : null}
-        {auth.user && <Autocomplete hidden={hidden} settings={settings} />}
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        <LanguageDropdown settings={settings} saveSettings={saveSettings} />
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         {auth.user && (
           <>
-            <ShortcutsDropdown settings={settings} shortcuts={shortcuts} />
             <NotificationDropdown settings={settings} notifications={notifications} />
             <UserDropdown settings={settings} />
           </>

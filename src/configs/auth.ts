@@ -4,6 +4,6 @@ export default {
   meEndpoint: '/auth/info',
   loginEndpoint: '/auth/login',
   registerEndpoint: '/jwt/register',
-  storageTokenKeyName: 'DMPToken',
+  storageTokenKeyName: 'accessToken',
   onTokenExpiration: 'refreshToken' // logout | refreshToken
 }
