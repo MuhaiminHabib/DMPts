@@ -32,21 +32,13 @@ import { addUser } from 'src/store/apps/user'
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
 import { UsersType } from 'src/types/apps/userTypes'
+import axiosConfig from 'src/configs/axios'
 
 interface SidebarAddUserType {
   open: boolean
   toggle: () => void
 }
 
-// interface UserData {
-//   email: string
-//   billing: string
-//   company: string
-//   country: string
-//   contact: number
-//   fullName: string
-//   username: string
-// }
 interface UserData {
   username: string
   password: string
@@ -101,7 +93,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
 
   // ** State
   // const [plan, setPlan] = useState<string>('basic')
-  const [type, setType] = useState<string>('ba')
+  const [type, setType] = useState<string>('BA')
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
@@ -120,27 +112,24 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
 
     //WE NEED THIS LINE OF CODE===============================
   })
-  const onSubmit = (data: UserData) => {
-    // if (store.allData.some((u: UsersType) => u.email === data.email || u.username === data.username)) {
-    //   store.allData.forEach((u: UsersType) => {
-    //     if (u.email === data.email) {
-    //       setError('email', {
-    //         message: 'Email already exists!'
-    //       })
-    //     }
-    //     if (u.username === data.username) {
-    //       setError('username', {
-    //         message: 'Username already exists!'
-    //       })
-    //     }
-    //   })
-    // } else {
-    //   dispatch(addUser({ ...data }))
-    //   toggle()
-    //   reset()
-    // }
-
+  const onSubmit = async (data: UserData) => {
     console.log('i will submit', data)
+    try {
+      const res = await axiosConfig.post('/auth/create-user', {
+        data: {
+          username: 'BA5',
+          password: 'Jason159357!',
+          passwordVerify: 'Jason159357!',
+          email: 'testba5@gmail.com',
+          firstName: 'BA5F',
+          lastName: 'BA5L',
+          type: 'BA'
+        }
+      })
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleClose = () => {
@@ -286,8 +275,8 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                   aria-describedby='validation-billing-select'
                 >
                   <MenuItem value=''>Type</MenuItem>
-                  {/* <MenuItem value='BA'>BA</MenuItem>
-                  <MenuItem value='Manual - Cash'>Manual - Cash</MenuItem>
+                  <MenuItem value='BA'>BA</MenuItem>
+                  {/* <MenuItem value='Manual - Cash'>Manual - Cash</MenuItem>
                   <MenuItem value='Manual - Paypal'>Manual - Paypal</MenuItem>
                   <MenuItem value='Manual - Credit Card'>Manual - Credit Card</MenuItem> */}
                 </Select>
