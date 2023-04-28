@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Card,
   CardHeader,
@@ -9,11 +10,18 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Tooltip
 } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+
+//icons
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import Diversity3Icon from '@mui/icons-material/Diversity3'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+
 import React, { useState } from 'react'
 import TableHeader from './TableHeader'
-import Link from 'src/@core/theme/overrides/link'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import axiosConfig from 'src/configs/axios'
@@ -22,9 +30,17 @@ type props = {
   title: string
   userList: UsersType[]
   showAccociatedBtn?: boolean
+  showHeader?: boolean
+  showLoading?: boolean
 }
 
-const UserListTable = ({ title, userList, showAccociatedBtn = false }: props) => {
+const UserListTable = ({
+  title,
+  userList,
+  showAccociatedBtn = false,
+  showHeader = false,
+  showLoading = false
+}: props) => {
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
@@ -44,12 +60,27 @@ const UserListTable = ({ title, userList, showAccociatedBtn = false }: props) =>
     }
   }
 
+  if (showLoading) {
+    return (
+      // <Box height={'80vh'} bgcolor={'red'} alignItems={'center'} justifyItems={'center'}>
+      //   <Box bgcolor={'green'}>hello</Box>
+      //
+      // </Box>
+
+      <Box display='flex' justifyContent='center'>
+        <CircularProgress disableShrink />
+      </Box>
+    )
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
+          <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
+
           <CardHeader title={title} />
-          <TableHeader toggle={toggleAddUserDrawer} />
+          {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null}
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
@@ -58,7 +89,7 @@ const UserListTable = ({ title, userList, showAccociatedBtn = false }: props) =>
                   <TableCell align='right'>Email</TableCell>
                   <TableCell align='right'>FirstName</TableCell>
                   <TableCell align='right'>LastName</TableCell>
-                  <TableCell align='right'>type</TableCell>
+                  <TableCell align='right'>actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -76,14 +107,24 @@ const UserListTable = ({ title, userList, showAccociatedBtn = false }: props) =>
                     <TableCell align='right'>{user.email}</TableCell>
                     <TableCell align='right'>{user.firstName}</TableCell>
                     <TableCell align='right'>{user.lastName}</TableCell>
-                    <TableCell align='right'>{user.type}</TableCell>
-                    <Button>Profile</Button>
+                    <TableCell align='right'>
+                      <Tooltip title='Profile' placement='top-start'>
+                        <Button startIcon={<AccountCircleIcon />} />
+                      </Tooltip>
 
-                    {showAccociatedBtn ? (
-                      <Button href={`/apps/user/associated-user-list/${user._id}`}>Accociated Users</Button>
-                    ) : null}
+                      {showAccociatedBtn ? (
+                        <Tooltip title='Accociated Users' placement='top-start'>
+                          <Button href={`/apps/user/associated-user-list/${user._id}`} startIcon={<Diversity3Icon />} />
+                        </Tooltip>
+                      ) : null}
 
-                    <Button onClick={() => handleInactivateUser(user._id, user.username)}>Inactive User</Button>
+                      <Tooltip title='Inactive User' placement='top-start'>
+                        <Button
+                          onClick={() => handleInactivateUser(user._id, user.username)}
+                          startIcon={<DeleteForeverIcon />}
+                        />
+                      </Tooltip>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -96,9 +137,5 @@ const UserListTable = ({ title, userList, showAccociatedBtn = false }: props) =>
     </Grid>
   )
 }
-
-// UserListTable.defaultProps = {
-//   showAccociatedBtn: false
-// }
 
 export default UserListTable

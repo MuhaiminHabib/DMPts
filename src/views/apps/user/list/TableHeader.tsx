@@ -7,9 +7,9 @@ import TextField from '@mui/material/TextField'
 import Icon from 'src/@core/components/icon'
 
 interface TableHeaderProps {
-  value: string
+  value?: string
   toggle: () => void
-  handleFilter: (val: string) => void
+  handleFilter?: (val: string) => void
 }
 
 const TableHeader = (props: TableHeaderProps) => {
@@ -24,7 +24,7 @@ const TableHeader = (props: TableHeaderProps) => {
         Export
       </Button>
       <Box sx={{ gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <TextField size='small' value={value} placeholder='Search User' onChange={e => handleFilter(e.target.value)} />
+        {/* <TextField size='small' value={value} placeholder='Search User' onChange={e => handleFilter(e.target.value)} /> */}
 
         <Button onClick={toggle} variant='contained'>
           Add User

@@ -48,6 +48,7 @@ function a11yProps(index: number) {
 const Hello = (props: TabPanelProps) => {
   const [DMList, setDMList] = useState<UsersType[]>([])
   const [CList, setCList] = useState<UsersType[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const { userId } = router.query
 
@@ -58,23 +59,28 @@ const Hello = (props: TabPanelProps) => {
   const [value, setValue] = React.useState(0)
 
   const handleFetchDMList = async () => {
+    setIsLoading(true)
     try {
       const res = await axiosConfig.post('/auth/dms-belong-to-ba', {
         BAID: userId
       })
       console.log(res.data)
       setDMList(res.data)
+      setIsLoading(false)
     } catch (error) {
       console.log(error)
+      setIsLoading(false)
     }
   }
 
   const handleFetchCList = async () => {
+    setIsLoading(true)
     const res = await axiosConfig.post('/auth/c-belongs-to-ba', {
       BAID: userId
     })
     console.log(res.data)
     setCList(res.data)
+    setIsLoading(false)
   }
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -82,7 +88,6 @@ const Hello = (props: TabPanelProps) => {
 
   return (
     <Grid container spacing={6}>
-      <h1>{userId}</h1>
       <Grid item xs={12}>
         <Card>
           <CardHeader title='BA Accociation' />
@@ -95,10 +100,10 @@ const Hello = (props: TabPanelProps) => {
                 </Tabs>
               </Box>
               <TabPanel value={value} index={0}>
-                <UserListTable title={'Accociated DM'} userList={DMList} />
+                <UserListTable title={'Accociated DM'} userList={DMList} showLoading={isLoading} />
               </TabPanel>
               <TabPanel value={value} index={1}>
-                <UserListTable title={'Accociated DM'} userList={CList} />
+                <UserListTable title={'Accociated DM'} userList={CList} showLoading={isLoading} />
               </TabPanel>
             </Box>
           </CardContent>

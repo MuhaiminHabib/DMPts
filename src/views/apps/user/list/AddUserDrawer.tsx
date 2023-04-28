@@ -115,17 +115,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   const onSubmit = async (data: UserData) => {
     console.log('i will submit', data)
     try {
-      const res = await axiosConfig.post('/auth/create-user', {
-        data: {
-          username: 'BA5',
-          password: 'Jason159357!',
-          passwordVerify: 'Jason159357!',
-          email: 'testba5@gmail.com',
-          firstName: 'BA5F',
-          lastName: 'BA5L',
-          type: 'BA'
-        }
-      })
+      const res = await axiosConfig.post('/auth/create-user', data)
       console.log(res)
     } catch (error) {
       console.log(error)

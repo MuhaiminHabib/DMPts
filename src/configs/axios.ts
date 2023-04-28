@@ -39,6 +39,7 @@ axiosConfig.interceptors.response.use(
         // Log out the user if refreshing the token fails
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
+        localStorage.removeItem('userData')
         window.location.replace('/login')
         // Redirect to the login page or handle the error in your application
       }
