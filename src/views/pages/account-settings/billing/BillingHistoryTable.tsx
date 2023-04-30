@@ -35,7 +35,7 @@ import { fetchData, deleteInvoice } from 'src/store/apps/invoice'
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
 import { ThemeColor } from 'src/@core/layouts/types'
-import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import { InvoiceType } from 'src/types/apps/postTypes'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'

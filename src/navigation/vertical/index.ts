@@ -36,19 +36,19 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: 'List',
-          path: '/apps/invoice/list'
+          path: '/apps/post/list'
         },
         {
           title: 'Preview',
-          path: '/apps/invoice/preview'
+          path: '/apps/post/preview'
         },
         {
           title: 'Edit',
-          path: '/apps/invoice/edit'
+          path: '/apps/post/edit'
         },
         {
           title: 'Add',
-          path: '/apps/invoice/add'
+          path: '/apps/post/add'
         }
       ]
     }

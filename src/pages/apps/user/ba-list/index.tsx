@@ -10,6 +10,13 @@ import { UsersType } from 'src/types/apps/userTypes'
 import axiosConfig from 'src/configs/axios'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 
+//redux
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchBaList } from 'src/store/apps/user'
+import { RootState, AppDispatch } from 'src/store'
+import { useFetchBaListQuery } from 'src/store/query/userApi'
+import { fi } from 'date-fns/locale'
+
 interface UserStatusType {
   [key: string]: ThemeColor
 }
@@ -25,16 +32,26 @@ const UserList = () => {
 
   const [userList, setUserList] = useState<UsersType[]>([])
 
+  // **Hooks
+  const dispatch = useDispatch<AppDispatch>()
+  const {baList} = useSelector((state: RootState) => state.user)
+
+  const {isFetching, isError, data} = useFetchBaListQuery()
+
+
   useEffect(() => {
-    const fetchBAList = async () => {
-      const res = await axiosConfig.get('/auth/ba-list')
-      console.log(res.data)
-      setUserList(res.data)
-    }
-    fetchBAList()
+    dispatch(fetchBaList())
   }, [])
 
-  return <UserListTable title={'BA List'} userList={userList} showAccociatedBtn={true} showHeader={true} />
+  if(isFetching) {
+    console.log('getting data')
+  } else if(isError) {
+    console.log('error getting data')
+  } else {
+    console.log(data)
+  }
+
+  return <UserListTable title={'All Businesses'} userList={baList} showAccociatedBtn={true} showHeader={true} />
 }
 
 export default UserList

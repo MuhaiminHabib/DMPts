@@ -17,7 +17,7 @@ import TimelineConnector from '@mui/lab/TimelineConnector'
 import MuiTimeline, { TimelineProps } from '@mui/lab/Timeline'
 
 // ** Types
-import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import { InvoiceType } from 'src/types/apps/postTypes'
 
 // ** Demo Component Imports
 import UsersInvoiceListTable from 'src/views/apps/user/view/UsersInvoiceListTable'

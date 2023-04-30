@@ -26,25 +26,11 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import axiosConfig from 'src/configs/axios'
 import { UsersType } from 'src/types/apps/userTypes'
 import Dialog from 'src/pages/components/dialogs'
+import DialogRespoFullScreen from 'src/views/components/dialogs/DialogRespoFullScreen'
+import PostDetailsModal from 'src/views/apps/post/view/PostDetailsModal'
+import { Post } from 'src/types/apps/postTypes'
 
-type Post = {
-  ba: string
-  boost: boolean
-  client: string
-  content: string
-  creator: UsersType
-  description: string
-  fileName: string
-  groupID: string
-  permissionLevel: string
-  platform: string[]
-  postingDate: string
-  postingEndDate: string
-  title: string
-  updatedAt: string
-  url: string
-  _id: string
-}
+
 
 const InvoiceList = () => {
   // ** State
@@ -70,6 +56,8 @@ const InvoiceList = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
+
+        
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
 
@@ -100,7 +88,7 @@ const InvoiceList = () => {
                     <TableCell align='right'>{post.creator.username}</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
-                        <Button href={'/apps/invoice/view/1122'} startIcon={<AccountCircleIcon />} />
+                        <PostDetailsModal post={post}/>
                       </Tooltip>
                     </TableCell>
                   </TableRow>

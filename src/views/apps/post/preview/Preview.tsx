@@ -8,27 +8,24 @@ import Link from 'next/link'
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
 
-// ** Types
-import { SingleInvoiceType, InvoiceLayoutProps } from 'src/types/apps/invoiceTypes'
-
 // ** Third Party Components
 import axios from 'axios'
 
-// ** Demo Components Imports
-import EditCard from './EditCard'
-import EditActions from './EditActions'
-import AddPaymentDrawer from 'src/views/apps/invoice/shared-drawer/AddPaymentDrawer'
-import SendInvoiceDrawer from 'src/views/apps/invoice/shared-drawer/SendInvoiceDrawer'
+// ** Types
+import { SingleInvoiceType, InvoiceLayoutProps } from 'src/types/apps/postTypes'
 
-const InvoiceEdit = ({ id }: InvoiceLayoutProps) => {
+// ** Demo Components Imports
+import PreviewCard from 'src/views/apps/post/preview/PreviewCard'
+import PreviewActions from 'src/views/apps/post/preview/PreviewActions'
+import AddPaymentDrawer from 'src/views/apps/post/shared-drawer/AddPaymentDrawer'
+import SendInvoiceDrawer from 'src/views/apps/post/shared-drawer/SendInvoiceDrawer'
+
+const InvoicePreview = ({ id }: InvoiceLayoutProps) => {
   // ** State
   const [error, setError] = useState<boolean>(false)
   const [data, setData] = useState<null | SingleInvoiceType>(null)
   const [addPaymentOpen, setAddPaymentOpen] = useState<boolean>(false)
   const [sendInvoiceOpen, setSendInvoiceOpen] = useState<boolean>(false)
-
-  const toggleSendInvoiceDrawer = () => setSendInvoiceOpen(!sendInvoiceOpen)
-  const toggleAddPaymentDrawer = () => setAddPaymentOpen(!addPaymentOpen)
 
   useEffect(() => {
     axios
@@ -43,18 +40,21 @@ const InvoiceEdit = ({ id }: InvoiceLayoutProps) => {
       })
   }, [id])
 
+  const toggleSendInvoiceDrawer = () => setSendInvoiceOpen(!sendInvoiceOpen)
+  const toggleAddPaymentDrawer = () => setAddPaymentOpen(!addPaymentOpen)
+
   if (data) {
     return (
       <>
         <Grid container spacing={6}>
           <Grid item xl={9} md={8} xs={12}>
-            <EditCard data={data} />
+            <PreviewCard data={data} />
           </Grid>
           <Grid item xl={3} md={4} xs={12}>
-            <EditActions
+            <PreviewActions
               id={id}
-              toggleSendInvoiceDrawer={toggleSendInvoiceDrawer}
               toggleAddPaymentDrawer={toggleAddPaymentDrawer}
+              toggleSendInvoiceDrawer={toggleSendInvoiceDrawer}
             />
           </Grid>
         </Grid>
@@ -78,4 +78,4 @@ const InvoiceEdit = ({ id }: InvoiceLayoutProps) => {
   }
 }
 
-export default InvoiceEdit
+export default InvoicePreview

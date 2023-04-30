@@ -11,12 +11,12 @@ import Grid from '@mui/material/Grid'
 import axios from 'axios'
 
 // ** Types
-import { InvoiceType, InvoiceClientType } from 'src/types/apps/invoiceTypes'
+import { InvoiceType, InvoiceClientType } from 'src/types/apps/postTypes'
 
 // ** Demo Components Imports
-import AddCard from 'src/views/apps/invoice/add/AddCard'
-import AddActions from 'src/views/apps/invoice/add/AddActions'
-import AddNewCustomers from 'src/views/apps/invoice/add/AddNewCustomer'
+import AddCard from 'src/views/apps/post/add/AddCard'
+import AddActions from 'src/views/apps/post/add/AddActions'
+import AddNewCustomers from 'src/views/apps/post/add/AddNewCustomer'
 
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'

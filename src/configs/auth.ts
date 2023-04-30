@@ -1,5 +1,3 @@
-import axiosConfig from './axios'
-
 export default {
   meEndpoint: '/auth/info',
   loginEndpoint: '/auth/login',

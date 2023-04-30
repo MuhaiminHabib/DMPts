@@ -40,8 +40,9 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)!
-      if (storedToken) {
+      const userData = localStorage.getItem('userData')!
+      if (!userData || userData === 'undefined') {
+        // call api
         setLoading(true)
         await axiosConfig
           .get(authConfig.meEndpoint, {
@@ -51,7 +52,17 @@ const AuthProvider = ({ children }: Props) => {
           })
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.userData })
+            // setUser({ ...response.data.userData })
+            const myUserData = {
+              id: response.data.userId,
+              role: 'admin',
+              email: 'string',
+              fullName: 'habib',
+              username: 'habib',
+              password: 'Root@2023'
+            }
+            setUser({ ...myUserData })
+            window.localStorage.setItem('userData', JSON.stringify(myUserData))
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -64,8 +75,36 @@ const AuthProvider = ({ children }: Props) => {
             }
           })
       } else {
+        // set user from localstorage
+        setUser(JSON.parse(userData))
         setLoading(false)
       }
+      // const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)!
+      // if (storedToken) {
+      //   setLoading(true)
+      //   await axiosConfig
+      //     .get(authConfig.meEndpoint, {
+      //       headers: {
+      //         accessToken: localStorage.getItem(authConfig.storageTokenKeyName)
+      //       }
+      //     })
+      //     .then(async response => {
+      //       setLoading(false)
+      //       setUser({ ...response.data.userData })
+      //     })
+      //     .catch(() => {
+      //       localStorage.removeItem('userData')
+      //       localStorage.removeItem('refreshToken')
+      //       localStorage.removeItem('accessToken')
+      //       setUser(null)
+      //       setLoading(false)
+      //       if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+      //         router.replace('/login')
+      //       }
+      //     })
+      // } else {
+      //   setLoading(false)
+      // }
     }
 
     initAuth()
@@ -93,8 +132,8 @@ const AuthProvider = ({ children }: Props) => {
         }
         setUser({ ...myUserData })
 
-        // params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(myUserData)) : null
+        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        // params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(myUserData)) : null
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 

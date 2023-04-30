@@ -21,7 +21,7 @@ import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 
 // ** Types
-import { InvoiceClientType } from 'src/types/apps/invoiceTypes'
+import { InvoiceClientType } from 'src/types/apps/postTypes'
 
 interface Props {
   open: boolean

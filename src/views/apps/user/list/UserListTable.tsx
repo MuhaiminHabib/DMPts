@@ -25,6 +25,8 @@ import TableHeader from './TableHeader'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import axiosConfig from 'src/configs/axios'
+import { useDispatch } from 'react-redux'
+import { inactiveBa } from 'src/store/apps/user'
 
 type props = {
   title: string
@@ -41,32 +43,39 @@ const UserListTable = ({
   showHeader = false,
   showLoading = false
 }: props) => {
+
+  // ** States
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
+  // ** Hooks
+
+  // ** Functions
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+  const dispatch = useDispatch()
 
-  const handleInactivateUser = async (userID: string, username: string) => {
-    console.log(`i will inactive user ${userID}, and ${username}`)
-
-    try {
-      const res = await axiosConfig.post('/auth/inactive-ba', {
-        BAID: userID,
-        username: username
-      })
-      console.log(res)
-      console.log('done')
-    } catch (error) {
-      console.log(error)
+  const handleInactivateUser = async (BAID: string, username: string) => {
+    const data = {
+      BAID,
+      username
     }
+    dispatch(inactiveBa(data))
   }
+  //   console.log(`i will inactive user ${userID}, and ${username}`)
+
+  //   try {
+  //     const res = await axiosConfig.post('/auth/inactive-ba', {
+  //       BAID: userID,
+  //       username: username
+  //     })
+  //     console.log(res)
+  //     console.log('done')
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   if (showLoading) {
     return (
-      // <Box height={'80vh'} bgcolor={'red'} alignItems={'center'} justifyItems={'center'}>
-      //   <Box bgcolor={'green'}>hello</Box>
-      //
-      // </Box>
-
       <Box display='flex' justifyContent='center'>
         <CircularProgress disableShrink />
       </Box>

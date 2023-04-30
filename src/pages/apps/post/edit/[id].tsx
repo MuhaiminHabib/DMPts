@@ -5,10 +5,10 @@ import { GetStaticPaths, GetStaticProps, GetStaticPropsContext, InferGetStaticPr
 import axios from 'axios'
 
 // ** Types
-import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import { InvoiceType } from 'src/types/apps/postTypes'
 
 // ** Demo Components Imports
-import Edit from 'src/views/apps/invoice/edit/Edit'
+import Edit from 'src/views/apps/post/edit/Edit'
 
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'

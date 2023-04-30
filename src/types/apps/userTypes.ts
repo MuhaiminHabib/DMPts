@@ -26,7 +26,7 @@ export type UsersType = {
   password: string
   passwordVerify: string
   avatar?: string
-  active: string
+  active: boolean
   creator: string
   customerID: string
   dm: []

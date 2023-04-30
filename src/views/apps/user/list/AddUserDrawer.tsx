@@ -27,7 +27,7 @@ import Icon from 'src/@core/components/icon'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
-import { addUser } from 'src/store/apps/user'
+import { createBAUser } from 'src/store/apps/user'
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
@@ -113,13 +113,15 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     //WE NEED THIS LINE OF CODE===============================
   })
   const onSubmit = async (data: UserData) => {
-    console.log('i will submit', data)
-    try {
-      const res = await axiosConfig.post('/auth/create-user', data)
-      console.log(res)
-    } catch (error) {
-      console.log(error)
-    }
+    dispatch(createBAUser(data))
+    handleClose()
+    // console.log('i will submit', data)
+    // try {
+    //   const res = await axiosConfig.post('/auth/create-user', data)
+    //   console.log(res)
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   const handleClose = () => {

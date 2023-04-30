@@ -8,13 +8,13 @@ import { GetStaticPaths, GetStaticProps, GetStaticPropsContext, InferGetStaticPr
 import axios from 'axios'
 
 // ** Types
-import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import { InvoiceType } from 'src/types/apps/postTypes'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Components Imports
-import PrintPage from 'src/views/apps/invoice/print/PrintPage'
+import PrintPage from 'src/views/apps/post/print/PrintPage'
 
 const InvoicePrint = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return <PrintPage id={id} />

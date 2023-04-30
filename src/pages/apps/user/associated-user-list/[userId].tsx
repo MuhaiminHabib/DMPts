@@ -53,12 +53,12 @@ const Hello = (props: TabPanelProps) => {
   const { userId } = router.query
 
   useEffect(() => {
-    handleFetchDMList()
-  }, [])
+    handleFetchDMList(userId)
+  }, [userId])
 
   const [value, setValue] = React.useState(0)
 
-  const handleFetchDMList = async () => {
+  const handleFetchDMList = async (userId) => {
     setIsLoading(true)
     try {
       const res = await axiosConfig.post('/auth/dms-belong-to-ba', {
@@ -99,9 +99,11 @@ const Hello = (props: TabPanelProps) => {
                   <Tab label='Client List' {...a11yProps(1)} onClick={() => handleFetchCList()} />
                 </Tabs>
               </Box>
-              <TabPanel value={value} index={0}>
-                <UserListTable title={'Accociated DM'} userList={DMList} showLoading={isLoading} />
-              </TabPanel>
+              {DMList.length !== 0 && (
+                <TabPanel value={value} index={0}>
+                  <UserListTable title={'Accociated DM'} userList={DMList} showLoading={isLoading} />
+                </TabPanel>
+              )}
               <TabPanel value={value} index={1}>
                 <UserListTable title={'Accociated DM'} userList={CList} showLoading={isLoading} />
               </TabPanel>
@@ -113,7 +115,7 @@ const Hello = (props: TabPanelProps) => {
   )
 }
 
-Hello.authGuard = false
+Hello.authGuard = true
 Hello.guestGuard = false
 
 export default Hello
