@@ -35,6 +35,7 @@ import UserEditModal from 'src/views/apps/user/list/UserEditModal'
 import { AuthContext } from 'src/context/AuthContext'
 import UserProfileModal from './UserProfileModal'
 
+
 type props = {
   title: string
   userList: UsersType[]
@@ -43,6 +44,7 @@ type props = {
   showLoading?: boolean
   addClient?: boolean
   addDm?: boolean
+  refetch : Promise<UsersType[]>
 }
 
 const UserListTable = ({
@@ -52,10 +54,11 @@ const UserListTable = ({
   showHeader = false,
   showLoading = false,
   addClient = false,
-  addDm = false
+  addDm = false,
+  refetchData = []
 }: props) => {
 
-  // ** States
+  // ** Statesß
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
 
@@ -89,6 +92,12 @@ const UserListTable = ({
     }
   }
 
+  useEffect(() => {
+    console.log('refetching')
+    refetchData()
+  }, [])
+  //   console.log(`i will inactive user ${userID}, and ${username}`)
+
 
 
 
@@ -115,7 +124,7 @@ const UserListTable = ({
               </TableHead>
                 
               <TableBody>
-                {userList.map(user => (
+                {userList?.map(user => (
                   <TableRow
                     key={user._id}
                     sx={{

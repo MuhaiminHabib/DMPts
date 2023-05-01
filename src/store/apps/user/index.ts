@@ -1,7 +1,6 @@
 // ** Redux Imports
 import { Dispatch } from 'redux'
-import { createSlice, createAsyncThunk, SerializedError } from '@reduxjs/toolkit'
-
+import { createSlice, createAsyncThunk, SerializedError, PayloadAction } from '@reduxjs/toolkit'
 import { UsersType } from '../../../types/apps/userTypes'
 
 // ** Axios Imports

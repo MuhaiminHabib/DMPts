@@ -8,6 +8,7 @@ import email from 'src/store/apps/email'
 import post from 'src/store/apps/post'
 import calendar from 'src/store/apps/calendar'
 import permissions from 'src/store/apps/permissions'
+import { baseApi } from './query/baseApi'
 
 export const store = configureStore({
   reducer: {
@@ -16,12 +17,10 @@ export const store = configureStore({
     email,
     post,
     calendar,
-    permissions
+    permissions,
+    [baseApi.reducerPath]: baseApi.reducer
   },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: false
-    })
+  middleware: gDM => gDM().concat(baseApi.middleware)
 })
 
 export type AppDispatch = typeof store.dispatch

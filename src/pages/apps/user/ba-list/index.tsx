@@ -11,11 +11,8 @@ import axiosConfig from 'src/configs/axios'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 
 //redux
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchBaList } from 'src/store/apps/user'
-import { RootState, AppDispatch } from 'src/store'
-
-import { fi } from 'date-fns/locale'
+import { useFetchBaListQuery } from 'src/store/query/userApi'
+import Loader from 'src/shared-components/Loader'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -31,16 +28,27 @@ const UserList = () => {
   // ** State
 
   // **Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  const {baList} = useSelector((state: RootState) => state.user)
 
-  useEffect(() => {
-    dispatch(fetchBaList())
-  }, [])
+  const {isLoading, isError, data : baList, refetch } = useFetchBaListQuery()
 
 
+  if(isLoading) {
+    console.log('getting data')
+  } else if(isError) {
+    console.log('error getting data')
+  } else {
+    console.log('rtk query data: ',baList)
+  }
 
-  return <UserListTable title={'All Businesses'} userList={baList} showAccociatedBtn={true} showHeader={true} />
+  if(isLoading) {
+    return <Loader />
+  }
+
+  return (
+    <UserListTable title={'All Businesses'} userList={baList!} showAccociatedBtn={true} showHeader={true} refetchData={refetch}/>
+      
+  )
+  
 }
 
 export default UserList
