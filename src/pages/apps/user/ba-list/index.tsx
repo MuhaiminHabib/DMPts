@@ -14,7 +14,7 @@ import UserListTable from 'src/views/apps/user/list/UserListTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBaList } from 'src/store/apps/user'
 import { RootState, AppDispatch } from 'src/store'
-import { useFetchBaListQuery } from 'src/store/query/userApi'
+
 import { fi } from 'date-fns/locale'
 
 interface UserStatusType {
@@ -36,20 +36,13 @@ const UserList = () => {
   const dispatch = useDispatch<AppDispatch>()
   const {baList} = useSelector((state: RootState) => state.user)
 
-  const {isFetching, isError, data} = useFetchBaListQuery()
 
 
   useEffect(() => {
     dispatch(fetchBaList())
   }, [])
 
-  if(isFetching) {
-    console.log('getting data')
-  } else if(isError) {
-    console.log('error getting data')
-  } else {
-    console.log(data)
-  }
+
 
   return <UserListTable title={'All Businesses'} userList={baList} showAccociatedBtn={true} showHeader={true} />
 }
