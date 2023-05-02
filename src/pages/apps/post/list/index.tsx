@@ -20,38 +20,31 @@ import {
   TableRow,
   Tooltip
 } from '@mui/material'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import Diversity3Icon from '@mui/icons-material/Diversity3'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import axiosConfig from 'src/configs/axios'
-import { UsersType } from 'src/types/apps/userTypes'
-import Dialog from 'src/pages/components/dialogs'
-import DialogRespoFullScreen from 'src/views/components/dialogs/DialogRespoFullScreen'
 import PostDetailsModal from 'src/views/apps/post/view/PostDetailsModal'
-import { Post } from 'src/types/apps/postTypes'
+import { PostsTypes } from 'src/types/apps/postTypes'
+import Loader from 'src/shared-components/Loader'
+import { useDispatch } from 'react-redux'
+import { AppDispatch, RootState } from 'src/store'
+import { useSelector } from 'react-redux'
+import { fetchPosts } from 'src/store/apps/post'
 
 
 
 const InvoiceList = () => {
   // ** State
-  const [posts, setPosts] = useState<Post[]>([])
-
+  const [postPage, setPostPage] = useState<number>(1)
   // ** Hooks
+
+  const dispatch = useDispatch<AppDispatch>()
+  const {posts, isLoading} = useSelector((state: RootState) => state.post)
+
   useEffect(() => {
-    handleFetchPosts()
+    dispatch(fetchPosts({
+      page: postPage
+    }))
   }, [])
 
-  // ** Functions
 
-  const handleFetchPosts = async () => {
-    try {
-      const res = await axiosConfig.get('/posting/page/1')
-      console.log(res.data)
-      setPosts(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   return (
     <Grid container spacing={6}>
@@ -64,6 +57,7 @@ const InvoiceList = () => {
           <CardHeader title='Posts' />
           {/* {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null} */}
           <TableContainer component={Paper}>
+          {isLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
@@ -95,6 +89,7 @@ const InvoiceList = () => {
                 ))}
               </TableBody>
             </Table>
+}
           </TableContainer>
         </Card>
       </Grid>

@@ -30,7 +30,7 @@ import format from 'date-fns/format'
 
 // ** Store & Actions Imports
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchData, deleteInvoice } from 'src/store/apps/invoice'
+import { fetchData, deleteInvoice } from 'src/store/apps/post'
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'

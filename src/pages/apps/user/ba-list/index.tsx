@@ -30,13 +30,9 @@ const userStatusObj: UserStatusType = {
 const UserList = () => {
   // ** State
 
-  const [userList, setUserList] = useState<UsersType[]>([])
-
   // **Hooks
   const dispatch = useDispatch<AppDispatch>()
   const {baList} = useSelector((state: RootState) => state.user)
-
-
 
   useEffect(() => {
     dispatch(fetchBaList())

@@ -46,7 +46,7 @@ import { UsersType } from './userTypes'
 //   paymentDetails: InvoicePaymentType
 // }
 
-export type Post = {
+export type PostsTypes = {
   ba: string
   boost: boolean
   client: string

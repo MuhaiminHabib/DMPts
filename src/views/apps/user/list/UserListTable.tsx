@@ -27,6 +27,9 @@ import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import axiosConfig from 'src/configs/axios'
 import { useDispatch } from 'react-redux'
 import { inactiveBa } from 'src/store/apps/user'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
+import Loader from '../../../../shared-components/Loader'
 
 type props = {
   title: string
@@ -48,6 +51,7 @@ const UserListTable = ({
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
   // ** Hooks
+  const { isLoading } = useSelector((state: RootState) => state.user)
 
   // ** Functions
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
@@ -60,27 +64,15 @@ const UserListTable = ({
     }
     dispatch(inactiveBa(data))
   }
-  //   console.log(`i will inactive user ${userID}, and ${username}`)
 
-  //   try {
-  //     const res = await axiosConfig.post('/auth/inactive-ba', {
-  //       BAID: userID,
-  //       username: username
-  //     })
-  //     console.log(res)
-  //     console.log('done')
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
+
+  // if (isLoading) {
+  //   return (
+  //     <Box display='flex' justifyContent='center'>
+  //       <CircularProgress disableShrink />
+  //     </Box>
+  //   )
   // }
-
-  if (showLoading) {
-    return (
-      <Box display='flex' justifyContent='center'>
-        <CircularProgress disableShrink />
-      </Box>
-    )
-  }
 
   return (
     <Grid container spacing={6}>
@@ -90,7 +82,9 @@ const UserListTable = ({
 
           <CardHeader title={title} />
           {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null}
+
           <TableContainer component={Paper}>
+          {isLoading || showLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
@@ -101,6 +95,7 @@ const UserListTable = ({
                   <TableCell align='right'>actions</TableCell>
                 </TableRow>
               </TableHead>
+                
               <TableBody>
                 {userList.map(user => (
                   <TableRow
@@ -138,6 +133,8 @@ const UserListTable = ({
                 ))}
               </TableBody>
             </Table>
+                }
+            
           </TableContainer>
         </Card>
       </Grid>

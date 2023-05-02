@@ -34,11 +34,13 @@ const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
 
   // ** Hooks
   const router = useRouter()
 
   useEffect(() => {
+    console.log('i am in useEffect')
     const initAuth = async (): Promise<void> => {
       const userData = localStorage.getItem('userData')!
       if (!userData || userData === 'undefined') {
@@ -52,17 +54,9 @@ const AuthProvider = ({ children }: Props) => {
           })
           .then(async response => {
             setLoading(false)
-            // setUser({ ...response.data.userData })
-            const myUserData = {
-              id: response.data.userId,
-              role: 'admin',
-              email: 'string',
-              fullName: 'habib',
-              username: 'habib',
-              password: 'Root@2023'
-            }
-            setUser({ ...myUserData })
-            window.localStorage.setItem('userData', JSON.stringify(myUserData))
+            console.log('authcontext useEffect', response.data)
+            setUser({ ...response.data })
+            window.localStorage.setItem('userData', JSON.stringify(response.data))
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -79,37 +73,11 @@ const AuthProvider = ({ children }: Props) => {
         setUser(JSON.parse(userData))
         setLoading(false)
       }
-      // const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)!
-      // if (storedToken) {
-      //   setLoading(true)
-      //   await axiosConfig
-      //     .get(authConfig.meEndpoint, {
-      //       headers: {
-      //         accessToken: localStorage.getItem(authConfig.storageTokenKeyName)
-      //       }
-      //     })
-      //     .then(async response => {
-      //       setLoading(false)
-      //       setUser({ ...response.data.userData })
-      //     })
-      //     .catch(() => {
-      //       localStorage.removeItem('userData')
-      //       localStorage.removeItem('refreshToken')
-      //       localStorage.removeItem('accessToken')
-      //       setUser(null)
-      //       setLoading(false)
-      //       if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-      //         router.replace('/login')
-      //       }
-      //     })
-      // } else {
-      //   setLoading(false)
-      // }
     }
-
     initAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isLoggedIn])
+
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     axiosConfig
@@ -120,26 +88,10 @@ const AuthProvider = ({ children }: Props) => {
           window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshtoken)
         }
         const returnUrl = router.query.returnUrl
-
-        // setUser({ ...response.data.userData })
-        const myUserData = {
-          id: response.data.userId,
-          role: 'admin',
-          email: 'string',
-          fullName: 'habib',
-          username: 'habib',
-          password: 'Root@2023'
-        }
-        setUser({ ...myUserData })
-
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-        // params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(myUserData)) : null
-
+        setIsLoggedIn(true)
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
         router.replace(redirectURL as string)
       })
-
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
@@ -147,9 +99,16 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogout = () => {
     setUser(null)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
+    try {
+      axiosConfig.get('/auth/logout')
+      window.localStorage.removeItem('userData')
+      window.localStorage.removeItem(authConfig.storageTokenKeyName)
+      window.localStorage.removeItem(authConfig.onTokenExpiration)
+      setIsLoggedIn(false)
+      router.push('/login')
+    } catch (error) {
+      console.log('could not log out')
+    }
   }
 
   const values = {

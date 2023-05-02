@@ -74,7 +74,7 @@ const schema = yup.object().shape({
   email: yup.string().email().required(),
   firstName: yup.string().required(),
   lastName: yup.string().required(),
-  type: yup.string().required()
+  role: yup.string().required()
 })
 
 const defaultValues = {
@@ -84,7 +84,7 @@ const defaultValues = {
   email: '',
   firstName: '',
   lastName: '',
-  type: 'BA'
+  role: 'BA'
 }
 
 const SidebarAddUser = (props: SidebarAddUserType) => {
@@ -93,7 +93,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
 
   // ** State
   // const [plan, setPlan] = useState<string>('basic')
-  const [type, setType] = useState<string>('BA')
+  const [role, setRole] = useState<string>('')
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
@@ -115,17 +115,11 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   const onSubmit = async (data: UserData) => {
     dispatch(createBAUser(data))
     handleClose()
-    // console.log('i will submit', data)
-    // try {
-    //   const res = await axiosConfig.post('/auth/create-user', data)
-    //   console.log(res)
-    // } catch (error) {
-    //   console.log(error)
-    // }
+
   }
 
   const handleClose = () => {
-    setType('BA')
+    setRole('')
     toggle()
     reset()
   }
@@ -250,23 +244,23 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.type)} htmlFor='validation-billing-select'>
-              User Type
+            <InputLabel id='validation-billing-select' error={Boolean(errors.role)} htmlFor='validation-billing-select'>
+              User role
             </InputLabel>
             <Controller
-              name='type'
+              name='role'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <Select
                   value={value}
-                  label='User Type'
+                  label='User Role'
                   onChange={onChange}
-                  error={Boolean(errors.type)}
+                  error={Boolean(errors.role)}
                   labelId='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 >
-                  <MenuItem value=''>Type</MenuItem>
+                  <MenuItem value=''>Role</MenuItem>
                   <MenuItem value='BA'>BA</MenuItem>
                   {/* <MenuItem value='Manual - Cash'>Manual - Cash</MenuItem>
                   <MenuItem value='Manual - Paypal'>Manual - Paypal</MenuItem>
@@ -274,7 +268,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                 </Select>
               )}
             />
-            {errors.type && (
+            {errors.role && (
               <FormHelperText sx={{ color: 'error.main' }} id='validation-billing-select'>
                 This field is required
               </FormHelperText>

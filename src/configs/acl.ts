@@ -20,9 +20,15 @@ const defineRulesFor = (role: string, subject: string) => {
   const { can, rules } = new AbilityBuilder(AppAbility)
 
   console.log('role is:', role)
-  if (role === 'admin') {
+  if (role === 'A') {
     can('manage', 'all')
-  } else if (role === 'client') {
+  } else if (role === 'BA') {
+    can('manage', 'all')
+  } else if (role === 'DM') {
+    can('manage', 'all')
+  } else if (role === 'C') {
+    can(['read'], 'acl-page')
+  } else if (role === 'CM') {
     can(['read'], 'acl-page')
   } else {
     can(['read', 'create', 'update', 'delete'], subject)
