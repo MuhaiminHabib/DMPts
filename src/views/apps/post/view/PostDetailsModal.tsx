@@ -49,20 +49,29 @@ const PostDetailsModal = ({post} : pageProps) => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, architecto cum sed culpa odio amet consequuntur alias? Repellat iusto, voluptas magnam inventore consequatur nostrum maxime exercitationem reprehenderit adipisci repellendus! Cupiditate!
+          <Typography component={'span'} sx={{fontWeight : 'bold'}}>Description: </Typography>
+            <Typography component={'span'}>{post.description}</Typography>
           </DialogContentText>
           <DialogContentText>
             <Typography component={'span'} sx={{fontWeight : 'bold'}}>Created By: </Typography>
             <Typography component={'span'}>habib </Typography>
+          </DialogContentText>
+          <DialogContentText>
+            <Typography component={'span'} sx={{fontWeight : 'bold'}}>Boosted: </Typography>
+            <Typography component={'span'}>{post.boost ? 'Yes' : 'No'}</Typography>
+          </DialogContentText>
+          <DialogContentText>
+            <Typography component={'span'} sx={{fontWeight : 'bold'}}>Filename: </Typography>
+            <Typography component={'span'}><a href={post.fileName} target='blank'>{post.fileName}</a></Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button variant='outlined' color='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button variant='contained' onClick={handleClose}>
+          {/* <Button variant='contained' onClick={handleClose}>
             Edit
-          </Button>
+          </Button> */}
         </DialogActions>
       </Dialog>
     </Fragment>

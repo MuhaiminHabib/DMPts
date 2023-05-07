@@ -47,6 +47,7 @@ import { UsersType } from './userTypes'
 // }
 
 export type PostsTypes = {
+  _id: string
   ba: string
   boost: boolean
   client: string
@@ -62,5 +63,4 @@ export type PostsTypes = {
   title: string
   updatedAt: string
   url: string
-  _id: string
 }

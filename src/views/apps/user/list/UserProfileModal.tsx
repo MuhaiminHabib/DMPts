@@ -24,7 +24,6 @@ type pageProps = {
 const UserProfileModal = ({user} : pageProps) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
-  const [isDisabled, setIsDisabled] = useState<boolean>(false)
 
   // ** Hooks
   const theme = useTheme()
@@ -34,9 +33,7 @@ const UserProfileModal = ({user} : pageProps) => {
 
   const handleProfileModalClose = () => setOpen(false)
 
-  const handleClick = () => {
-    setIsDisabled(true)
-  }
+
  
   useEffect(() => {
     console.log(user)
@@ -79,9 +76,9 @@ const UserProfileModal = ({user} : pageProps) => {
           <Button variant='outlined' color='secondary' onClick={handleProfileModalClose}>
             Close
           </Button>
-          <Button variant='contained' size='small' disabled={isDisabled} onClick={handleClick}>
+          {/* <Button variant='contained' size='small' disabled={isDisabled} onClick={handleClick}>
             <UserEditModal user={user} />
-          </Button>
+          </Button> */}
         </DialogActions>
       </Dialog>
     </Fragment>

@@ -19,6 +19,13 @@ interface createUserParams {
   type: string
 }
 
+interface editUserParams {
+  userId: string
+  email: string
+  firstName: string
+  lastName: string
+}
+
 interface RejectedAction<ThunkArg> {
   type: string
   payload: undefined
@@ -125,9 +132,9 @@ export const baDeleteC = createAsyncThunk('appUsers/baDeleteC', async (data: { c
   console.log(response.data)
   return response.data
 })
-export const editUserInfo = createAsyncThunk('appUsers/editUserInfo', async (data: { cId: string }) => {
-  console.log('i will edit info', data.cId)
-  const response = await axiosConfig.delete('/auth/edit-user-info', { data: { cId: data.cId } })
+export const editUserInfo = createAsyncThunk('appUsers/editUserInfo', async (data: editUserParams) => {
+  console.log('i will edit user info', data)
+  const response = await axiosConfig.put('/auth/edit-user-info', data)
   console.log(response.data)
   return response.data
 })
@@ -159,17 +166,20 @@ export const appUsersSlice = createSlice({
   extraReducers: builder => {
     //BA
     builder.addCase(fetchBaList.fulfilled, (state, action) => {
+      Swal.fire('success')
       state.baList = action.payload
       state.isLoading = false
       state.isError = false
       console.log('action is: ', action.payload)
     })
     builder.addCase(fetchBaList.pending, state => {
+      Swal.fire('loading')
       console.log('fetching ba list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(fetchBaList.rejected, (state, action) => {
+      Swal.fire('rejected')
       console.log('fetching ba list: error')
       state.isLoading = false
       state.isError = true
@@ -178,17 +188,22 @@ export const appUsersSlice = createSlice({
 
     //DM
     builder.addCase(fetchDmList.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       state.dmList = action.payload
       state.isLoading = false
       state.isError = false
       console.log('action is: ', action.payload)
     })
     builder.addCase(fetchDmList.pending, state => {
+      Swal.fire('loading')
+
       console.log('fetchDmList list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(fetchDmList.rejected, state => {
+      Swal.fire('rejected')
       console.log('fetchDmList list: error')
       state.isLoading = false
       state.isError = true
@@ -196,17 +211,22 @@ export const appUsersSlice = createSlice({
 
     //C
     builder.addCase(fetchCList.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       state.cList = action.payload
       state.isLoading = false
       state.isError = false
       console.log('action is: ', action.payload)
     })
     builder.addCase(fetchCList.pending, state => {
+      Swal.fire('loading')
+
       console.log('fetchCList list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(fetchCList.rejected, state => {
+      Swal.fire('rejected')
       console.log('fetchCList list: error')
       state.isLoading = false
       state.isError = true
@@ -214,6 +234,8 @@ export const appUsersSlice = createSlice({
 
     //CM
     builder.addCase(fetchCmList.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       state.cmList = action.payload
       console.log('action is: ', action.payload)
       state.isLoading = false
@@ -221,11 +243,14 @@ export const appUsersSlice = createSlice({
     })
 
     builder.addCase(fetchCmList.pending, state => {
+      Swal.fire('loading')
+
       console.log('fetchCmList list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(fetchCmList.rejected, state => {
+      Swal.fire('rejected')
       console.log('fetchCmList list: error')
       state.isLoading = false
       state.isError = true
@@ -233,17 +258,22 @@ export const appUsersSlice = createSlice({
 
     //Inactive BA
     builder.addCase(inactiveBa.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       console.log('action is: ', action.payload)
       state.baList.map(item => (item._id === action.payload._id ? (item.active = false) : null))
       state.isLoading = false
       state.isError = false
     })
     builder.addCase(inactiveBa.pending, state => {
+      Swal.fire('loading')
+
       console.log('inactiveBa list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(inactiveBa.rejected, state => {
+      Swal.fire('rejected')
       console.log('inactiveBa list: error')
       state.isLoading = false
       state.isError = true
@@ -251,7 +281,7 @@ export const appUsersSlice = createSlice({
 
     //Create BA
     builder.addCase(createBAUser.fulfilled, (state, action) => {
-      Swal.fire('fulfilled')
+      Swal.fire('success')
       console.log('action is: ', action.payload)
       if (
         action.payload.role === 'BA'
@@ -281,17 +311,22 @@ export const appUsersSlice = createSlice({
 
     /////////////////BA
     builder.addCase(fetchDmListforBA.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       state.dmList = action.payload
       state.isLoading = false
       state.isError = false
       console.log('action is: ', action.payload)
     })
     builder.addCase(fetchDmListforBA.pending, state => {
+      Swal.fire('loading')
+
       console.log('creating user  loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(fetchDmListforBA.rejected, state => {
+      Swal.fire('rejected')
       console.log('creating user : error')
       state.isLoading = false
       state.isError = true
@@ -299,6 +334,8 @@ export const appUsersSlice = createSlice({
 
     //Delete DM
     builder.addCase(baDeleteDm.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       console.log('action is: ', action.payload._id)
 
       state.dmList = state.dmList.filter(item => item._id.toString() !== action.payload._id.toString())
@@ -306,11 +343,14 @@ export const appUsersSlice = createSlice({
       state.isError = false
     })
     builder.addCase(baDeleteDm.pending, state => {
+      Swal.fire('loading')
+
       console.log('baDeleteDm list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(baDeleteDm.rejected, state => {
+      Swal.fire('rejected')
       console.log('baDeleteDm list: error')
       state.isLoading = false
       state.isError = true
@@ -318,17 +358,22 @@ export const appUsersSlice = createSlice({
 
     ///BA fetches C list
     builder.addCase(fetchCListforBA.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       state.cList = action.payload
       state.isLoading = false
       state.isError = false
       console.log('action is: ', action.payload)
     })
     builder.addCase(fetchCListforBA.pending, state => {
+      Swal.fire('loading')
+
       console.log('fetchCListforBA list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(fetchCListforBA.rejected, state => {
+      Swal.fire('rejected')
       console.log('fetchCListforBA list: error')
       state.isLoading = false
       state.isError = true
@@ -336,17 +381,22 @@ export const appUsersSlice = createSlice({
 
     //Delete C
     builder.addCase(baDeleteC.fulfilled, (state, action) => {
+      Swal.fire('success')
+
       console.log('action is: ', action.payload._id)
       state.cList = state.cList.filter(item => item._id.toString() !== action.payload._id.toString())
       state.isLoading = false
       state.isError = false
     })
     builder.addCase(baDeleteC.pending, state => {
+      Swal.fire('loading')
+
       console.log('baDeleteC list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(baDeleteC.rejected, state => {
+      Swal.fire('rejected')
       console.log('baDeleteC list: error')
       state.isLoading = false
       state.isError = true
@@ -354,17 +404,34 @@ export const appUsersSlice = createSlice({
 
     //Edit User Info
     builder.addCase(editUserInfo.fulfilled, (state, action) => {
-      console.log('action is: ', action.payload._id)
-      // state.cList = state.cList.filter(item => item._id.toString() !== action.payload._id.toString())
+      Swal.fire('success')
+
+      console.log('action is: ', action.payload.role)
+      action.payload.role === 'BA'
+        ? (state.baList = state.baList.map(user =>
+            user._id.toString() === action.payload._id.toString() ? action.payload : user
+          ))
+        : action.payload.role === 'DM'
+        ? (state.dmList = state.dmList.map(user =>
+            user._id.toString() === action.payload._id.toString() ? action.payload : user
+          ))
+        : action.payload.role === 'C'
+        ? (state.cList = state.cList.map(user =>
+            user._id.toString() === action.payload._id.toString() ? action.payload : user
+          ))
+        : null
       state.isLoading = false
       state.isError = false
     })
     builder.addCase(editUserInfo.pending, state => {
+      Swal.fire('loading')
+
       console.log('editUserInfo list loading')
       state.isLoading = true
       state.isError = false
     })
     builder.addCase(editUserInfo.rejected, state => {
+      Swal.fire('rejected')
       console.log('editUserInfo list: error')
       state.isLoading = false
       state.isError = true

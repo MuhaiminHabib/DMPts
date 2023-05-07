@@ -12,7 +12,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { PostsTypes } from 'src/types/apps/postTypes'
-import { Box, FormControl, FormHelperText, InputLabel, TextField, Typography } from '@mui/material'
+import { Box, FormControl, FormHelperText, InputLabel, TextField, Tooltip, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
 
@@ -21,6 +21,9 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import { UsersType } from 'src/types/apps/userTypes'
+import { editUserInfo } from 'src/store/apps/user'
+import { AppDispatch } from 'src/store'
+import { useDispatch } from 'react-redux'
 
 
 type pageProps = {
@@ -28,45 +31,34 @@ type pageProps = {
 }
 
 interface UserData {
-    dmId: string
+  username: string
     email: string
     firstName: string
     lastName: string
-
   }
   
-//   const defaultValues = {
-//       dmId: '',
-//       email: '',
-//       firstName: '',
-//       lastName: '',
-      
-//     }
-
-    const schema = yup.object().shape({
-        username: yup.string().required(),
-        password: yup.string().required(),
-        passwordVerify: yup.string().required(),
-        email: yup.string().email().required(),
-        firstName: yup.string().required(),
-        lastName: yup.string().required(),
-        role: yup.string().required()
-      })
+  const schema = yup.object().shape({
+    username: yup.string().required(),
+    email: yup.string().required(),
+    firstName: yup.string().required(),
+    lastName: yup.string().required(),
+    })
 
 const UserEditModal = ({user} : pageProps) => {
     const defaultValues = {
-        dmId: user._id,
+      username: user.username,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        
       }
+
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const dispatch = useDispatch<AppDispatch>()
   const {
     reset,
     control,
@@ -80,12 +72,16 @@ const UserEditModal = ({user} : pageProps) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = async (e: MouseEvent) => {
+  const onSubmit = async (data: UserData, e: SubmitEvent) => {
     e.stopPropagation()
-    console.log('done submitting')
-    // dispatch(createBAUser(data))
+    console.log('done submitting', data)
+    dispatch(editUserInfo(data))
     handleClose()
   }
+
+  const onError = (error) => {
+    console.log(error)
+  } 
 
   const handleClickOpen = () => setOpen(true)
 
@@ -95,36 +91,35 @@ const UserEditModal = ({user} : pageProps) => {
 
   return (
     <Fragment>
-      <Button variant='contained' onClick={handleClickOpen} size='small'>
-        Edit
+      <Tooltip title='Edit User Details' placement='top-start'>
+      <Button variant='text' onClick={handleClickOpen} size='small'>
+        <EditIcon />
       </Button>
-      
+      </Tooltip>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>
         <DialogTitle>
             <Typography variant={'h4'}>Edit User Details:</Typography>
         </DialogTitle> 
         <Box sx={{ p: 5 }}>
-        <form 
-        // onSubmit={handleSubmit(onSubmit)}
-        >
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-              name='dmId'
+              name='username'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
                 disabled={true}
                   value={value}
-                  label='User Id'
+                  label='User Name'
                   onChange={onChange}
-                  error={Boolean(errors.dmId)}
+                  error={Boolean(errors.username)}
                 />
               )}
             />
-            {errors.dmId && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.dmId.message}</FormHelperText>
+            {errors.username && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.username.message}</FormHelperText>
             )}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -186,7 +181,7 @@ const UserEditModal = ({user} : pageProps) => {
             <Button variant='outlined' color='secondary' onClick={handleClose}>
               Cancel
             </Button>
-            <Button type='submit' variant='contained' sx={{ ml: 3 }} onClick={handleSubmit(onSubmit)}>
+            <Button type='submit' variant='contained' sx={{ ml: 3 }}>
               Update Info
             </Button>
           {/* </DialogActions> */}

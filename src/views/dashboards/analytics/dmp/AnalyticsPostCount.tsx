@@ -29,7 +29,7 @@ const AnalyticsPostCount = () => {
   const fetchPostCount = async () => {
     setIsFetching(true)
     try {
-      const res = await axiosConfig('/posting/ba-gets-total-of-posts')
+      const res = await axiosConfig('/posting/ba-get-total-of-posts')
       console.log(res.data)
       setCount(res.data)
     } catch (error) {

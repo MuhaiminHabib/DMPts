@@ -12,25 +12,26 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import { PostsTypes } from 'src/types/apps/postTypes'
 import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material'
-import MenuBookIcon from '@mui/icons-material/MenuBook';
+
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { UsersType } from 'src/types/apps/userTypes'
-
+import EditIcon from '@mui/icons-material/Edit';
+import { editPost } from 'src/store/apps/post'
+import { AppDispatch } from 'src/store'
+import { useDispatch } from 'react-redux'
 
 type pageProps = {
     post : PostsTypes
 }
 
 type platform = {
-    platform: string
+    platform: 'google' | 'fb'
 }
 
 interface PostData {
     id: string
-    boost: boolean
-    client: string
+    boost: string
     description: string
     permissionLevel: string
     platform: platform[],
@@ -42,14 +43,13 @@ interface PostData {
 
   const schema = yup.object().shape({
     id: yup.string().required(),
-    client: yup.string().required(),
     title: yup.string().required(),
     description: yup.string().required(),
     platform: yup.string().required(),
     postingDate: yup.string().required(),
     postingEndDate: yup.string().required(),
     permissionLevel: yup.string().required(),
-    boost: yup.boolean().required(),
+    boost: yup.string().required(),
     url: yup.string().required(),
   })
   
@@ -60,6 +60,7 @@ const EditPostModal = ({post} : pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const dispatch = useDispatch<AppDispatch>()
 
 //   const platform = () =>  {
 //     post.platform[0].platform === 'FB' ?
@@ -67,7 +68,6 @@ const EditPostModal = ({post} : pageProps) => {
 
   const defaultValues = {
     id: post._id,
-    client: post.client,
     title: post.title,
     description: post.description,
     platform: post.platform[0].platform,
@@ -92,18 +92,15 @@ const EditPostModal = ({post} : pageProps) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = async (data: PostData, e: MouseEvent) => {
- 
+  const onSubmit = async (data: PostData, e: SubmitEvent) => {
+    e.stopPropagation()
     console.log('submitted',  data)
-    // dispatch(createPost(data))
+    dispatch(editPost(data))
     // handleClose()
-
   }
 
-
-
   const onError = (error: any ) => {
-
+    console.log('i am the onError')
     console.log(error)
   }
 
@@ -111,23 +108,11 @@ const EditPostModal = ({post} : pageProps) => {
 
   const handleClose = () => setOpen(false)
 
-  function stopPropagate(callback: () => void) {
-    console.log('I am stop propagate')
-    return (e: {stopPropagation: () => void}) => {
-      e.stopPropagation()
-      callback()
-    }
-  }
-
-  useEffect(() => {
-    console.log(post)
-    console.log(new Date(post.postingEndDate).toISOString().split('T')[0])
-  }, [])
 
   return (
     <Fragment>
-      <Tooltip title="Post Details" placement='top-start'>
-        <Button variant='text' onClick={handleClickOpen} startIcon={<MenuBookIcon />} />
+      <Tooltip title="Post Edit" placement='top-start'>
+        <Button variant='text' onClick={handleClickOpen} startIcon={<EditIcon />} />
       </Tooltip>
         
 
@@ -143,7 +128,7 @@ const EditPostModal = ({post} : pageProps) => {
 
         <DialogContent>
           <form 
-          onSubmit={stopPropagate(handleSubmit(onSubmit, onError))}
+          onSubmit={(handleSubmit(onSubmit, onError))}
           >
         <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
@@ -152,6 +137,7 @@ const EditPostModal = ({post} : pageProps) => {
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                     <TextField
+                    disabled={true}
                     value={value}
                     label='Post Id'
                     onChange={onChange}
@@ -163,9 +149,9 @@ const EditPostModal = ({post} : pageProps) => {
             {errors.id && <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>}
         </FormControl>
 
+        {/* title */}
         <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-            //   {...register('title')}
               name='title'
               control={control}
               rules={{ required: true }}
@@ -184,6 +170,7 @@ const EditPostModal = ({post} : pageProps) => {
             {errors.title && <FormHelperText sx={{ color: 'error.main' }}>{errors.title.message}</FormHelperText>}
           </FormControl>
 
+          {/* description */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='description'
@@ -192,7 +179,7 @@ const EditPostModal = ({post} : pageProps) => {
               render={({ field: { value, onChange } }) => (
                 <TextField
                   value={value}
-                  label='Description: TextArea Required'
+                  label='Description'
                   onChange={onChange}
                   placeholder=''
                   error={Boolean(errors.description)}
@@ -204,8 +191,7 @@ const EditPostModal = ({post} : pageProps) => {
             {errors.description && <FormHelperText sx={{ color: 'error.main' }}>{errors.description.message}</FormHelperText>}
           </FormControl>
 
-
-
+          {/* platform */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel id='platform' error={Boolean(errors.platform)} htmlFor='platform'>
             Select platform
@@ -232,7 +218,6 @@ const EditPostModal = ({post} : pageProps) => {
             />
             {errors.platform && <FormHelperText sx={{ color: 'error.main' }}>{errors.platform.message}</FormHelperText>}
           </FormControl>
-
 
           {/* Posting Start Date */}
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -306,7 +291,6 @@ const EditPostModal = ({post} : pageProps) => {
             )}
           </FormControl>
 
-
           {/* boost */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel id='boost' error={Boolean(errors.boost)} htmlFor='validation-billing-select'>
@@ -358,16 +342,17 @@ const EditPostModal = ({post} : pageProps) => {
 
           
         {/* <DialogActions>
-          <Button variant='outlined' color='secondary' onClick={handleClose}>
-            Close
-          </Button>
+          
           <Button type='submit' variant='contained'>
             Update Post
           </Button>
 
           <Button type='submit'>hello</Button>
         </DialogActions> */}
-        <Button type='submit' variant='contained'>Submit la la al</Button>
+        <Button variant='outlined' color='secondary' onClick={handleClose}>
+            Close
+          </Button>
+        <Button type='submit' variant='contained' sx={{ml: 3}}>Update Post</Button>
         </form>
         </DialogContent>
       </Dialog>

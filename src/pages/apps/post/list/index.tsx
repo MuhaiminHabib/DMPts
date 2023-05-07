@@ -27,13 +27,14 @@ import Loader from 'src/shared-components/Loader'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-import { fetchPosts } from 'src/store/apps/post'
+import { deletePost, fetchPosts } from 'src/store/apps/post'
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import TableHeader from 'src/views/apps/post/list/TableHeader'
 import { fetchCList } from 'src/store/apps/user'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import EditPostModal from 'src/views/apps/post/edit/EditPostModal'
+import { UsersType } from 'src/types/apps/userTypes'
 
 
 const InvoiceList = () => {
@@ -52,9 +53,17 @@ const InvoiceList = () => {
     }))
   }, [])
 
+  useEffect(() => {
+    console.log(posts)
+  },[posts])
+
   // ** Functions
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
+  const handlePostDelete = (postId: string) => {
+    console.log('postId', postId)
+    dispatch(deletePost(postId))
+  }
 
 
   return (
@@ -67,11 +76,13 @@ const InvoiceList = () => {
           {isLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
-                <TableRow>
                 <TableHeader toggle={toggleAddPostDrawer} />
+                <TableRow>
                   <TableCell>Title</TableCell>
+                  <TableCell>Description</TableCell>
 
-                  <TableCell align='right'>Creator</TableCell>
+                  <TableCell align='right'>Client</TableCell>
+
                   <TableCell align='right'>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -86,8 +97,11 @@ const InvoiceList = () => {
                     <TableCell component='th' scope='row'>
                       {post.title}
                     </TableCell>
+                    <TableCell component='th' scope='row'>
+                      {post.description}
+                    </TableCell>
 
-                    <TableCell align='right'>{post.creator.username}</TableCell>
+                    <TableCell align='right'>{post.creator.username}</TableCell> 
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post}/>
@@ -96,7 +110,7 @@ const InvoiceList = () => {
                         <EditPostModal post={post}/>
                       </Tooltip>
                       <Tooltip title='Post Delete' placement='top-start'>
-                        <Button startIcon={<DeleteForeverIcon />}></Button>
+                        <Button startIcon={<DeleteForeverIcon />} onClick={() => handlePostDelete(post._id)}></Button>
                       </Tooltip>
                     </TableCell>
                   </TableRow>

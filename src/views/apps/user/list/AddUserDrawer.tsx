@@ -127,7 +127,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const onSubmit = async (data: UserData, e: MouseEvent) => {
+  const onSubmit = async (data: UserData, e: SubmitEvent) => {
     e.stopPropagation()
     dispatch(createBAUser(data))
     handleClose()

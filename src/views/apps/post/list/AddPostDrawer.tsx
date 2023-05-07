@@ -57,6 +57,7 @@ interface PostData {
   postingEndDate: string
   title: string
   url: string
+  fileName: string
 }
 
 const showErrors = (field: string, valueLen: number, min: number) => {
@@ -88,6 +89,7 @@ const schema = yup.object().shape({
   permissionLevel: yup.string().required(),
   boost: yup.boolean().required(),
   url: yup.string().required(),
+  fileName: yup.string()
 })
 
 const defaultValues = {
@@ -100,6 +102,7 @@ const defaultValues = {
   permissionLevel: '',
   boost: false,
   url: '',
+  fileName: '',
 }
 
 const SidebarAddPost = (props: SidebarAddPostType) => {
@@ -125,7 +128,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const onSubmit = async (data: PostData, e: MouseEvent) => {
+  const onSubmit = async (data: PostData, e: SubmitEvent) => {
     e.stopPropagation()
     console.log('submitted',data)
     dispatch(createPost(data))
@@ -214,7 +217,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               render={({ field: { value, onChange } }) => (
                 <TextField
                   value={value}
-                  label='Description: TextArea Required'
+                  label='Description'
                   onChange={onChange}
                   placeholder=''
                   error={Boolean(errors.description)}
@@ -380,12 +383,32 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             )}
           </FormControl>
 
+          {/* fileName */}
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <Controller
+              name='fileName'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  value={value}
+                  label='Link to Attached Files'
+                  onChange={onChange}
+                  error={Boolean(errors.fileName)}
+                />
+              )}
+            />
+            {errors.fileName && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.fileName.message}</FormHelperText>
+            )}
+          </FormControl>
+
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }}>
-              Add User
-            </Button>
             <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
               Cancel
+            </Button>
+            <Button size='large' type='submit' variant='contained' sx={{ ml: 3 }}>
+              Add Post
             </Button>
           </Box>
         </form>
