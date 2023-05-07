@@ -57,6 +57,9 @@ const AuthProvider = ({ children }: Props) => {
             console.log('authcontext useEffect', response.data)
             setUser({ ...response.data })
             window.localStorage.setItem('userData', JSON.stringify(response.data))
+            const returnUrl = router.query.returnUrl
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        router.replace(redirectURL as string)
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -87,10 +90,7 @@ const AuthProvider = ({ children }: Props) => {
           window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accesstoken)
           window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshtoken)
         }
-        const returnUrl = router.query.returnUrl
         setIsLoggedIn(true)
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-        router.replace(redirectURL as string)
       })
       .catch(err => {
         if (errorCallback) errorCallback(err)

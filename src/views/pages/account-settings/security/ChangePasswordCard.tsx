@@ -24,17 +24,19 @@ import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import axiosConfig from 'src/configs/axios'
+import { AxiosPromise, AxiosResponse } from 'axios'
 
 interface State {
   showNewPassword: boolean
   showCurrentPassword: boolean
-  showConfirmNewPassword: boolean
+  showNewPasswordVerify: boolean
 }
 
 const defaultValues = {
   newPassword: '',
   currentPassword: '',
-  confirmNewPassword: ''
+  newPasswordVerify: ''
 }
 
 const schema = yup.object().shape({
@@ -47,7 +49,7 @@ const schema = yup.object().shape({
       'Must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
     )
     .required(),
-  confirmNewPassword: yup
+    newPasswordVerify: yup
     .string()
     .required()
     .oneOf([yup.ref('newPassword')], 'Passwords must match')
@@ -58,7 +60,7 @@ const ChangePasswordCard = () => {
   const [values, setValues] = useState<State>({
     showNewPassword: false,
     showCurrentPassword: false,
-    showConfirmNewPassword: false
+    showNewPasswordVerify: false
   })
 
   // ** Hooks
@@ -78,12 +80,28 @@ const ChangePasswordCard = () => {
   }
 
   const handleClickShowConfirmNewPassword = () => {
-    setValues({ ...values, showConfirmNewPassword: !values.showConfirmNewPassword })
+    setValues({ ...values, showNewPasswordVerify: !values.showNewPasswordVerify })
   }
 
-  const onPasswordFormSubmit = () => {
-    toast.success('Password Changed Successfully')
-    reset(defaultValues)
+  const onPasswordFormSubmit = async (data: FormData) => {
+    console.log(data)
+    toast.loading('Sumitting...')
+    try {
+      const res = await axiosConfig.post('/auth/change-password', data)
+      
+      
+      console.log(res)
+      toast.success('Pw changed')
+    } catch (error) {
+      toast.error(error.response.data.errorMessage)
+      console.log(error.response.data.errorMessage)
+      console.log(error.message)
+      console.log(error.errorMessage)
+    } finally {
+      console.log('finally')
+    }
+    // toast.success('Password Changed Successfully')
+    // reset(defaultValues)
   }
 
   return (
@@ -168,11 +186,11 @@ const ChangePasswordCard = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel htmlFor='input-confirm-new-password' error={Boolean(errors.confirmNewPassword)}>
+                <InputLabel htmlFor='input-confirm-new-password' error={Boolean(errors.newPasswordVerify)}>
                   Confirm New Password
                 </InputLabel>
                 <Controller
-                  name='confirmNewPassword'
+                  name='newPasswordVerify'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
@@ -181,8 +199,8 @@ const ChangePasswordCard = () => {
                       label='Confirm New Password'
                       onChange={onChange}
                       id='input-confirm-new-password'
-                      error={Boolean(errors.confirmNewPassword)}
-                      type={values.showConfirmNewPassword ? 'text' : 'password'}
+                      error={Boolean(errors.newPasswordVerify)}
+                      type={values.showNewPasswordVerify ? 'text' : 'password'}
                       endAdornment={
                         <InputAdornment position='end'>
                           <IconButton
@@ -190,15 +208,15 @@ const ChangePasswordCard = () => {
                             onMouseDown={e => e.preventDefault()}
                             onClick={handleClickShowConfirmNewPassword}
                           >
-                            <Icon icon={values.showConfirmNewPassword ? 'bx:show' : 'bx:hide'} />
+                            <Icon icon={values.showNewPasswordVerify ? 'bx:show' : 'bx:hide'} />
                           </IconButton>
                         </InputAdornment>
                       }
                     />
                   )}
                 />
-                {errors.confirmNewPassword && (
-                  <FormHelperText sx={{ color: 'error.main' }}>{errors.confirmNewPassword.message}</FormHelperText>
+                {errors.newPasswordVerify && (
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.newPasswordVerify.message}</FormHelperText>
                 )}
               </FormControl>
             </Grid>

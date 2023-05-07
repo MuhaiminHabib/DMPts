@@ -46,7 +46,7 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const AccountSettings = ({ tab, apiPricingPlanData }: { tab: string; apiPricingPlanData: PricingPlanType[] }) => {
+const AccountSettings = ({ tab }: { tab: string }) => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>(tab)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -72,7 +72,7 @@ const AccountSettings = ({ tab, apiPricingPlanData }: { tab: string; apiPricingP
     security: <TabSecurity />,
     connections: <TabConnections />,
     notifications: <TabNotifications />,
-    'billing-plan': <TabBilling apiPricingPlanData={apiPricingPlanData} />
+    // 'billing-plan': <TabBilling />
   }
 
   return (

@@ -11,22 +11,31 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Users',
       icon: 'bx:user',
+
       children: [
         {
           title: 'Businesses',
-          path: '/apps/user/ba-list'
+          path: '/apps/user/ba-list',
+          action: 'read',
+          subject: 'businesses-page'
         },
         {
           title: 'Digital Managers',
-          path: '/apps/user/dm-list'
+          path: '/apps/user/dm-list',
+          action: 'read',
+          subject: 'dm-page'
         },
         {
           title: 'Clients',
-          path: '/apps/user/c-list'
+          path: '/apps/user/c-list',
+          action: 'read',
+          subject: 'c-page'
         },
         {
           title: 'Client Managers',
-          path: '/apps/user/cm-list'
+          path: '/apps/user/cm-list',
+          action: 'read',
+          subject: 'cm-page'
         }
       ]
     },

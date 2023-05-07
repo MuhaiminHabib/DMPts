@@ -1,59 +1,33 @@
-// ** Next Import
-import Link from 'next/link'
-
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Select from '@mui/material/Select'
-import { GridRowId } from '@mui/x-data-grid'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
+
 interface TableHeaderProps {
-  value: string
-  selectedRows: GridRowId[]
-  handleFilter: (val: string) => void
+  value?: string
+  toggle: () => void
+  handleFilter?: (val: string) => void
 }
 
 const TableHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { value, selectedRows, handleFilter } = props
+  const { handleFilter, toggle, value } = props
 
   return (
     <Box
-      sx={{
-        p: 5,
-        pb: 3,
-        width: '100%',
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}
+      sx={{ p: 6, gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}
     >
-      <Select
-        size='small'
-        displayEmpty
-        defaultValue=''
-        sx={{ mr: 4, mb: 2 }}
-        disabled={selectedRows && selectedRows.length === 0}
-        renderValue={selected => (selected.length === 0 ? 'Actions' : selected)}
-      >
-        <MenuItem disabled>Actions</MenuItem>
-        <MenuItem value='Delete'>Delete</MenuItem>
-        <MenuItem value='Edit'>Edit</MenuItem>
-        <MenuItem value='Send'>Send</MenuItem>
-      </Select>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <TextField
-          size='small'
-          value={value}
-          sx={{ mr: 4, mb: 2 }}
-          placeholder='Search Invoice'
-          onChange={e => handleFilter(e.target.value)}
-        />
-        <Button sx={{ mb: 2 }} component={Link} variant='contained' href='/apps/invoice/add'>
-          Create Invoice
+      <Button color='secondary' variant='outlined' startIcon={<Icon icon='bx:upload' fontSize={20} />}>
+        Export
+      </Button>
+      <Box sx={{ gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+        {/* <TextField size='small' value={value} placeholder='Search User' onChange={e => handleFilter(e.target.value)} /> */}
+
+        <Button onClick={toggle} variant='contained'>
+          Add Post
         </Button>
       </Box>
     </Box>

@@ -10,13 +10,13 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { Post } from 'src/types/apps/postTypes'
-import { Typography } from '@mui/material'
+import { PostsTypes } from 'src/types/apps/postTypes'
+import { Tooltip, Typography } from '@mui/material'
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 
 type pageProps = {
-    post : Post
+    post : PostsTypes
 }
 
 const PostDetailsModal = ({post} : pageProps) => {
@@ -33,7 +33,9 @@ const PostDetailsModal = ({post} : pageProps) => {
 
   return (
     <Fragment>
-      <Button variant='outlined' onClick={handleClickOpen} startIcon={<AccountCircleIcon />} />
+      <Tooltip title="Post Details" placement='top-start'>
+        <Button variant='text' onClick={handleClickOpen} startIcon={<MenuBookIcon />} />
+      </Tooltip>
         
 
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>

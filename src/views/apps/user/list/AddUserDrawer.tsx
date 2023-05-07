@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -27,16 +27,21 @@ import Icon from 'src/@core/components/icon'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
-import { createBAUser } from 'src/store/apps/user'
+
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
 import { UsersType } from 'src/types/apps/userTypes'
 import axiosConfig from 'src/configs/axios'
+import { AuthContext } from 'src/context/AuthContext'
+import { MenuList } from '@mui/material'
+import { createBAUser } from 'src/store/apps/user'
 
 interface SidebarAddUserType {
   open: boolean
   toggle: () => void
+  addClient?: boolean
+  addDm?: boolean
 }
 
 interface UserData {
@@ -46,7 +51,7 @@ interface UserData {
   email: string
   firstName: string
   lastName: string
-  type: 'BA'
+  type: 'BA' | 'DM' | 'C'
 }
 
 const showErrors = (field: string, valueLen: number, min: number) => {
@@ -84,18 +89,30 @@ const defaultValues = {
   email: '',
   firstName: '',
   lastName: '',
-  role: 'BA'
+  role: ''
 }
+
+const aOptions = [
+  { value: 'BA', label: "Business" },
+];
+const baAddsDm = [
+  { value: 'DM', label: "Digital Manager" },
+];
+const baAddsC = [
+
+  { value: 'C', label: "Client" },
+];
 
 const SidebarAddUser = (props: SidebarAddUserType) => {
   // ** Props
-  const { open, toggle } = props
+  const { open, toggle, addClient, addDm } = props
 
   // ** State
   // const [plan, setPlan] = useState<string>('basic')
   const [role, setRole] = useState<string>('')
 
   // ** Hooks
+  const auth = useContext(AuthContext)
   const dispatch = useDispatch<AppDispatch>()
   const store = useSelector((state: RootState) => state.user)
   const {
@@ -109,13 +126,11 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
-
-    //WE NEED THIS LINE OF CODE===============================
   })
-  const onSubmit = async (data: UserData) => {
+  const onSubmit = async (data: UserData, e: MouseEvent) => {
+    e.stopPropagation()
     dispatch(createBAUser(data))
     handleClose()
-
   }
 
   const handleClose = () => {
@@ -148,6 +163,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
+                
                   value={value}
                   label='First Name'
                   onChange={onChange}
@@ -260,11 +276,35 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                   labelId='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 >
-                  <MenuItem value=''>Role</MenuItem>
-                  <MenuItem value='BA'>BA</MenuItem>
-                  {/* <MenuItem value='Manual - Cash'>Manual - Cash</MenuItem>
-                  <MenuItem value='Manual - Paypal'>Manual - Paypal</MenuItem>
-                  <MenuItem value='Manual - Credit Card'>Manual - Credit Card</MenuItem> */}
+                  {/* <option aria-label="None" value="" /> */}
+                  {/* {auth.user?.role === 'A' ? 
+                  aOptions.map(option => (
+                    <MenuItem value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  )) :
+                  auth.user?.role === 'BA' ?
+                  baOptions.map(option => (
+                    <MenuItem value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  )) : null
+                } */}
+
+                  <option aria-label="None" value="" />
+                  {auth.user?.role === 'A' ?
+                   <MenuItem value='BA'>
+                   Business
+                 </MenuItem> : 
+                  (auth.user?.role === 'BA' && addDm)  ?
+                  <MenuItem value='DM'>
+                   Digital Manager
+                 </MenuItem> : 
+                 (auth.user?.role === 'BA' && addClient)  ?
+                 <MenuItem value='C'>
+                  Client
+                </MenuItem> : null
+                 }
                 </Select>
               )}
             />

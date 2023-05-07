@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
 
 
 // ** Actions Imports
-import { fetchCList } from 'src/store/apps/user'
+import { fetchCList, fetchCListforBA } from 'src/store/apps/user'
 
 
 // ** Types Imports
@@ -21,6 +21,7 @@ import { UsersType } from 'src/types/apps/userTypes'
 
 import axiosConfig from 'src/configs/axios'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
+import { AuthContext } from 'src/context/AuthContext'
 
 // import axiosConfig from 'src/configs/axios'
 
@@ -58,19 +59,22 @@ const userStatusObj: UserStatusType = {
 const UserList = () => {
   // ** State
 
-
-
-
-  // ** Hooks
+  // ** Hooksß
   const dispatch = useDispatch<AppDispatch>()
   const {cList} = useSelector((state: RootState) => state.user)
+  const auth = useContext(AuthContext)
 
   useEffect(() => {
-    dispatch(fetchCList())
+    console.log(auth.user?.role)
+    if(auth.user?.role === 'A') {
+      dispatch(fetchCList())
+    } else if(auth.user?.role === 'BA') {
+      dispatch(fetchCListforBA())
+    }
   }, [])
 
   return (
-    <UserListTable title={'All Clients'} userList={cList} showAccociatedBtn={true} />
+    <UserListTable title={'All Clients'} userList={cList} showAccociatedBtn={true} showHeader={true} addClient={true}/>
   )
 }
 

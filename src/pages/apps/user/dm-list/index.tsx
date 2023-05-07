@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
 
 
 // ** Actions Imports
-import { fetchDmList } from 'src/store/apps/user'
+import { fetchDmList, fetchDmListforBA } from 'src/store/apps/user'
 
 
 // ** Types Imports
@@ -21,6 +21,7 @@ import { UsersType } from 'src/types/apps/userTypes'
 
 import axiosConfig from 'src/configs/axios'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
+import { AuthContext } from 'src/context/AuthContext'
 
 // import axiosConfig from 'src/configs/axios'
 
@@ -61,13 +62,19 @@ const UserList = () => {
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
   const {dmList} = useSelector((state: RootState) => state.user)
+  const auth = useContext(AuthContext)
 
   useEffect(() => {
-    dispatch(fetchDmList())
+    console.log(auth.user?.role)
+    if(auth.user?.role === 'A') {
+      dispatch(fetchDmList())
+    } else {
+      dispatch(fetchDmListforBA())
+    }
   }, [])
 
   return (
-    <UserListTable title={'All Digital Managers'} userList={dmList} showAccociatedBtn={true} />
+    <UserListTable title={'All Digital Managers'} userList={dmList} showAccociatedBtn={true} showHeader={true} addDm={true}/>
   )
 }
 

@@ -18,18 +18,22 @@ import CircularProgress from '@mui/material/CircularProgress'
 //icons
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import Diversity3Icon from '@mui/icons-material/Diversity3'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
-import React, { useState } from 'react'
+
+
+import React, { useContext, useState } from 'react'
 import TableHeader from './TableHeader'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import axiosConfig from 'src/configs/axios'
 import { useDispatch } from 'react-redux'
-import { inactiveBa } from 'src/store/apps/user'
+import { baDeleteC, baDeleteDm, inactiveBa } from 'src/store/apps/user'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import Loader from '../../../../shared-components/Loader'
+import UserEditModal from 'src/views/apps/user/list/UserEditModal'
+import { AuthContext } from 'src/context/AuthContext'
+import UserProfileModal from './UserProfileModal'
 
 type props = {
   title: string
@@ -37,6 +41,8 @@ type props = {
   showAccociatedBtn?: boolean
   showHeader?: boolean
   showLoading?: boolean
+  addClient?: boolean
+  addDm?: boolean
 }
 
 const UserListTable = ({
@@ -44,35 +50,47 @@ const UserListTable = ({
   userList,
   showAccociatedBtn = false,
   showHeader = false,
-  showLoading = false
+  showLoading = false,
+  addClient = false,
+  addDm = false
 }: props) => {
 
   // ** States
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
+
   // ** Hooks
   const { isLoading } = useSelector((state: RootState) => state.user)
+
 
   // ** Functions
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const dispatch = useDispatch()
 
-  const handleInactivateUser = async (BAID: string, username: string) => {
-    const data = {
-      BAID,
-      username
+
+  const handleDelete = async (id: string, role: string, username: string) => {
+    console.log('role is:', role) 
+    if(role === 'BA') {
+      const data = {
+        BAID: id,
+        username
+      }
+      dispatch(inactiveBa(data))
+    } else if(role === 'DM') {
+      const data = {
+        dmId : id
+      }
+      dispatch(baDeleteDm(data))  
+    } else if (role === 'C') {
+      const data = {
+        cId : id
+      }
+      dispatch(baDeleteC(data))
     }
-    dispatch(inactiveBa(data))
   }
 
 
-  // if (isLoading) {
-  //   return (
-  //     <Box display='flex' justifyContent='center'>
-  //       <CircularProgress disableShrink />
-  //     </Box>
-  //   )
-  // }
+
 
   return (
     <Grid container spacing={6}>
@@ -113,7 +131,7 @@ const UserListTable = ({
                     <TableCell align='right'>{user.lastName}</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Profile' placement='top-start'>
-                        <Button startIcon={<AccountCircleIcon />} />
+                        <UserProfileModal user={user}/>
                       </Tooltip>
 
                       {showAccociatedBtn ? (
@@ -122,9 +140,13 @@ const UserListTable = ({
                         </Tooltip>
                       ) : null}
 
-                      <Tooltip title='Inactive User' placement='top-start'>
+                      <Tooltip title='Edit User Details' placement='top-start'>
+                        <UserEditModal user={user}/>
+                      </Tooltip>
+
+                      <Tooltip title='Delete User' placement='top-start'>
                         <Button
-                          onClick={() => handleInactivateUser(user._id, user.username)}
+                          onClick={() => handleDelete(user._id, user.role, user.username)}
                           startIcon={<DeleteForeverIcon />}
                         />
                       </Tooltip>
@@ -139,7 +161,7 @@ const UserListTable = ({
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={addClient} addDm={addDm}/>
     </Grid>
   )
 }

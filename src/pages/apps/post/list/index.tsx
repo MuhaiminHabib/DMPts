@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 // ** MUI Imports
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -27,40 +28,47 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 import { fetchPosts } from 'src/store/apps/post'
-
+import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
+import TableHeader from 'src/views/apps/post/list/TableHeader'
+import { fetchCList } from 'src/store/apps/user'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
+import EditPostModal from 'src/views/apps/post/edit/EditPostModal'
 
 
 const InvoiceList = () => {
   // ** State
   const [postPage, setPostPage] = useState<number>(1)
+  const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
   // ** Hooks
 
   const dispatch = useDispatch<AppDispatch>()
   const {posts, isLoading} = useSelector((state: RootState) => state.post)
 
   useEffect(() => {
+    dispatch(fetchCList())
     dispatch(fetchPosts({
       page: postPage
     }))
   }, [])
+
+  // ** Functions
+  const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
 
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-
-        
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
-
           <CardHeader title='Posts' />
-          {/* {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null} */}
           <TableContainer component={Paper}>
           {isLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
+                <TableHeader toggle={toggleAddPostDrawer} />
                   <TableCell>Title</TableCell>
 
                   <TableCell align='right'>Creator</TableCell>
@@ -84,6 +92,12 @@ const InvoiceList = () => {
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post}/>
                       </Tooltip>
+                      <Tooltip title='Post Edit' placement='top-start'>
+                        <EditPostModal post={post}/>
+                      </Tooltip>
+                      <Tooltip title='Post Delete' placement='top-start'>
+                        <Button startIcon={<DeleteForeverIcon />}></Button>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -94,7 +108,7 @@ const InvoiceList = () => {
         </Card>
       </Grid>
 
-      {/* <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} /> */}
+      <AddPostDrawer open={addPostOpen} toggle={toggleAddPostDrawer} />
     </Grid>
   )
 }
