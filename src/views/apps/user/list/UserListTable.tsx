@@ -58,7 +58,7 @@ const UserListTable = ({
   refetchData = []
 }: props) => {
 
-  // ** Statesß
+  // ** States
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
 
@@ -93,8 +93,8 @@ const UserListTable = ({
   }
 
   useEffect(() => {
-    console.log('refetching')
-    refetchData()
+    // console.log('refetching')
+    // refetchData()
   }, [])
   //   console.log(`i will inactive user ${userID}, and ${username}`)
 

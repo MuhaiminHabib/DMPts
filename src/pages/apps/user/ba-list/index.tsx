@@ -29,12 +29,13 @@ const UserList = () => {
 
   // **Hooks
 
-  const {isLoading, isError, data : baList, refetch } = useFetchBaListQuery()
+  const {isLoading, isError, error, data : baList } = useFetchBaListQuery()
 
 
   if(isLoading) {
     console.log('getting data')
   } else if(isError) {
+    console.log(error.data.errorMessage)
     console.log('error getting data')
   } else {
     console.log('rtk query data: ',baList)
@@ -45,7 +46,7 @@ const UserList = () => {
   }
 
   return (
-    <UserListTable title={'All Businesses'} userList={baList!} showAccociatedBtn={true} showHeader={true} refetchData={refetch}/>
+    <UserListTable title={'All Businesses'} userList={baList!} showAccociatedBtn={true} showHeader={true}/>
       
   )
   

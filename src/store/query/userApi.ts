@@ -5,9 +5,12 @@ const userApi = baseApi.injectEndpoints({
   endpoints: build => ({
     fetchBaList: build.query<UsersType[], void>({
       query: () => '/auth/ba-list'
+    }),
+    logout: build.query<void, void>({
+      query: () => '/auth/logout'
     })
   }),
   overrideExisting: false
 })
 
-export const { useFetchBaListQuery } = userApi
+export const { useFetchBaListQuery, useLogoutQuery } = userApi

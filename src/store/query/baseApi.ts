@@ -1,55 +1,34 @@
-// Or from '@reduxjs/toolkit/query' if not using the auto-generated hooks
-// import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-// import { baseURL } from 'src/utils/constants'
-
-// // initialize an empty api service that we'll inject endpoints into later as needed
-// export const baseApi = createApi({
-//   baseQuery: fetchBaseQuery({
-//     baseUrl: baseURL,
-//     prepareHeaders: (headers) => {
-//         const accessToken = localStorage.getItem('accessToken')
-//         // If we have a token set in state, let's assume that we should be passing it.
-//         if (accessToken) {
-//           headers.set('accessToken', accessToken)
-//         }
-//         return headers
-//  },
-//   endpoints: () => ({})
-// })
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError, FetchBaseQueryMeta } from '@reduxjs/toolkit/query'
 import { baseURL } from 'src/utils/constants'
-import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import authConfig from 'src/configs/auth'
+import { useLogoutQuery } from './userApi'
+import { logOutUser } from '../apps/user'
 
-// initialize an empty api service that we'll inject endpoints into later as needed
+type RefreshResultData = {
+  accesstoken: string
+  refreshtoken: string
+}
+
+type RefreshResultType = {
+  data?: RefreshResultData | undefined
+  error?: FetchBaseQueryError
+  meta?: FetchBaseQueryMeta
+}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: baseURL,
-  credentials: 'include',
   prepareHeaders: headers => {
-    const accessToken = localStorage.getItem('accessToken')
-    console.log('accessToken is:', accessToken)
-    if (accessToken) {
-      headers.set('accessToken', accessToken)
-    }
+    // const accessToken = localStorage.getItem('accessToken')
+    const refreshtoken = localStorage.getItem('refreshToken')
+    // console.log('accessToken is:', accessToken)
+    console.log('refreshToken is:', refreshtoken)
+    // if (accessToken && refreshtoken) {
+    //   headers.set('accessToken', accessToken)
+    //   headers.set('refreshtoken', refreshtoken)
+    // }
     return headers
   }
-})
-
-export const baseApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseURL,
-    credentials: 'include',
-    prepareHeaders: headers => {
-      const accessToken = localStorage.getItem('accessToken')
-      console.log('accessToken is:', accessToken)
-      if (accessToken) {
-        headers.set('accessToken', accessToken)
-      }
-      return headers
-    }
-  }),
-  endpoints: () => ({})
 })
 
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
@@ -58,17 +37,33 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   extraOptions
 ) => {
   let result = await baseQuery(args, api, extraOptions)
+  console.log('result is:', result)
   if (result.error && result.error.status === 401) {
-    // try to get a new token
-    const refreshResult = await baseQuery('/refreshToken', api, extraOptions)
+    console.log('in 401')
+    const refreshResult: RefreshResultType = await baseQuery('/auth/get-access-token', api, extraOptions)
     if (refreshResult.data) {
-      // store the new token
-      api.dispatch(tokenReceived(refreshResult.data))
+      console.log('refresh result is:', refreshResult.data)
+      console.log('refresh result accessToken:', refreshResult.data.accesstoken)
+      console.log('refresh result refreshToken:', refreshResult.data.refreshtoken)
+      // api.dispatch(tokenUpdated({ accessToken: refreshResult.data as string }))
+      localStorage.setItem(authConfig.storageTokenKeyName, refreshResult.data.accesstoken)
+      localStorage.setItem(authConfig.onTokenExpiration, refreshResult.data.refreshtoken)
+
       // retry the initial query
       result = await baseQuery(args, api, extraOptions)
     } else {
-      api.dispatch(loggedOut())
+      api.dispatch(logOutUser())
+      // useLogoutQuery()
+      // window.localStorage.removeItem('userData')
+      // window.localStorage.removeItem(authConfig.storageTokenKeyName)
+      // window.location.replace('/login')
     }
   }
   return result
 }
+
+export const baseApi = createApi({
+  reducerPath: 'baseApi',
+  baseQuery: baseQueryWithReauth,
+  endpoints: () => ({})
+})

@@ -118,6 +118,12 @@ export const baDeleteDm = createAsyncThunk('appUsers/baDeleteDm', async (data: {
   console.log(response.data)
   return response.data
 })
+export const logOutUser = createAsyncThunk('appUsers/logOutUser', async () => {
+  console.log('logging out')
+  const response = await axiosConfig.get('/auth/logout')
+  console.log(response.data)
+  return response.data
+})
 
 export const fetchCListforBA = createAsyncThunk('appUsers/fetchCListforBA', async () => {
   const response = await axiosConfig.get('/auth/ba-gets-all-c')
@@ -434,6 +440,12 @@ export const appUsersSlice = createSlice({
       console.log('editUserInfo list: error')
       state.isLoading = false
       state.isError = true
+    })
+    builder.addCase(logOutUser.fulfilled, (state, action) => {
+      window.localStorage.removeItem('userData')
+      window.localStorage.removeItem('accessToken')
+      window.localStorage.removeItem('refreshToken')
+      window.location.replace('/login')
     })
   }
 })
