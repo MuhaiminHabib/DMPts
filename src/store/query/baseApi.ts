@@ -4,7 +4,8 @@ import { baseURL } from 'src/utils/constants'
 import authConfig from 'src/configs/auth'
 import { useLogoutQuery } from './userApi'
 import { logOutUser } from '../apps/user'
-
+import type { UsersType as User } from 'src/types/apps/userTypes'
+import type { PostsTypes as Post } from 'src/types/apps/postTypes'
 type RefreshResultData = {
   accesstoken: string
   refreshtoken: string
@@ -19,14 +20,14 @@ type RefreshResultType = {
 const baseQuery = fetchBaseQuery({
   baseUrl: baseURL,
   prepareHeaders: headers => {
-    // const accessToken = localStorage.getItem('accessToken')
+    const accessToken = localStorage.getItem('accessToken')
     const refreshtoken = localStorage.getItem('refreshToken')
     // console.log('accessToken is:', accessToken)
     console.log('refreshToken is:', refreshtoken)
-    // if (accessToken && refreshtoken) {
-    //   headers.set('accessToken', accessToken)
-    //   headers.set('refreshtoken', refreshtoken)
-    // }
+    if (accessToken && refreshtoken) {
+      headers.set('accessToken', accessToken)
+      headers.set('refreshtoken', refreshtoken)
+    }
     return headers
   }
 })
@@ -40,7 +41,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   console.log('result is:', result)
   if (result.error && result.error.status === 401) {
     console.log('in 401')
-    const refreshResult: RefreshResultType = await baseQuery('/auth/get-access-token', api, extraOptions)
+    const refreshResult: RefreshResultType = await baseQuery('/API/auth/get-access-token', api, extraOptions)
     if (refreshResult.data) {
       console.log('refresh result is:', refreshResult.data)
       console.log('refresh result accessToken:', refreshResult.data.accesstoken)
@@ -65,5 +66,6 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const baseApi = createApi({
   reducerPath: 'baseApi',
   baseQuery: baseQueryWithReauth,
+  tagTypes: ['Post', 'User'],
   endpoints: () => ({})
 })

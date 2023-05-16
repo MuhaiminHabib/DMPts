@@ -14,6 +14,7 @@ import { RootState, AppDispatch } from 'src/store'
 // import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
+import { useFetchCmListQuery } from 'src/store/query/userApi'
 
 
 interface UserRoleType {
@@ -39,12 +40,22 @@ const UserList = () => {
   const dispatch = useDispatch<AppDispatch>()
   const {cmList} = useSelector((state: RootState) => state.user)
 
-  useEffect(() => {
-    dispatch(fetchCmList())
-  }, [])
+const {isLoading, isError, error, data} = useFetchCmListQuery()
+  
+
+  if(data) {
+    console.log(data)
+  } else if (isError) {
+    console.log(error)
+  } else if(isLoading) {
+    console.log('Loading')
+  }
+  // useEffect(() => {
+  //   dispatch(fetchCmList())
+  // }, [])
 
   return (
-    <UserListTable title={'All Clients Managers'} userList={cmList} showAccociatedBtn={true} />
+    <UserListTable title={'All Clients Managers'} userList={data ? data: []} showAccociatedBtn={true} />
   )
 }
 

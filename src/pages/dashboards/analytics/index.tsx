@@ -34,7 +34,7 @@ const AnalyticsDashboard = () => {
         <Grid item xs={12} lg={8} sx={{ order: -1 }}>
           <AnalyticsCongratulations />
         </Grid>
-        {ability?.can('read', 'analytics-baCount') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
+        {ability?.can('read', 'analytics-aStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
           <Grid container spacing={6}>
             <Grid item xs={6} md={12} lg={6}>
               <AnalyticsBACount />
@@ -47,6 +47,7 @@ const AnalyticsDashboard = () => {
 
         {/* BA */}
 
+        {ability?.can('read', 'analytics-baStats') ?(<>
         <Grid item xs={12} md={4} sx={{ order: -1 }}>
             <Grid container spacing={6}>
               <Grid item xs={6} md={12} lg={6}>
@@ -67,10 +68,35 @@ const AnalyticsDashboard = () => {
               </Grid>
             </Grid>
           </Grid>
+          </>) : null }
+
+          {/* DM */}
 
 
+          {ability?.can('read', 'analytics-dmStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
+          <Grid container spacing={6}>
+            <Grid item xs={6} md={12} lg={6}>
+            <AnalyticsCCount />
+            </Grid>
+            <Grid item xs={6} md={12} lg={6}>
+            <AnalyticsPostCount />
+            </Grid>
+          </Grid>
+        </Grid>) : null }
 
-        <Grid item xs={12} md={4} sx={{ order: -1 }}>
+          {ability?.can('read', 'analytics-cStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
+          <Grid container spacing={6}>
+            <Grid item xs={6} md={12} lg={6}>
+            <AnalyticsCCount />
+            </Grid>
+            <Grid item xs={6} md={12} lg={6}>
+            <AnalyticsPostCount />
+            </Grid>
+          </Grid>
+        </Grid>) : null }
+
+
+        {/* <Grid item xs={12} md={4} sx={{ order: -1 }}>
           <Grid container spacing={6}>
             <Grid item xs={6} md={12} lg={6}>
               <AnalyticsOrder />
@@ -110,7 +136,7 @@ const AnalyticsDashboard = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <AnalyticsTabsWithTable />
-        </Grid>
+        </Grid> */}
       </Grid>
     </ApexChartWrapper>
   )

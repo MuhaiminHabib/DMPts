@@ -13,6 +13,7 @@ import authConfig from 'src/configs/auth'
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
 import axiosConfig from 'src/configs/axios'
+import { useLogoutMutation } from 'src/store/query/authApi'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -38,6 +39,7 @@ const AuthProvider = ({ children }: Props) => {
 
   // ** Hooks
   const router = useRouter()
+  // const [logout, {isLoading, isError, error, data}] = useLogoutMutation()
 
   useEffect(() => {
     console.log('i am in useEffect')
@@ -100,7 +102,8 @@ const AuthProvider = ({ children }: Props) => {
   const handleLogout = () => {
     setUser(null)
     try {
-      axiosConfig.get('/auth/logout')
+      axiosConfig.get('/API/auth/logout')
+      // logout()
       window.localStorage.removeItem('userData')
       window.localStorage.removeItem(authConfig.storageTokenKeyName)
       window.localStorage.removeItem(authConfig.onTokenExpiration)

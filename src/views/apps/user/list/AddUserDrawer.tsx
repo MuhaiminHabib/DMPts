@@ -36,6 +36,8 @@ import axiosConfig from 'src/configs/axios'
 import { AuthContext } from 'src/context/AuthContext'
 import { MenuList } from '@mui/material'
 import { createBAUser } from 'src/store/apps/user'
+import { useCreateUserMutation } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 interface SidebarAddUserType {
   open: boolean
@@ -115,6 +117,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   const auth = useContext(AuthContext)
   const dispatch = useDispatch<AppDispatch>()
   const store = useSelector((state: RootState) => state.user)
+  const [createUser, {isLoading, isError, error, data}] = useCreateUserMutation()
   const {
     reset,
     control,
@@ -129,7 +132,9 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   })
   const onSubmit = async (data: UserData, e: SubmitEvent) => {
     e.stopPropagation()
-    dispatch(createBAUser(data))
+    // dispatch(createBAUser(data))
+    console.log('from form:', data)
+    createUser(data)
     handleClose()
   }
 
@@ -137,6 +142,16 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     setRole('')
     toggle()
     reset()
+  }
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({text: error!.data.errorMessage})
+  } else if(data) {
+    showSuccessAlert({text: 'User Created'})
   }
 
   return (
@@ -276,21 +291,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                   labelId='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 >
-                  {/* <option aria-label="None" value="" /> */}
-                  {/* {auth.user?.role === 'A' ? 
-                  aOptions.map(option => (
-                    <MenuItem value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  )) :
-                  auth.user?.role === 'BA' ?
-                  baOptions.map(option => (
-                    <MenuItem value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  )) : null
-                } */}
-
                   <option aria-label="None" value="" />
                   {auth.user?.role === 'A' ?
                    <MenuItem value='BA'>
@@ -301,6 +301,10 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                    Digital Manager
                  </MenuItem> : 
                  (auth.user?.role === 'BA' && addClient)  ?
+                 <MenuItem value='C'>
+                  Client
+                </MenuItem> :
+                 (auth.user?.role === 'DM' && addClient)  ?
                  <MenuItem value='C'>
                   Client
                 </MenuItem> : null

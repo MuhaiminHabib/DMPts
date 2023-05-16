@@ -14,11 +14,7 @@ import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/lab'
+
 
 
 // ** Third Party Imports
@@ -33,7 +29,7 @@ import Icon from 'src/@core/components/icon'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
-import { createBAUser, fetchCList } from 'src/store/apps/user'
+// import { createBAUser, fetchCList } from 'src/store/apps/user'
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
@@ -41,6 +37,9 @@ import { UsersType } from 'src/types/apps/userTypes'
 import axiosConfig from 'src/configs/axios'
 import { createPost } from 'src/store/apps/post'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import { useCreatePostMutation } from 'src/store/query/postApi'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 interface SidebarAddPostType {
   open: boolean
@@ -48,7 +47,7 @@ interface SidebarAddPostType {
 }
 
 interface PostData {
-  boost: false
+  boost: string
   client: string
   description: string
   permissionLevel: 'D' | 'C'
@@ -87,7 +86,7 @@ const schema = yup.object().shape({
   postingDate: yup.string().required(),
   postingEndDate: yup.string().required(),
   permissionLevel: yup.string().required(),
-  boost: yup.boolean().required(),
+  boost: yup.string().required(),
   url: yup.string().required(),
   fileName: yup.string()
 })
@@ -100,7 +99,7 @@ const defaultValues = {
   postingDate: '',
   postingEndDate: '',
   permissionLevel: '',
-  boost: false,
+  boost: 'false',
   url: '',
   fileName: '',
 }
@@ -114,8 +113,17 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
   const {cList} = useSelector((state: RootState) => state.user)
-  
-
+  const [createPost, {isLoading, isError, error, data}] = useCreatePostMutation()
+  const {
+      isLoading: isLoadingFetchCListForBA, 
+      isError: isErrorFetchCListForBA, 
+      error: fetchCListForBAError, 
+      data: FetchCListForBaData} = useFetchCListForBAQuery()
+  const {
+      isLoading: isLoadingFetchCListForDm, 
+      isError: isErrorFetchCListForDm, 
+      error: fetchCListForDmError, 
+      data: FetchCListForDmData} = useFetchCListForDMQuery()
   const {
     reset,
     control,
@@ -131,7 +139,8 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
   const onSubmit = async (data: PostData, e: SubmitEvent) => {
     e.stopPropagation()
     console.log('submitted',data)
-    dispatch(createPost(data))
+    // dispatch(createPost(data))
+    createPost(data)
     handleClose()
   }
 
@@ -139,6 +148,20 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     toggle()
     reset()
   }
+
+
+  
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({text: error!.status === 500 ? 'Error Occured' : error!.data.errorMessage})
+  } else if(data) {
+    showSuccessAlert({text: 'Post Created'})
+  }
+
 
 
 
@@ -177,9 +200,11 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   aria-describedby='validation-billing-select'
                 >
                   <MenuItem value=''>none</MenuItem>
-                  {cList.map(item => (
+                  {FetchCListForBaData  && FetchCListForBaData.map(item => (
                     <MenuItem value={item._id}>{item.username}</MenuItem>
-
+                  ))}
+                  {FetchCListForDmData  && FetchCListForDmData.map(item => (
+                    <MenuItem value={item._id}>{item.username}</MenuItem>
                   ))}
                 </Select>
               )}

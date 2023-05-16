@@ -24,6 +24,8 @@ import { UsersType } from 'src/types/apps/userTypes'
 import { editUserInfo } from 'src/store/apps/user'
 import { AppDispatch } from 'src/store'
 import { useDispatch } from 'react-redux'
+import { useEditUserMutation } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 
 type pageProps = {
@@ -31,6 +33,7 @@ type pageProps = {
 }
 
 interface UserData {
+  userId: string
   username: string
     email: string
     firstName: string
@@ -38,6 +41,7 @@ interface UserData {
   }
   
   const schema = yup.object().shape({
+    userId: yup.string(),
     username: yup.string().required(),
     email: yup.string().required(),
     firstName: yup.string().required(),
@@ -46,6 +50,7 @@ interface UserData {
 
 const UserEditModal = ({user} : pageProps) => {
     const defaultValues = {
+      userId: user._id,
       username: user.username,
         email: user.email,
         firstName: user.firstName,
@@ -58,6 +63,11 @@ const UserEditModal = ({user} : pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const [editUser, 
+      {isLoading, 
+      isError, 
+      error, 
+      data}] = useEditUserMutation()
   const dispatch = useDispatch<AppDispatch>()
   const {
     reset,
@@ -75,7 +85,7 @@ const UserEditModal = ({user} : pageProps) => {
   const onSubmit = async (data: UserData, e: SubmitEvent) => {
     e.stopPropagation()
     console.log('done submitting', data)
-    dispatch(editUserInfo(data))
+    editUser(data)
     handleClose()
   }
 
@@ -86,6 +96,17 @@ const UserEditModal = ({user} : pageProps) => {
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({text: error!.data.errorMessage})
+  } else if(data) {
+    showSuccessAlert({text: 'User Created'})
+
+  }
 
  
 

@@ -21,7 +21,7 @@ import Diversity3Icon from '@mui/icons-material/Diversity3'
 
 
 
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TableHeader from './TableHeader'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
@@ -34,6 +34,7 @@ import Loader from '../../../../shared-components/Loader'
 import UserEditModal from 'src/views/apps/user/list/UserEditModal'
 import { AuthContext } from 'src/context/AuthContext'
 import UserProfileModal from './UserProfileModal'
+import { useBaDeletesCMutation, useBaDeletesDmMutation, useInactivateBaMutation } from 'src/store/query/userApi'
 
 
 type props = {
@@ -41,10 +42,11 @@ type props = {
   userList: UsersType[]
   showAccociatedBtn?: boolean
   showHeader?: boolean
+  showDeleteBtn? : boolean
   showLoading?: boolean
   addClient?: boolean
   addDm?: boolean
-  refetch : Promise<UsersType[]>
+
 }
 
 const UserListTable = ({
@@ -52,10 +54,11 @@ const UserListTable = ({
   userList,
   showAccociatedBtn = false,
   showHeader = false,
+  showDeleteBtn = false,
   showLoading = false,
   addClient = false,
   addDm = false,
-  refetchData = []
+
 }: props) => {
 
   // ** States
@@ -63,9 +66,27 @@ const UserListTable = ({
 
 
   // ** Hooks
-  const { isLoading } = useSelector((state: RootState) => state.user)
+  // const { isLoading } = useSelector((state: RootState) => state.user)
+  const [baDeletesDm, {
+    isLoading: isLoadingBaDeletesDm, 
+    isError : isErrorBaDeletesDm, 
+    error: errorBaDeletesDm, 
+    data: baDeletesDmData}] = useBaDeletesDmMutation()
+  const [baDeletesC, {
+    isLoading: isLoadingBaDeletesC, 
+    isError :isErrorBaDeletesC, 
+    error: errorBaDeletesC, 
+    data: baDeletesCData}] = useBaDeletesCMutation()
+  const [inactivateBa, {
+    isLoading: isLoadingInactivateBa, 
+    isError :isErrorInactivateBa, 
+    error: errorInactivateBa, 
+    data: inactivateBaData}] = useInactivateBaMutation()
 
 
+useEffect(() => {
+  console.log('useEffect clients are:', userList)
+}, [])
   // ** Functions
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const dispatch = useDispatch()
@@ -78,27 +99,14 @@ const UserListTable = ({
         BAID: id,
         username
       }
-      dispatch(inactiveBa(data))
+      // dispatch(inactiveBa(data))
+      inactivateBa(data)
     } else if(role === 'DM') {
-      const data = {
-        dmId : id
-      }
-      dispatch(baDeleteDm(data))  
+      baDeletesDm(id)
     } else if (role === 'C') {
-      const data = {
-        cId : id
-      }
-      dispatch(baDeleteC(data))
+      baDeletesC(id)
     }
   }
-
-  useEffect(() => {
-    // console.log('refetching')
-    // refetchData()
-  }, [])
-  //   console.log(`i will inactive user ${userID}, and ${username}`)
-
-
 
 
   return (
@@ -111,7 +119,7 @@ const UserListTable = ({
           {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null}
 
           <TableContainer component={Paper}>
-          {isLoading || showLoading ? <Loader /> : 
+          {isLoadingBaDeletesC || isLoadingBaDeletesDm || isLoadingInactivateBa || showLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
@@ -153,12 +161,12 @@ const UserListTable = ({
                         <UserEditModal user={user}/>
                       </Tooltip>
 
-                      <Tooltip title='Delete User' placement='top-start'>
+                      {showDeleteBtn ? (<Tooltip title='Delete User' placement='top-start'>
                         <Button
                           onClick={() => handleDelete(user._id, user.role, user.username)}
                           startIcon={<DeleteForeverIcon />}
                         />
-                      </Tooltip>
+                      </Tooltip>) : null}
                     </TableCell>
                   </TableRow>
                 ))}

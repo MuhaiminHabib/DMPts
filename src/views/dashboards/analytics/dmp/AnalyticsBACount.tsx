@@ -14,15 +14,18 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
+import { useBaCountQuery } from 'src/store/query/statusApi'
 
 const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
 const AnalyticsBACount = () => {
-  // ** Hook
-  const theme = useTheme()
-
   const [count, setCount] = useState<number>(0)
   const [isFetching, setIsFetching] = useState<boolean>(false)
+
+  // ** Hook
+  const theme = useTheme()
+  const {isLoading, isError, error, data} = useBaCountQuery()
+
 
   // const options: ApexOptions = {
   //   chart: {
@@ -101,33 +104,35 @@ const AnalyticsBACount = () => {
   //   }
   // }
 
-  const fetchBACount = async () => {
-    setIsFetching(true)
-    try {
-      const res = await axiosConfig('auth/total-of-ba')
-      console.log(res.data)
-      setCount(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-    setIsFetching(false)
+  // const fetchBACount = async () => {
+  //   setIsFetching(true)
+  //   try {
+  //     const res = await axiosConfig('auth/total-of-ba')
+  //     console.log(res.data)
+  //     setCount(res.data)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  //   setIsFetching(false)
+  // }
+
+  // useEffect(() => {
+  //   fetchBACount()
+  // }, [])
+
+  if(data) {
+    console.log('BA count is',data)
+  } else if (isError) {
+    console.log(error)
+  } else if(isLoading) {
+    console.log('Loading')
   }
 
-  useEffect(() => {
-    fetchBACount()
-  }, [])
-
   return (
-    // <Card>
-    //   <CardContent sx={{ p: theme => `${theme.spacing(3.5, 5, 0)} !important` }}>
-    //     <Typography sx={{ fontWeight: 600, color: 'text.secondary' }}>BA Count</Typography>
-    //     {isFetching ? <Typography variant='h5'>Loading</Typography> : <Typography variant='h5'>{count}</Typography>}
-    //   </CardContent>
-    //   {/* <ReactApexcharts type='area' height={110} options={options} series={series} /> */}
-    // </Card>
+
     <CardStatisticsVertical
       title='BA Count'
-      stats={count.toString()}
+      stats={data ? data.toString() : '0'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

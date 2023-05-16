@@ -17,49 +17,32 @@ const navigation = (): VerticalNavItemsType => {
           title: 'Businesses',
           path: '/apps/user/ba-list',
           action: 'read',
-          subject: 'businesses-page'
+          subject: 'businesses-navItem'
         },
         {
           title: 'Digital Managers',
           path: '/apps/user/dm-list',
           action: 'read',
-          subject: 'dm-page'
+          subject: 'dm-navItem'
         },
         {
           title: 'Clients',
           path: '/apps/user/c-list',
           action: 'read',
-          subject: 'c-page'
+          subject: 'c-navItem'
         },
         {
           title: 'Client Managers',
           path: '/apps/user/cm-list',
           action: 'read',
-          subject: 'cm-page'
+          subject: 'cm-navItem'
         }
       ]
     },
     {
       title: 'Posts',
       icon: 'bx:food-menu',
-      children: [
-        {
-          title: 'List',
-          path: '/apps/post/list'
-        },
-        {
-          title: 'Preview',
-          path: '/apps/post/preview'
-        },
-        {
-          title: 'Edit',
-          path: '/apps/post/edit'
-        },
-        {
-          title: 'Add',
-          path: '/apps/post/add'
-        }
-      ]
+      path: '/apps/post/list'
     }
   ]
 }

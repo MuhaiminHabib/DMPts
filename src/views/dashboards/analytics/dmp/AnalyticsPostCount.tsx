@@ -12,8 +12,11 @@ import { ApexOptions } from 'apexcharts'
 
 // ** Custom Components Imports
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
+import { usePostCountQuery, usePostCountforCQuery, usePostCountforDmQuery } from 'src/store/query/statusApi'
+import { AuthContext } from 'src/context/AuthContext'
+import Loader from 'src/shared-components/Loader'
 
 const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
@@ -21,32 +24,22 @@ const AnalyticsPostCount = () => {
   // ** Hook
   const theme = useTheme()
 
-  const [count, setCount] = useState<number>(0)
-  const [isFetching, setIsFetching] = useState<boolean>(false)
+  const {isLoading, isError, error, data} = usePostCountQuery()
+  const {isLoading: isLoadingPostCountForDm, 
+    isError: isErrorPostCountForDm, 
+    error: PostCountForDmError, 
+    data: PostCountForDmData} = usePostCountforDmQuery()
 
-
-
-  const fetchPostCount = async () => {
-    setIsFetching(true)
-    try {
-      const res = await axiosConfig('/posting/ba-get-total-of-posts')
-      console.log(res.data)
-      setCount(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-    setIsFetching(false)
-  }
-
-  useEffect(() => {
-    fetchPostCount()
-  }, [])
-
+  const {isLoading: isLoadingPostCountForC, 
+    isError: isErrorPostCountForC, 
+    error: PostCountForCError, 
+    data: PostCountForCData} = usePostCountforCQuery()
+  
   return (
-
     <CardStatisticsVertical
+    isLoading ={isLoading || isLoadingPostCountForDm}
       title='Total Posts'
-      stats={count.toString()}
+      stats={ (data && data) || (PostCountForDmData && PostCountForDmData) || (PostCountForCData && PostCountForCData)}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

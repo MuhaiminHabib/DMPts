@@ -14,6 +14,7 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
+import { useCCountQuery, useCCountforDmQuery,  } from 'src/store/query/statusApi'
 
 const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
@@ -21,34 +22,29 @@ const AnalyticsCCount = () => {
   // ** Hook
   const theme = useTheme()
 
-  const [count, setCount] = useState<number>(0)
-  const [isFetching, setIsFetching] = useState<boolean>(false)
+  const {isLoading, isError, error, data} = useCCountQuery()
+  const {isLoading: isLoadingCCountforDm, 
+    isError: isErrorCCountforDm, 
+    error: CCountforDmError, 
+    data: CCountforDmData} = useCCountforDmQuery()
+  
 
-
-  const fetchBACount = async () => {
-    setIsFetching(true)
-    try {
-      const res = await axiosConfig('/auth/ba-gets-total-of-dm')
-      console.log(res.data)
-      setCount(res.data)
-    } catch (error) {
-      console.log(error)
+    if((isLoading || isLoadingCCountforDm)) {
+      console.log('isLoading')
+    } else if(CCountforDmData) {
+      console.log(CCountforDmData)
     }
-    setIsFetching(false)
-  }
-
-  useEffect(() => {
-    fetchBACount()
-  }, [])
-
   return (
+
     <CardStatisticsVertical
+    isLoading={isLoading || isLoadingCCountforDm}
       title='Total Clients'
-      stats={count.toString()}
+      stats={ (data && data) || (CCountforDmData && CCountforDmData)}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />
   )
 }
+
 
 export default AnalyticsCCount

@@ -26,7 +26,7 @@ interface CreatePostParams {
   postingEndDate: string
   title: string
   url: string
-  fileName: string
+  fileName?: string
 }
 interface EditPostParams {
   id: string
@@ -41,10 +41,10 @@ interface EditPostParams {
 }
 
 // ** Fetch Posts
-export const fetchPosts = createAsyncThunk('appPost/fetchPost', async (params: FetchDataParams) => {
-  const response = await axiosConfig.get(`/posting/page/${params.page}`)
-  return response.data
-})
+// export const fetchPosts = createAsyncThunk('appPost/fetchPost', async (params: FetchDataParams) => {
+//   const response = await axiosConfig.get(`/posting/page/${params.page}`)
+//   return response.data
+// })
 // ** Create Post
 export const createPost = createAsyncThunk('appPost/createPost', async (data: CreatePostParams) => {
   const response = await axiosConfig.post(`/posting/new`, data)
@@ -58,11 +58,11 @@ export const editPost = createAsyncThunk('appPost/editPost', async (data: EditPo
   return response.data
 })
 // ** Delete Post
-export const deletePost = createAsyncThunk('appPost/deletePost', async (postId: string) => {
-  const response = await axiosConfig.delete(`/posting/${postId}`)
-  console.log('from post edit thunk', response.data)
-  return response.data
-})
+// export const deletePost = createAsyncThunk('appPost/deletePost', async (postId: string) => {
+//   const response = await axiosConfig.delete(`/posting/${postId}`)
+//   console.log('from post edit thunk', response.data)
+//   return response.data
+// })
 
 interface UserState {
   isLoading: boolean
@@ -84,21 +84,21 @@ export const postSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     //Fetch Posts
-    builder.addCase(fetchPosts.fulfilled, (state, action) => {
-      Swal.fire('success')
-      state.posts = action.payload
-      state.isLoading = false
-    })
-    builder.addCase(fetchPosts.pending, state => {
-      Swal.fire('loading')
-      state.isLoading = true
-      state.isError = false
-    })
-    builder.addCase(fetchPosts.rejected, (state, action) => {
-      Swal.fire('rejected')
-      state.isLoading = false
-      state.isError = true
-    })
+    // builder.addCase(fetchPosts.fulfilled, (state, action) => {
+    //   Swal.fire('success')
+    //   state.posts = action.payload
+    //   state.isLoading = false
+    // })
+    // builder.addCase(fetchPosts.pending, state => {
+    //   Swal.fire('loading')
+    //   state.isLoading = true
+    //   state.isError = false
+    // })
+    // builder.addCase(fetchPosts.rejected, (state, action) => {
+    //   Swal.fire('rejected')
+    //   state.isLoading = false
+    //   state.isError = true
+    // })
 
     //Create Posts
     builder.addCase(createPost.fulfilled, (state, action) => {
@@ -138,22 +138,22 @@ export const postSlice = createSlice({
       state.isError = true
     })
     //Delete Posts
-    builder.addCase(deletePost.fulfilled, (state, action) => {
-      Swal.fire('success')
-      state.posts = state.posts.filter(post => post._id.toString() !== action.payload.toString())
-      state.isLoading = false
-      state.isError = false
-    })
-    builder.addCase(deletePost.pending, state => {
-      Swal.fire('loading')
-      state.isLoading = true
-      state.isError = false
-    })
-    builder.addCase(deletePost.rejected, state => {
-      Swal.fire('rejected')
-      state.isLoading = false
-      state.isError = true
-    })
+    // builder.addCase(deletePost.fulfilled, (state, action) => {
+    //   Swal.fire('success')
+    //   state.posts = state.posts.filter(post => post._id.toString() !== action.payload.toString())
+    //   state.isLoading = false
+    //   state.isError = false
+    // })
+    // builder.addCase(deletePost.pending, state => {
+    //   Swal.fire('loading')
+    //   state.isLoading = true
+    //   state.isError = false
+    // })
+    // builder.addCase(deletePost.rejected, state => {
+    //   Swal.fire('rejected')
+    //   state.isLoading = false
+    //   state.isError = true
+    // })
   }
 })
 

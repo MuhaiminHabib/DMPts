@@ -20,6 +20,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { editPost } from 'src/store/apps/post'
 import { AppDispatch } from 'src/store'
 import { useDispatch } from 'react-redux'
+import { useEditPostMutation } from 'src/store/query/postApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 type pageProps = {
     post : PostsTypes
@@ -61,6 +63,7 @@ const EditPostModal = ({post} : pageProps) => {
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const dispatch = useDispatch<AppDispatch>()
+  const [editPost, {isLoading, isError, error, data}] = useEditPostMutation()
 
 //   const platform = () =>  {
 //     post.platform[0].platform === 'FB' ?
@@ -94,8 +97,9 @@ const EditPostModal = ({post} : pageProps) => {
 
   const onSubmit = async (data: PostData, e: SubmitEvent) => {
     e.stopPropagation()
-    console.log('submitted',  data)
-    dispatch(editPost(data))
+    console.log('submitted', data)
+    // dispatch(editPost(data))
+    editPost(data)
     // handleClose()
   }
 
@@ -107,6 +111,17 @@ const EditPostModal = ({post} : pageProps) => {
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
+
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({text: error!.status === 500 ? "Iternal Server Error" : error!.data.errorMessage})
+  } else if(data) {
+    showSuccessAlert({text: 'Post Edited Successfully'})
+  }
 
 
   return (
