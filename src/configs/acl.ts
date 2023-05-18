@@ -33,13 +33,27 @@ const defineRulesFor = (role: string, subject: string) => {
     cannot(['read'], ['analytics-aStats', 'analytics-baStats'])
   } else if (role === 'C') {
     can(['manage'], 'all')
-    // cannot(['read'], ['businesses-navItem', 'dm-navItem'])
     cannot(
       ['read'],
       ['analytics-aStats', 'analytics-baStats', 'analytics-dmStats', 'businesses-navItem', 'dm-navItem', 'c-navItem']
     )
   } else if (role === 'CM') {
-    can(['read'], 'acl-page')
+    can(['manage'], 'all')
+    cannot(
+      ['read'],
+      [
+        'analytics-aStats',
+        'analytics-baStats',
+        'analytics-dmStats',
+        'analytics-cStats',
+        'users-navItem',
+        'add-post',
+        'ba-list-page',
+        'c-list-page',
+        'cm-list-page',
+        'dm-list-page'
+      ]
+    )
   } else {
     can(['read', 'create', 'update', 'delete'], subject)
   }

@@ -61,7 +61,7 @@ const userStatusObj: UserStatusType = {
 
 
 
-const UserList = () => {
+const DmList = () => {
   // ** State
 const [userList, setUserList] = useState<UsersType[]>([])
 
@@ -117,4 +117,9 @@ const [userList, setUserList] = useState<UsersType[]>([])
   )
 }
 
-export default UserList
+DmList.acl = {
+  action: 'read',
+  subject: 'dm-list-page'
+}
+
+export default DmList

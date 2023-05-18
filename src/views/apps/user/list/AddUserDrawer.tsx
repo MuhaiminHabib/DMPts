@@ -44,6 +44,7 @@ interface SidebarAddUserType {
   toggle: () => void
   addClient?: boolean
   addDm?: boolean
+  addCm?: boolean
 }
 
 interface UserData {
@@ -101,13 +102,12 @@ const baAddsDm = [
   { value: 'DM', label: "Digital Manager" },
 ];
 const baAddsC = [
-
   { value: 'C', label: "Client" },
 ];
 
 const SidebarAddUser = (props: SidebarAddUserType) => {
   // ** Props
-  const { open, toggle, addClient, addDm } = props
+  const { open, toggle, addClient, addDm, addCm } = props
 
   // ** State
   // const [plan, setPlan] = useState<string>('basic')
@@ -149,7 +149,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: error!.data.errorMessage})
+    showErrorAlert({text: error!.status === 500 ? "Internal Server Error" : error!.data.errorMessage })
   } else if(data) {
     showSuccessAlert({text: 'User Created'})
   }
@@ -307,6 +307,10 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                  (auth.user?.role === 'DM' && addClient)  ?
                  <MenuItem value='C'>
                   Client
+                </MenuItem> :
+                 (auth.user?.role === 'C' && addCm)  ?
+                 <MenuItem value='CM'>
+                  Client Manager
                 </MenuItem> : null
                  }
                 </Select>

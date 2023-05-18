@@ -34,7 +34,7 @@ import Loader from '../../../../shared-components/Loader'
 import UserEditModal from 'src/views/apps/user/list/UserEditModal'
 import { AuthContext } from 'src/context/AuthContext'
 import UserProfileModal from './UserProfileModal'
-import { useBaDeletesCMutation, useBaDeletesDmMutation, useInactivateBaMutation } from 'src/store/query/userApi'
+import { useBaDeletesCMutation, useBaDeletesDmMutation, useCDeletesCmMutation, useInactivateBaMutation } from 'src/store/query/userApi'
 
 
 type props = {
@@ -46,6 +46,7 @@ type props = {
   showLoading?: boolean
   addClient?: boolean
   addDm?: boolean
+  addCm?: boolean
 
 }
 
@@ -58,6 +59,7 @@ const UserListTable = ({
   showLoading = false,
   addClient = false,
   addDm = false,
+  addCm = false
 
 }: props) => {
 
@@ -67,6 +69,11 @@ const UserListTable = ({
 
   // ** Hooks
   // const { isLoading } = useSelector((state: RootState) => state.user)
+  const [inactivateBa, {
+    isLoading: isLoadingInactivateBa, 
+    isError :isErrorInactivateBa, 
+    error: errorInactivateBa, 
+    data: inactivateBaData}] = useInactivateBaMutation()
   const [baDeletesDm, {
     isLoading: isLoadingBaDeletesDm, 
     isError : isErrorBaDeletesDm, 
@@ -77,11 +84,11 @@ const UserListTable = ({
     isError :isErrorBaDeletesC, 
     error: errorBaDeletesC, 
     data: baDeletesCData}] = useBaDeletesCMutation()
-  const [inactivateBa, {
-    isLoading: isLoadingInactivateBa, 
-    isError :isErrorInactivateBa, 
-    error: errorInactivateBa, 
-    data: inactivateBaData}] = useInactivateBaMutation()
+  const [cDeletesCm, {
+    isLoading: isLoadingCDeletesCm, 
+    isError :isErrorCDeletesCm, 
+    error: cDeletesCmError, 
+    data: cDeletesCmData}] = useCDeletesCmMutation()
 
 
 useEffect(() => {
@@ -105,6 +112,8 @@ useEffect(() => {
       baDeletesDm(id)
     } else if (role === 'C') {
       baDeletesC(id)
+    } else if (role === 'CM') {
+      cDeletesCm(id)
     }
   }
 
@@ -116,14 +125,14 @@ useEffect(() => {
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
 
           <CardHeader title={title} />
-          {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null}
+          { <TableHeader toggle={toggleAddUserDrawer} />}
 
           <TableContainer component={Paper}>
           {isLoadingBaDeletesC || isLoadingBaDeletesDm || isLoadingInactivateBa || showLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
-                  <TableCell>username</TableCell>
+                  <TableCell>Username</TableCell>
                   <TableCell align='right'>Email</TableCell>
                   <TableCell align='right'>FirstName</TableCell>
                   <TableCell align='right'>LastName</TableCell>
@@ -178,7 +187,7 @@ useEffect(() => {
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={addClient} addDm={addDm}/>
+      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={addClient} addDm={addDm} addCm={addCm}/>
     </Grid>
   )
 }

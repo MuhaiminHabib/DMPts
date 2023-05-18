@@ -102,7 +102,7 @@ const UserEditModal = ({user} : pageProps) => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: error!.data.errorMessage})
+    showErrorAlert({text: "Edit Error"})
   } else if(data) {
     showSuccessAlert({text: 'User Created'})
 

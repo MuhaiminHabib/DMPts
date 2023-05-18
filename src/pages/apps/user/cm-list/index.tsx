@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import { useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,7 +14,9 @@ import { RootState, AppDispatch } from 'src/store'
 // import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
-import { useFetchCmListQuery } from 'src/store/query/userApi'
+import { useFetchCmListForCQuery, useFetchCmListQuery } from 'src/store/query/userApi'
+import { AuthContext } from 'src/context/AuthContext'
+import { UsersType } from 'src/types/apps/userTypes'
 
 
 interface UserRoleType {
@@ -33,30 +35,36 @@ const userStatusObj: UserStatusType = {
 
 
 
-const UserList = () => {
+const CmList = () => {
   // ** State
-
+  const [userList, setUserList] = useState<UsersType[]>([])
   // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  const {cmList} = useSelector((state: RootState) => state.user)
+const {user} = useContext(AuthContext)
 
 const {isLoading, isError, error, data} = useFetchCmListQuery()
+const {isLoading : isLoadingFetchCmListForC, 
+  isError: isErrorFetchCmListForC, 
+  error: fetchCmListForCError, 
+  data: fetchCmListForCData} = useFetchCmListForCQuery()
   
 
-  if(data) {
-    console.log(data)
-  } else if (isError) {
-    console.log(error)
-  } else if(isLoading) {
-    console.log('Loading')
-  }
-  // useEffect(() => {
-  //   dispatch(fetchCmList())
-  // }, [])
+  useEffect(() => {
+    console.log(user?.role)
+    if(user?.role === 'A' && data) {
+      setUserList(data)
+    } else if(user?.role === 'C' && fetchCmListForCData) {
+      setUserList(fetchCmListForCData)
+    }
+  }, [data, fetchCmListForCData])
 
   return (
-    <UserListTable title={'All Clients Managers'} userList={data ? data: []} showAccociatedBtn={true} />
+    <UserListTable title={'All Clients Managers'} userList={userList} showAccociatedBtn={true} addCm={true} showDeleteBtn={user?.role === 'C'}/>
   )
 }
 
-export default UserList
+CmList.acl = {
+  action: 'read',
+  subject: 'cm-list-page'
+}
+
+export default CmList

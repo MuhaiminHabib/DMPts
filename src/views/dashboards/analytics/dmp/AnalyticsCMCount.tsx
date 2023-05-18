@@ -21,27 +21,6 @@ const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 const AnalyticsCMCount = () => {
   // ** Hook
   const theme = useTheme()
-
-  // const [count, setCount] = useState<number>(0)
-  // const [isFetching, setIsFetching] = useState<boolean>(false)
-
-
-  // const fetchCMCount = async () => {
-  //   setIsFetching(true)
-  //   try {
-  //     const res = await axiosConfig('/auth/ba-gets-total-of-cm')
-  //     console.log(res.data)
-  //     setCount(res.data)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  //   setIsFetching(false)
-  // }
-
-  // useEffect(() => {
-  //   fetchCMCount()
-  // }, [])
-
   const {isLoading, isError, error, data} = useCmCountQuery()
   const {isLoading : isLoadingCmCountforC, 
     isError: isErrorCmCountforC, 
@@ -71,4 +50,4 @@ const AnalyticsCMCount = () => {
   )
 }
 
-export default AnalyticsCMCount
+export default AnalyticsCMCount 

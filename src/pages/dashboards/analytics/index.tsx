@@ -87,7 +87,7 @@ const AnalyticsDashboard = () => {
           {ability?.can('read', 'analytics-cStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
           <Grid container spacing={6}>
             <Grid item xs={6} md={12} lg={6}>
-            <AnalyticsCCount />
+            <AnalyticsCMCount />
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
             <AnalyticsPostCount />

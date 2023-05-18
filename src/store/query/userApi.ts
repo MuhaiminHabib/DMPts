@@ -112,6 +112,21 @@ const userApi = baseApi.injectEndpoints({
       },
       invalidatesTags: [{ type: 'User', id: 'C' }]
     }),
+    //============C============
+    fetchCmListForC: build.query<User[], void>({
+      query: () => '/API/auth/c-gets-cm',
+      providesTags: [{ type: 'User', id: 'CM' }]
+    }),
+    cDeletesCm: build.mutation<User, string>({
+      query(id) {
+        return {
+          url: `/API/auth/c-delete-cm`,
+          method: 'DELETE',
+          body: { cmId: id }
+        }
+      },
+      invalidatesTags: [{ type: 'User', id: 'CM' }]
+    }),
     logout: build.query<void, void>({
       query: () => '/API/auth/logout'
     })
@@ -133,5 +148,7 @@ export const {
   useBaDeletesCMutation,
   useFetchCListForDMQuery,
   useDmDeletesCMutation,
+  useFetchCmListForCQuery,
+  useCDeletesCmMutation,
   useLogoutQuery
 } = userApi

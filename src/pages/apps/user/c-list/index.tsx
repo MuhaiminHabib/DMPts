@@ -58,7 +58,7 @@ const userStatusObj: UserStatusType = {
 
 
 
-const UserList = () => {
+const CList = () => {
   // ** State
   const [userList, setUserList] = useState<UsersType[]>([])
   // ** Hooks
@@ -117,4 +117,9 @@ const UserList = () => {
   )
 }
 
-export default UserList
+CList.acl = {
+  action: 'read',
+  subject: 'c-list-page'
+}
+
+export default CList

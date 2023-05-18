@@ -24,7 +24,7 @@ const userStatusObj: UserStatusType = {
   inactive: 'secondary'
 }
 
-const UserList = () => {
+const BaList = () => {
   // ** State
 
   // **Hooks
@@ -51,5 +51,10 @@ const UserList = () => {
   )
   
 }
+BaList.acl = {
+  action: 'read',
+  subject: 'ba-list-page'
+}
 
-export default UserList
+
+export default BaList

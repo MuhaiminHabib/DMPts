@@ -11,7 +11,8 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Users',
       icon: 'bx:user',
-
+      action: 'read',
+      subject: 'users-navItem',
       children: [
         {
           title: 'Businesses',
