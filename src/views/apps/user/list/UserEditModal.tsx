@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -7,12 +7,7 @@ import Dialog from '@mui/material/Dialog'
 import { useTheme } from '@mui/material/styles'
 import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { PostsTypes } from 'src/types/apps/postTypes'
-import { Box, FormControl, FormHelperText, InputLabel, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, FormControl, FormHelperText, TextField, Tooltip, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
 
@@ -21,9 +16,6 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import { UsersType } from 'src/types/apps/userTypes'
-import { editUserInfo } from 'src/store/apps/user'
-import { AppDispatch } from 'src/store'
-import { useDispatch } from 'react-redux'
 import { useEditUserMutation } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
@@ -68,12 +60,13 @@ const UserEditModal = ({user} : pageProps) => {
       isError, 
       error, 
       data}] = useEditUserMutation()
-  const dispatch = useDispatch<AppDispatch>()
   const {
-    reset,
+
+    // reset,
+    // setValue,
+    // setError,
+    
     control,
-    setValue,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -105,7 +98,6 @@ const UserEditModal = ({user} : pageProps) => {
     showErrorAlert({text: "Edit Error"})
   } else if(data) {
     showSuccessAlert({text: 'User Created'})
-
   }
 
  

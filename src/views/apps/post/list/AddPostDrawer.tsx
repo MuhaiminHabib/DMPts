@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -26,19 +26,14 @@ import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
+
 
 // ** Actions Imports
 // import { createBAUser, fetchCList } from 'src/store/apps/user'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-import { UsersType } from 'src/types/apps/userTypes'
-import axiosConfig from 'src/configs/axios'
-import { createPost } from 'src/store/apps/post'
-import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { useCreatePostMutation } from 'src/store/query/postApi'
-import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 interface SidebarAddPostType {
@@ -59,15 +54,15 @@ interface PostData {
   fileName: string
 }
 
-const showErrors = (field: string, valueLen: number, min: number) => {
-  if (valueLen === 0) {
-    return `${field} field is required`
-  } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
-  } else {
-    return ''
-  }
-}
+// const showErrors = (field: string, valueLen: number, min: number) => {
+//   if (valueLen === 0) {
+//     return `${field} field is required`
+//   } else if (valueLen > 0 && valueLen < min) {
+//     return `${field} must be at least ${min} characters`
+//   } else {
+//     return ''
+//   }
+// }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
@@ -111,24 +106,26 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
   // ** State
 
   // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  const {cList} = useSelector((state: RootState) => state.user)
   const [createPost, {isLoading, isError, error, data}] = useCreatePostMutation()
   const {
-      isLoading: isLoadingFetchCListForBA, 
-      isError: isErrorFetchCListForBA, 
-      error: fetchCListForBAError, 
+      // isLoading: isLoadingFetchCListForBA, 
+      // isError: isErrorFetchCListForBA, 
+      // error: fetchCListForBAError, 
+
       data: FetchCListForBaData} = useFetchCListForBAQuery()
   const {
-      isLoading: isLoadingFetchCListForDm, 
-      isError: isErrorFetchCListForDm, 
-      error: fetchCListForDmError, 
+      // isLoading: isLoadingFetchCListForDm, 
+      // isError: isErrorFetchCListForDm, 
+      // error: fetchCListForDmError, 
+
       data: FetchCListForDmData} = useFetchCListForDMQuery()
   const {
     reset,
     control,
-    setValue,
-    setError,
+
+    // setValue,
+    // setError,
+
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -139,7 +136,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
   const onSubmit = async (data: PostData, e: SubmitEvent) => {
     e.stopPropagation()
     console.log('submitted',data)
-    // dispatch(createPost(data))
     createPost(data)
     handleClose()
   }
@@ -148,9 +144,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     toggle()
     reset()
   }
-
-
-  
 
   if(isLoading) {
     console.log('Loading')
@@ -161,9 +154,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
   } else if(data) {
     showSuccessAlert({text: 'Post Created'})
   }
-
-
-
 
   return (
     <Drawer
@@ -201,10 +191,10 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                 >
                   <MenuItem value=''>none</MenuItem>
                   {FetchCListForBaData  && FetchCListForBaData.map(item => (
-                    <MenuItem value={item._id}>{item.username}</MenuItem>
+                    <MenuItem key={item._id} value={item._id}>{item.username}</MenuItem>
                   ))}
                   {FetchCListForDmData  && FetchCListForDmData.map(item => (
-                    <MenuItem value={item._id}>{item.username}</MenuItem>
+                    <MenuItem key={item._id} value={item._id}>{item.username}</MenuItem>
                   ))}
                 </Select>
               )}

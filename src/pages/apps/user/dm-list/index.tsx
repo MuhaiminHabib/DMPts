@@ -63,11 +63,11 @@ const userStatusObj: UserStatusType = {
 
 const DmList = () => {
   // ** State
+
 const [userList, setUserList] = useState<UsersType[]>([])
 
   // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  // const {dmList} = useSelector((state: RootState) => state.user)
+
   const auth = useContext(AuthContext)
   const {
     isLoading: isLoadingFetchDmList,
@@ -86,25 +86,16 @@ const [userList, setUserList] = useState<UsersType[]>([])
     } else if(auth.user?.role === 'BA' && fetchDmListforBaData) {
       setUserList(fetchDmListforBaData)
     }
-  }, [fetchDmListforBaData])
+  }, [fetchDmListforBaData, auth.user?.role, fetchDmListData ])
 
 
   
-  // if(isLoadingFetchDmList || isLoadingFetchDmListForBa) {
-  //   showLoadingAlert()
-  // } else 
+
   if ((isErrorFetchDmList && auth.user?.role === 'A') || (isErrorFetchDmListForBa && auth.user?.role === 'BA')) {
     showErrorAlert({text: errorFetchDmListError!.errorMessage || errorFetchDmListForBa!.errorMessage})
   } 
-  // else if(fetchDmListforBaData) {
-  //   console.log(fetchDmListforBaData)
- 
-  //   showSuccessAlert()
-  // }
-  
-  
-  
 
+  
   return (
     <UserListTable 
       title={'All Digital Managers'} 

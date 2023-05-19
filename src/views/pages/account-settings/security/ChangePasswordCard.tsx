@@ -21,11 +21,8 @@ import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import * as yup from 'yup'
-import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axiosConfig from 'src/configs/axios'
-import { AxiosPromise, AxiosResponse } from 'axios'
 import { useChangePasswordMutation } from 'src/store/query/authApi'
 import { showErrorAlert, showLoadingAlert } from 'src/utils/swal'
 

@@ -1,4 +1,3 @@
-import { UsersType } from 'src/types/apps/userTypes'
 import { baseApi } from './baseApi'
 
 type AuthResponse = {
@@ -38,9 +37,15 @@ const authApi = baseApi.injectEndpoints({
         url: `/API/auth/logout`,
         method: 'GET'
       })
+    }),
+    meEndpoint: build.mutation<void, void>({
+      query: () => ({
+        url: '/API/auth/info',
+        method: 'GET'
+      })
     })
   }),
   overrideExisting: false
 })
 
-export const { useLoginMutation, useChangePasswordMutation, useLogoutMutation } = authApi
+export const { useLoginMutation, useChangePasswordMutation, useLogoutMutation, useMeEndpointMutation } = authApi

@@ -1,13 +1,11 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
 
 // ** MUI Components
-import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
@@ -32,7 +30,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import useBgColor, { UseBgColorType } from 'src/@core/hooks/useBgColor'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Configs
@@ -40,7 +37,7 @@ import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import { useLoginMutation } from 'src/store/query/authApi'
+
 
 // ** Styled Components
 const LoginIllustration = styled('img')({
@@ -95,7 +92,7 @@ const LoginPage = () => {
   const auth = useAuth()
   const theme = useTheme()
   const { settings } = useSettings()
-  const bgColors: UseBgColorType = useBgColor()
+
   const hidden = useMediaQuery(theme.breakpoints.down('lg'))
 
   // ** Var

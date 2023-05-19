@@ -13,26 +13,19 @@ import {
   TableRow,
   Tooltip
 } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
+
 
 //icons
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import Diversity3Icon from '@mui/icons-material/Diversity3'
 
 
-
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import TableHeader from './TableHeader'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-import axiosConfig from 'src/configs/axios'
-import { useDispatch } from 'react-redux'
-import { baDeleteC, baDeleteDm, inactiveBa } from 'src/store/apps/user'
-import { useSelector } from 'react-redux'
-import { RootState } from 'src/store'
 import Loader from '../../../../shared-components/Loader'
 import UserEditModal from 'src/views/apps/user/list/UserEditModal'
-import { AuthContext } from 'src/context/AuthContext'
 import UserProfileModal from './UserProfileModal'
 import { useBaDeletesCMutation, useBaDeletesDmMutation, useCDeletesCmMutation, useInactivateBaMutation } from 'src/store/query/userApi'
 
@@ -54,7 +47,6 @@ const UserListTable = ({
   title,
   userList,
   showAccociatedBtn = false,
-  showHeader = false,
   showDeleteBtn = false,
   showLoading = false,
   addClient = false,
@@ -69,36 +61,15 @@ const UserListTable = ({
 
   // ** Hooks
   // const { isLoading } = useSelector((state: RootState) => state.user)
-  const [inactivateBa, {
-    isLoading: isLoadingInactivateBa, 
-    isError :isErrorInactivateBa, 
-    error: errorInactivateBa, 
-    data: inactivateBaData}] = useInactivateBaMutation()
-  const [baDeletesDm, {
-    isLoading: isLoadingBaDeletesDm, 
-    isError : isErrorBaDeletesDm, 
-    error: errorBaDeletesDm, 
-    data: baDeletesDmData}] = useBaDeletesDmMutation()
-  const [baDeletesC, {
-    isLoading: isLoadingBaDeletesC, 
-    isError :isErrorBaDeletesC, 
-    error: errorBaDeletesC, 
-    data: baDeletesCData}] = useBaDeletesCMutation()
-  const [cDeletesCm, {
-    isLoading: isLoadingCDeletesCm, 
-    isError :isErrorCDeletesCm, 
-    error: cDeletesCmError, 
-    data: cDeletesCmData}] = useCDeletesCmMutation()
+  const [inactivateBa, {isLoading: isLoadingInactivateBa}] = useInactivateBaMutation()
+  const [baDeletesDm, {isLoading: isLoadingBaDeletesDm}] = useBaDeletesDmMutation()
+  const [baDeletesC, {isLoading: isLoadingBaDeletesC}] = useBaDeletesCMutation()
+  const [cDeletesCm, {isLoading: isLoadingCDeletesCm}] = useCDeletesCmMutation()
 
 
-useEffect(() => {
-  console.log('useEffect clients are:', userList)
-}, [])
+
   // ** Functions
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
-  const dispatch = useDispatch()
-
-
   const handleDelete = async (id: string, role: string, username: string) => {
     console.log('role is:', role) 
     if(role === 'BA') {
@@ -106,7 +77,6 @@ useEffect(() => {
         BAID: id,
         username
       }
-      // dispatch(inactiveBa(data))
       inactivateBa(data)
     } else if(role === 'DM') {
       baDeletesDm(id)
@@ -128,7 +98,7 @@ useEffect(() => {
           { <TableHeader toggle={toggleAddUserDrawer} />}
 
           <TableContainer component={Paper}>
-          {isLoadingBaDeletesC || isLoadingBaDeletesDm || isLoadingInactivateBa || showLoading ? <Loader /> : 
+          {isLoadingBaDeletesC || isLoadingBaDeletesDm || isLoadingInactivateBa || isLoadingCDeletesCm || showLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>

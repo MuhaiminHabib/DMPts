@@ -2,19 +2,8 @@
 import Grid from '@mui/material/Grid'
 
 // ** Demo Component Imports
-import AnalyticsOrder from 'src/views/dashboards/analytics/AnalyticsOrder'
 import AnalyticsSales from 'src/views/dashboards/analytics/AnalyticsSales'
-import AnalyticsRevenue from 'src/views/dashboards/analytics/AnalyticsRevenue'
-import AnalyticsPayments from 'src/views/dashboards/analytics/AnalyticsPayments'
-import AnalyticsProfitReport from 'src/views/dashboards/analytics/AnalyticsProfitReport'
-import AnalyticsTotalRevenue from 'src/views/dashboards/analytics/AnalyticsTotalRevenue'
-import AnalyticsTransactions from 'src/views/dashboards/analytics/AnalyticsTransactions'
-import AnalyticsTabsWithChart from 'src/views/dashboards/analytics/AnalyticsTabsWithChart'
-import AnalyticsTabsWithTable from 'src/views/dashboards/analytics/AnalyticsTabsWithTable'
 import AnalyticsCongratulations from 'src/views/dashboards/analytics/AnalyticsCongratulations'
-import AnalyticsOrderStatistics from 'src/views/dashboards/analytics/AnalyticsOrderStatistics'
-import AnalyticsActivityTimeline from 'src/views/dashboards/analytics/AnalyticsActivityTimeline'
-
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 // ** Styled Component Import
@@ -28,6 +17,7 @@ import { useContext } from 'react'
 
 const AnalyticsDashboard = () => {
   const ability = useContext(AbilityContext)
+
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>

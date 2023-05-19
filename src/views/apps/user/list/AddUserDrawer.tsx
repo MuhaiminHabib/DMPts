@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -23,19 +23,7 @@ import { useForm, Controller } from 'react-hook-form'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-// ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
-
-// ** Actions Imports
-
-
-// ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-import { UsersType } from 'src/types/apps/userTypes'
-import axiosConfig from 'src/configs/axios'
 import { AuthContext } from 'src/context/AuthContext'
-import { MenuList } from '@mui/material'
-import { createBAUser } from 'src/store/apps/user'
 import { useCreateUserMutation } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
@@ -57,15 +45,15 @@ interface UserData {
   type: 'BA' | 'DM' | 'C'
 }
 
-const showErrors = (field: string, valueLen: number, min: number) => {
-  if (valueLen === 0) {
-    return `${field} field is required`
-  } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
-  } else {
-    return ''
-  }
-}
+// const showErrors = (field: string, valueLen: number, min: number) => {
+//   if (valueLen === 0) {
+//     return `${field} field is required`
+//   } else if (valueLen > 0 && valueLen < min) {
+//     return `${field} must be at least ${min} characters`
+//   } else {
+//     return ''
+//   }
+// }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
@@ -95,34 +83,24 @@ const defaultValues = {
   role: ''
 }
 
-const aOptions = [
-  { value: 'BA', label: "Business" },
-];
-const baAddsDm = [
-  { value: 'DM', label: "Digital Manager" },
-];
-const baAddsC = [
-  { value: 'C', label: "Client" },
-];
+
 
 const SidebarAddUser = (props: SidebarAddUserType) => {
   // ** Props
   const { open, toggle, addClient, addDm, addCm } = props
 
   // ** State
-  // const [plan, setPlan] = useState<string>('basic')
-  const [role, setRole] = useState<string>('')
 
   // ** Hooks
   const auth = useContext(AuthContext)
-  const dispatch = useDispatch<AppDispatch>()
-  const store = useSelector((state: RootState) => state.user)
   const [createUser, {isLoading, isError, error, data}] = useCreateUserMutation()
   const {
     reset,
     control,
-    setValue,
-    setError,
+
+    // setValue,
+    // setError,
+
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -132,14 +110,12 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   })
   const onSubmit = async (data: UserData, e: SubmitEvent) => {
     e.stopPropagation()
-    // dispatch(createBAUser(data))
     console.log('from form:', data)
     createUser(data)
     handleClose()
   }
 
   const handleClose = () => {
-    setRole('')
     toggle()
     reset()
   }

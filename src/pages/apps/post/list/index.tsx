@@ -1,12 +1,8 @@
 // ** React Imports
-import { useState, useEffect, forwardRef, useContext } from 'react'
-
-// ** Next Import
-import Link from 'next/link'
+import { useState, useContext } from 'react'
 
 // ** MUI Imports
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -20,53 +16,72 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography
+
 } from '@mui/material'
 import PostDetailsModal from 'src/views/apps/post/view/PostDetailsModal'
-import { PostsTypes } from 'src/types/apps/postTypes'
+
 import Loader from 'src/shared-components/Loader'
-import { useDispatch } from 'react-redux'
-import { AppDispatch, RootState } from 'src/store'
-import { useSelector } from 'react-redux'
-import { deletePost, fetchPosts } from 'src/store/apps/post'
+
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import TableHeader from 'src/views/apps/post/list/TableHeader'
-// import { fetchCList } from 'src/store/apps/user'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
+
 import EditPostModal from 'src/views/apps/post/edit/EditPostModal'
-import { UsersType } from 'src/types/apps/userTypes'
+
 import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useFetchPostsforDMQuery } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
-import { AuthContext } from 'src/context/AuthContext'
+
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { SerializedError } from '@reduxjs/toolkit'
+
+type dataType = {
+  errorMessage: string;
+}
+
+type ExtendedSerializedError = SerializedError & {
+  status: number;
+  data: dataType;
+}
+
+
 
 
 const InvoiceList = () => {
   // ** State
-  const [postPage, setPostPage] = useState<string>('1')
+
+  // const [postPage, setPostPage] = useState<string>('1')
+
+  const postPage = '1'
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
+
   // ** Hooks
   const ability = useContext(AbilityContext)
   const {isLoading, isError, error, data: posts} = useFetchPostsQuery(postPage)
   const {isLoading: isLoadingFetchPostsforDm,
-     isError: isErrorFetchPostsforDm, 
-     error: FetchPostsforDmError,
-      data: FetchPostsforDmData} = useFetchPostsforDMQuery(postPage)
+
+    //  isError: isErrorFetchPostsforDm, 
+    //  error: FetchPostsforDmError,
+      data: FetchPostsforDmData} = useFetchPostsforDMQuery()
   const {isLoading: isLoadingFetchPostsforC,
-     isError: isErrorFetchPostsforC, 
-     error: FetchPostsforCError,
-      data: FetchPostsforCData} = useFetchPostsforCQuery(postPage)
-  const [deletePost, {isLoading: isDeletePostLoading, isError: isDeletePostError, error: deletePostError, data: deletePostData}] = useDeletePostMutation()
+
+    //  isError: isErrorFetchPostsforC, 
+    //  error: FetchPostsforCError,
+      data: FetchPostsforCData} = useFetchPostsforCQuery()
+  const [deletePost, {
+    isLoading: isDeletePostLoading, 
+    isError: isDeletePostError,
+    error: deletePostError, 
+    data: deletePostData
+  }] = useDeletePostMutation()
 
 
 
   // ** Functions
+
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
   const handlePostDelete = (postId: string) => {
     console.log('postId', postId)
-    // dispatch(deletePost(postId))
     deletePost(postId)
   }
 
@@ -87,7 +102,8 @@ const InvoiceList = () => {
   if(isDeletePostLoading) {
     showLoadingAlert()
   } else if (isDeletePostError) {
-    showErrorAlert({text: deletePostError!.status === 500 ? "Internal Server Error" : deletePostError!.data.errorMessage})
+    const naam : ExtendedSerializedError = deletePostError as ExtendedSerializedError
+    showErrorAlert({text: naam.status === 500 ? "Internal Server Error" : naam.data.errorMessage})
   } else if(deletePostData) {
     showSuccessAlert({text: 'Post Deleted'})
   }

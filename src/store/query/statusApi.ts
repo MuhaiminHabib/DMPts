@@ -1,4 +1,3 @@
-import { UsersType } from 'src/types/apps/userTypes'
 import { baseApi } from './baseApi'
 
 type StatusResponse = {

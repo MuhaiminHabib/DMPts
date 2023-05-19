@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
 import { Card, CardContent, CardHeader, Grid } from '@mui/material'
-import { useState, useEffect, MouseEvent, useCallback } from 'react'
+import { useEffect } from 'react'
 import * as React from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -9,8 +9,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { useRouter } from 'next/router'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
-import axiosConfig from 'src/configs/axios'
-import { UsersType } from 'src/types/apps/userTypes'
+import { useCBelongToBaMutation, useDmsBelongToBaMutation } from 'src/store/query/userApi'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -46,42 +45,32 @@ function a11yProps(index: number) {
 }
 
 const Hello = (props: TabPanelProps) => {
-  const [DMList, setDMList] = useState<UsersType[]>([])
-  const [CList, setCList] = useState<UsersType[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const router = useRouter()
-  const { userId } = router.query
+  //* States
+
+  //* Hooks
+  const { userId } = useRouter().query
+
+  const [dmsBelongToBa, {
+    isLoading:  dmsBelongToBaIsLoading, 
+    
+    // isError: dmsBelongToBaIsError, 
+    // error : dmsBelongToBaError, 
+    data: dmsBelongToBaData}] = useDmsBelongToBaMutation()
+
+  const [cBelongToBa, {
+    isLoading:  cBelongToBaIsLoading, 
+
+    // isError: cBelongToBaIsError, 
+    // error : cBelongToBaError, 
+    data: cBelongToBaData}] = useCBelongToBaMutation()
 
   useEffect(() => {
-    handleFetchDMList(userId)
-  }, [userId])
+    dmsBelongToBa(userId as string)
+  }, [userId, dmsBelongToBa])
 
   const [value, setValue] = React.useState(0)
 
-  const handleFetchDMList = async (userId) => {
-    setIsLoading(true)
-    try {
-      const res = await axiosConfig.post('/auth/dms-belong-to-ba', {
-        BAID: userId
-      })
-      console.log(res.data)
-      setDMList(res.data)
-      setIsLoading(false)
-    } catch (error) {
-      console.log(error)
-      setIsLoading(false)
-    }
-  }
 
-  const handleFetchCList = async () => {
-    setIsLoading(true)
-    const res = await axiosConfig.post('/auth/c-belongs-to-ba', {
-      BAID: userId
-    })
-    console.log(res.data)
-    setCList(res.data)
-    setIsLoading(false)
-  }
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
@@ -96,17 +85,26 @@ const Hello = (props: TabPanelProps) => {
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
                   <Tab label='DM List' {...a11yProps(0)} />
-                  <Tab label='Client List' {...a11yProps(1)} onClick={() => handleFetchCList()} />
+                  <Tab label='Client List' {...a11yProps(1)} onClick={() => cBelongToBa(userId as string)} />
                 </Tabs>
               </Box>
-              {DMList.length !== 0 && (
+              {dmsBelongToBaData && dmsBelongToBaData.length !== 0 && (
                 <TabPanel value={value} index={0}>
-                  <UserListTable title={'Accociated DM'} userList={DMList} showLoading={isLoading} />
+                  <UserListTable 
+                    title={'Accociated Digital Managers'} 
+                    userList={dmsBelongToBaData} 
+                    showLoading={dmsBelongToBaIsLoading} />
                 </TabPanel>
               )}
+
+              {cBelongToBaData && cBelongToBaData.length !== 0 && (
               <TabPanel value={value} index={1}>
-                <UserListTable title={'Accociated DM'} userList={CList} showLoading={isLoading} />
+                <UserListTable 
+                  title={'Accociated Clients'} 
+                  userList={cBelongToBaData} 
+                  showLoading={cBelongToBaIsLoading} />
               </TabPanel>
+              )}
             </Box>
           </CardContent>
         </Card>

@@ -1,18 +1,6 @@
 import type { PostsTypes as Post } from 'src/types/apps/postTypes'
 import { baseApi } from './baseApi'
 
-interface CreatePostParams {
-  boost: boolean
-  client: string
-  description: string
-  permissionLevel: 'D' | 'C'
-  platform: 'google' | 'fb'
-  postingDate: string
-  postingEndDate: string
-  title: string
-  url: string
-  fileName?: string
-}
 type platform = {
   platform: string
 }
@@ -34,17 +22,16 @@ const postApi = baseApi.injectEndpoints({
       query: page => `/API/posting/page/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforDM: build.query<Post[], string>({
-      query: page => `/API/posting/dm-get-posts`,
+    fetchPostsforDM: build.query<Post[], void>({
+      query: () => `/API/posting/dm-get-posts`,
       providesTags: ['Post']
     }),
-    fetchPostsforC: build.query<Post[], string>({
-      query: page => `/API/posting/c-get-posts`,
+    fetchPostsforC: build.query<Post[], void>({
+      query: () => `/API/posting/c-get-posts`,
       providesTags: ['Post']
     }),
     createPost: build.mutation<Post, Partial<Post>>({
       query(data) {
-        console.log('create post rtk:', data)
         return {
           url: '/API/posting/new',
           method: 'POST',
@@ -55,7 +42,6 @@ const postApi = baseApi.injectEndpoints({
     }),
     editPost: build.mutation<Post, EditPostParams & Pick<EditPostParams, 'id'>>({
       query(data) {
-        console.log('from edit rtk query:', data)
         return {
           url: `/API/posting/${data.id}`,
           method: 'PUT',

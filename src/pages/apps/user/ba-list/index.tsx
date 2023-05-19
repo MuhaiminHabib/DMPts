@@ -7,7 +7,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
 
 // ** Custom Table Components Imports
-import axiosConfig from 'src/configs/axios'
+
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 
 //redux

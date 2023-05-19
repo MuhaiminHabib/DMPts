@@ -1,8 +1,6 @@
 // ** React Imports
 import { SyntheticEvent, useState, useEffect } from 'react'
 
-// ** Next Import
-import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -18,19 +16,14 @@ import CircularProgress from '@mui/material/CircularProgress'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-// ** Demo Components Imports
-import UserViewBilling from 'src/views/apps/user/view/UserViewBilling'
-import UserViewAccount from 'src/views/apps/user/view/UserViewAccount'
-import UserViewSecurity from 'src/views/apps/user/view/UserViewSecurity'
-import UserViewConnection from 'src/views/apps/user/view/UserViewConnection'
-import UserViewNotification from 'src/views/apps/user/view/UserViewNotification'
 
 // ** Types
-import { InvoiceType } from 'src/types/apps/postTypes'
-import UsersViewTable from './dmp/UsersViewTable'
+
+import UsersViewTable from 'src/views/apps/user/view/UserViewRight'
 
 interface Props {
   tab: string
+  
   // invoiceData: InvoiceType[]
 }
 
@@ -57,10 +50,10 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 const UserViewRight = ({ tab }: Props) => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>(tab)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // ** Hooks
-  const router = useRouter()
   const hideText = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
   const handleChange = (event: SyntheticEvent, value: string) => {
@@ -83,15 +76,6 @@ const UserViewRight = ({ tab }: Props) => {
         onChange={handleChange}
         aria-label='forced scroll tabs example'
       >
-        {/* <Tab
-          value='BA'
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
-              <Icon icon='bx:user' />
-              {!hideText && 'BA'}
-            </Box>
-          }
-        /> */}
         <Tab
           value='DM'
           label={
@@ -112,27 +96,27 @@ const UserViewRight = ({ tab }: Props) => {
         />
       </TabList>
       <Box sx={{ '& .MuiTabPanel-root': { p: 0, border: 0, boxShadow: 0, backgroundColor: 'transparent' } }}>
-        {isLoading ? (
+        
+        {/* {isLoading ? (
           <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
             <CircularProgress sx={{ mb: 4 }} />
             <Typography>Loading...</Typography>
           </Box>
-        ) : (
+        ) : */}
+         (
           <>
-            {/* <TabPanel value='BA'>
-              <h1>Show BA list</h1>
-              <UsersViewTable />
-            </TabPanel> */}
             <TabPanel value='DM'>
               <h1>Show DM list</h1>
-              <UsersViewTable />
+              <UsersViewTable tab='DM'/>
             </TabPanel>
             <TabPanel value='Clients'>
               <h1>Show Clients list</h1>
-              <UsersViewTable />
+              <UsersViewTable tab="Clients"/>
             </TabPanel>
           </>
-        )}
+        )
+        
+        {/* } */}
       </Box>
     </TabContext>
   ) : (

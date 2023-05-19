@@ -36,8 +36,10 @@ const userStatusObj: UserStatusType = {
 
 
 const CmList = () => {
+  
   // ** State
   const [userList, setUserList] = useState<UsersType[]>([])
+
   // ** Hooks
 const {user} = useContext(AuthContext)
 
@@ -55,7 +57,7 @@ const {isLoading : isLoadingFetchCmListForC,
     } else if(user?.role === 'C' && fetchCmListForCData) {
       setUserList(fetchCmListForCData)
     }
-  }, [data, fetchCmListForCData])
+  }, [data, fetchCmListForCData, user?.role])
 
   return (
     <UserListTable title={'All Clients Managers'} userList={userList} showAccociatedBtn={true} addCm={true} showDeleteBtn={user?.role === 'C'}/>

@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -11,10 +11,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { PostsTypes } from 'src/types/apps/postTypes'
 import { Typography } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit';
-import UserEditModal from './UserEditModal'
 import { UsersType } from 'src/types/apps/userTypes'
 
 type pageProps = {
@@ -32,12 +29,6 @@ const UserProfileModal = ({user} : pageProps) => {
   const handleClickOpen = () => setOpen(true)
 
   const handleProfileModalClose = () => setOpen(false)
-
-
- 
-  useEffect(() => {
-    console.log(user)
-  }, [])
 
 
   return (
