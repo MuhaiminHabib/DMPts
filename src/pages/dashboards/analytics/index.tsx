@@ -34,7 +34,9 @@ const AnalyticsDashboard = () => {
         <Grid item xs={12} lg={8} sx={{ order: -1 }}>
           <AnalyticsCongratulations />
         </Grid>
-        {ability?.can('read', 'analytics-aStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
+        {ability?.can('read', 'analytics-aStats') ? 
+        (<>
+        <Grid item xs={12} md={4} sx={{ order: -1 }}>
           <Grid container spacing={6}>
             <Grid item xs={6} md={12} lg={6}>
               <AnalyticsBACount />
@@ -43,11 +45,33 @@ const AnalyticsDashboard = () => {
               <AnalyticsSales />
             </Grid>
           </Grid>
-        </Grid>) : null }
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ order: -1 }}>
+            <Grid container spacing={6}>
+              <Grid item xs={6} md={12} lg={6}>
+                <AnalyticsDMCount />
+              </Grid>
+              <Grid item xs={6} md={12} lg={6}>
+                <AnalyticsCCount />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={4} sx={{ order: -1 }}>
+            <Grid container spacing={6}>
+              <Grid item xs={6} md={12} lg={6}>
+                <AnalyticsCMCount />
+              </Grid>
+              <Grid item xs={6} md={12} lg={6}>
+                <AnalyticsPostCount />
+              </Grid>
+            </Grid>
+          </Grid>
+        </>) : null }
 
         {/* BA */}
 
-        {ability?.can('read', 'analytics-baStats') ?(<>
+        {ability?.can('read', 'analytics-baStats') ?(
+        <>
         <Grid item xs={12} md={4} sx={{ order: -1 }}>
             <Grid container spacing={6}>
               <Grid item xs={6} md={12} lg={6}>

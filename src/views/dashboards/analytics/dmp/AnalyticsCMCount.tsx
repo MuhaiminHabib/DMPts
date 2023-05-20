@@ -14,14 +14,14 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
-import { useCmCountQuery, useCmCountforCQuery } from 'src/store/query/statusApi'
+import { useCmCountForBaQuery, useCmCountforCQuery } from 'src/store/query/statusApi'
 
 const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
 const AnalyticsCMCount = () => {
   // ** Hook
   const theme = useTheme()
-  const {isLoading, isError, error, data} = useCmCountQuery()
+  const {isLoading, isError, error, data} = useCmCountForBaQuery()
   const {isLoading : isLoadingCmCountforC, 
     isError: isErrorCmCountforC, 
     error : cmCountforCError, 

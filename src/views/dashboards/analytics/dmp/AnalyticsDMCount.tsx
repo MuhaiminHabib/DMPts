@@ -14,7 +14,7 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
-import { useDmCountQuery } from 'src/store/query/statusApi'
+import { useDmCountForBaQuery } from 'src/store/query/statusApi'
 
 const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
@@ -42,7 +42,8 @@ const AnalyticsDMCount = () => {
   //   fetchDMCount()
   // }, [])
 
-  const {isLoading, isError, error, data} = useDmCountQuery()
+
+  const {isLoading, isError, error, data} = useDmCountForBaQuery()
   
 
   if(data) {

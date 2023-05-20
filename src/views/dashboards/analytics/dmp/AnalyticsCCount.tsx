@@ -14,7 +14,7 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
-import { useCCountQuery, useCCountforDmQuery,  } from 'src/store/query/statusApi'
+import { useCCountForBaQuery, useCCountforDmQuery,  } from 'src/store/query/statusApi'
 
 const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
@@ -22,7 +22,7 @@ const AnalyticsCCount = () => {
   // ** Hook
   const theme = useTheme()
 
-  const {isLoading, isError, error, data} = useCCountQuery()
+  const {isLoading, isError, error, data} = useCCountForBaQuery()
   const {isLoading: isLoadingCCountforDm, 
     isError: isErrorCCountforDm, 
     error: CCountforDmError, 

@@ -14,7 +14,7 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useContext, useEffect, useState } from 'react'
 import axiosConfig from 'src/configs/axios'
-import { usePostCountQuery, usePostCountforCQuery, usePostCountforDmQuery } from 'src/store/query/statusApi'
+import { usePostCountForBaQuery, usePostCountforCQuery, usePostCountforDmQuery } from 'src/store/query/statusApi'
 import { AuthContext } from 'src/context/AuthContext'
 import Loader from 'src/shared-components/Loader'
 
@@ -24,7 +24,7 @@ const AnalyticsPostCount = () => {
   // ** Hook
   const theme = useTheme()
 
-  const {isLoading, isError, error, data} = usePostCountQuery()
+  const {isLoading, isError, error, data} = usePostCountForBaQuery()
   const {isLoading: isLoadingPostCountForDm, 
     isError: isErrorPostCountForDm, 
     error: PostCountForDmError, 
