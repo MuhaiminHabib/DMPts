@@ -42,6 +42,10 @@ const postApi = baseApi.injectEndpoints({
       query: page => `/API/posting/c-get-posts`,
       providesTags: ['Post']
     }),
+    fetchPostsforCm: build.query<Post[], string>({
+      query: page => `/API/posting/cm-get-posts`,
+      providesTags: ['Post']
+    }),
     createPost: build.mutation<Post, Partial<Post>>({
       query(data) {
         console.log('create post rtk:', data)
@@ -81,6 +85,7 @@ export const {
   useFetchPostsQuery,
   useFetchPostsforDMQuery,
   useFetchPostsforCQuery,
+  useFetchPostsforCmQuery,
   useCreatePostMutation,
   useEditPostMutation,
   useDeletePostMutation

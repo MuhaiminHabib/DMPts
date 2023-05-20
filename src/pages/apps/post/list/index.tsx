@@ -36,7 +36,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import EditPostModal from 'src/views/apps/post/edit/EditPostModal'
 import { UsersType } from 'src/types/apps/userTypes'
-import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useFetchPostsforDMQuery } from 'src/store/query/postApi'
+import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useFetchPostsforCmQuery, useFetchPostsforDMQuery } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import { AuthContext } from 'src/context/AuthContext'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
@@ -57,6 +57,11 @@ const InvoiceList = () => {
      isError: isErrorFetchPostsforC, 
      error: FetchPostsforCError,
       data: FetchPostsforCData} = useFetchPostsforCQuery(postPage)
+
+  const {isLoading: isLoadingFetchPostsforCm,
+     isError: isErrorFetchPostsforCm, 
+     error: FetchPostsforCmError,
+      data: FetchPostsforCmData} = useFetchPostsforCmQuery(postPage)
   const [deletePost, {isLoading: isDeletePostLoading, isError: isDeletePostError, error: deletePostError, data: deletePostData}] = useDeletePostMutation()
 
 
@@ -101,7 +106,7 @@ const InvoiceList = () => {
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
           <CardHeader title='Posts' />
           <TableContainer component={Paper}>
-          {isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC ? <Loader /> : 
+          {isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC || isLoadingFetchPostsforCm ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
               {ability?.can('read', 'add-post') ? (<TableHeader toggle={toggleAddPostDrawer} />) : null}
@@ -193,7 +198,30 @@ const InvoiceList = () => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                )) : "No Posts to show"}
+                )) : (FetchPostsforCmData && FetchPostsforCmData.length > 0) ? FetchPostsforCmData.map(post => (
+    
+                  <TableRow
+                    key={post._id}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 }
+                    }}
+                  >
+                    
+                    <TableCell component='th' scope='row'>
+                      {post.title}
+                    </TableCell>
+                    <TableCell component='th' scope='row'>
+                      {post.description}
+                    </TableCell>
+
+                    <TableCell align='right'>{post.creator.username}</TableCell> 
+                    <TableCell align='right'>
+                      <Tooltip title='Post Details' placement='top-start'>
+                        <PostDetailsModal post={post}/>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                )): 'No posts to show'}
               </TableBody>
             </Table>}
           </TableContainer>
