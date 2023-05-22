@@ -232,9 +232,9 @@ const LoginPage = () => {
               <Typography variant='body2' sx={{ mr: 2 }}>
                 New on our platform?
               </Typography>
-              <Typography>
+              {/* <Typography>
                 <LinkStyled href='/register'>Create an account</LinkStyled>
-              </Typography>
+              </Typography> */}
             </Box>
           </form>
         </Box>

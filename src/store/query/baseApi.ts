@@ -27,6 +27,7 @@ const baseQuery = fetchBaseQuery({
     return headers
   }
 })
+
 const baseQueryForAccessToken = fetchBaseQuery({
   baseUrl: baseURL,
   prepareHeaders: headers => {
@@ -62,7 +63,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
       result = await baseQuery(args, api, extraOptions)
     } else {
-      //logout needed here
+      await baseQuery('/API/auth/logout', api, extraOptions)
       window.localStorage.removeItem('userData')
       window.localStorage.removeItem(authConfig.storageTokenKeyName)
       window.location.replace('/login')

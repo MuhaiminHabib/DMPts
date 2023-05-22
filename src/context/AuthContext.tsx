@@ -38,12 +38,8 @@ const AuthProvider = ({ children }: Props) => {
 
   // ** Hooks
   const router = useRouter()
-  const [logout, 
 
-    // {isLoading, isError, error, data}
-  ] = useLogoutMutation()
   const [login, 
-
     {isLoading: loginIsLoading, 
       isError: loginIsError, 
       error: loginError, 
@@ -51,119 +47,107 @@ const AuthProvider = ({ children }: Props) => {
   ] = useLoginMutation()
 
   const [meEndpoint, 
-
     {isLoading: meEndpointIsLoading, 
       isError: meEndpointIsError, 
       error: meEndpointError, 
       data: meEndpointData}
   ] = useMeEndpointMutation()
 
+  const [logout, 
+
+    {isLoading: logoutIsLoading, 
+      isError: logoutIsError,
+       error: logoutError,
+        data: logoutData}
+  ] = useLogoutMutation()
+
   useEffect(() => {
-    console.log('i am in useEffect')
-    const initAuth = async (): Promise<void> => {
-      const userData = localStorage.getItem('userData')!
-      if (!userData || userData === 'undefined') {
-        // call api
-        setLoading(true)
-
-        meEndpoint()
-
-        // await axiosConfig
-        //   .get(authConfig.meEndpoint, {
-        //     headers: {
-        //       accessToken: localStorage.getItem(authConfig.storageTokenKeyName)
-        //     }
-        //   })
-        //   .then(async response => {
-        //     setLoading(false)
-        //     console.log('authcontext useEffect', response.data)
-        //     setUser({ ...response.data })
-        //     window.localStorage.setItem('userData', JSON.stringify(response.data))
-        //     const returnUrl = router.query.returnUrl
-        // const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-        // router.replace(redirectURL as string)
-        //   })
-        //   .catch(() => {
-        //     localStorage.removeItem('userData')
-        //     localStorage.removeItem('refreshToken')
-        //     localStorage.removeItem('accessToken')
-        //     setUser(null)
-        //     setLoading(false)
-        //     if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-        //       router.replace('/login')
-        //     }
-        //   })
-      } else {
-        // set user from localstorage
-        setUser(JSON.parse(userData))
-        setLoading(false)
+    if(isLoggedIn) {
+      const initAuth = async (): Promise<void> => {
+        const userData = localStorage.getItem('userData')!
+        if (!userData || userData === 'undefined') {
+          setLoading(true)
+          meEndpoint()
+        } else {
+          setUser(JSON.parse(userData))
+          setLoading(false)
+        }
       }
+      initAuth()
     }
-    initAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn])
 
-  if(loginIsLoading) {
-    console.log('Trying to login')
-  } else if(loginIsError) {
-    console.log(loginError)
-  } else if(loginData) {
-    console.log('login data for remember me is: ', loginData)
-      if (rememberMe) {
-      // window.localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
-      // window.localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
+  useEffect(() => {
+    onSuccessMeEndpoint(meEndpointData)
+  }, [meEndpointData])
+
+  useEffect(() => {
+    onErrorMeEndpoint(meEndpointError)
+  }, [meEndpointIsError])
+
+  useEffect(() => {
+    if(loginData) {
+      onSuccessLogin(loginData)
+    }
+  }, [loginData])
+
+   const onSuccessfulLogout = () => {
+      window.localStorage.removeItem('userData')
+      window.localStorage.removeItem(authConfig.storageTokenKeyName)
+      window.localStorage.removeItem(authConfig.onTokenExpiration)
+      setIsLoggedIn(false)
+      setLoading(false)
+      router.push('/login')
+   }
+
+  
+  const onSuccessMeEndpoint = (meEndpointData: any) => {
+    console.log('me endpoint data', meEndpointData)
+    setUser(meEndpointData)
+    window.localStorage.setItem('userData', JSON.stringify(meEndpointData))
+    const returnUrl = router.query.returnUrl
+    const redirectURL = returnUrl && returnUrl !== '/dashboards/analytics/' ? returnUrl : '/dashboards/analytics/'
+    setLoading(false)
+    router.replace(redirectURL as string)
+  }
+  
+  const onErrorMeEndpoint = (meEndpointError: any) => {
+    console.log('meEndpointError', meEndpointError)
+    setLoading(false)
+    localStorage.removeItem('userData')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('accessToken')
+    setUser(null)
+    router.replace('/login')
+    if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+      console.log('routing to login page')
+    }
+  }
+
+  const onSuccessLogin = (loginData: any) => {
+    console.log(loginData)
+    if (rememberMe) {
+      window.localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
+      window.localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
     }
     setIsLoggedIn(true)
   }
 
 
-  if(meEndpointIsLoading) {
-    console.log('Trying to meEndpoint')
-  } else if(meEndpointIsError) {
-    console.log(meEndpointError)
-  } else if(meEndpointData) {
-        setLoading(false)
-        console.log('me endpoint data', meEndpointData)
-        setUser(meEndpointData)
-        window.localStorage.setItem('userData', JSON.stringify(meEndpointData))
-        const returnUrl = router.query.returnUrl
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-        router.replace(redirectURL as string)
-  }
-
 
   const handleLogin = (params: LoginParams) => {
+    setLoading(true)
     const {rememberMe} = params
     setRememberMe(rememberMe!)
     login(params)
-
-
-    // axiosConfig
-    //   .post(authConfig.loginEndpoint, params)
-    //   .then(async response => {
-    //     if (params.rememberMe) {
-    //       window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accesstoken)
-    //       window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshtoken)
-    //     }
-    //     setIsLoggedIn(true)
-    //   })
-    //   .catch(err => {
-    //     if (errorCallback) errorCallback(err)
-    //   })
   }
 
   const handleLogout = () => {
+    logout()
     setUser(null)
-    try {
-      logout()
-      window.localStorage.removeItem('userData')
-      window.localStorage.removeItem(authConfig.storageTokenKeyName)
-      window.localStorage.removeItem(authConfig.onTokenExpiration)
-      setIsLoggedIn(false)
-      router.push('/login')
-    } catch (error) {
-      console.log('could not log out')
-    }
+    console.log('i am here in logout')
+    onSuccessfulLogout()
+
   }
 
   const values = {
