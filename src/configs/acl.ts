@@ -12,6 +12,22 @@ export type ACLObj = {
 }
 
 /**
+ * const ability = defineAbility((can) => {
+  can('read', 'Post');
+});
+
+router.get('/posts', (req, res) => {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'block';
+
+  ability.beforeEach(() => {
+    loader.style.display = 'block';
+  });
+
+  ability.can('read', 'Post');
+
+  loader.style.display = 'none';
+});
  * Please define your own Ability rules according to your app requirements.
  * We have just shown Admin and Client rules for demo purpose where
  * admin can manage everything and client can just visit ACL page

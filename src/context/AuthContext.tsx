@@ -40,26 +40,18 @@ const AuthProvider = ({ children }: Props) => {
   const router = useRouter()
 
   const [login, 
-    {isLoading: loginIsLoading, 
-      isError: loginIsError, 
-      error: loginError, 
+    {
       data: loginData}
   ] = useLoginMutation()
 
   const [meEndpoint, 
-    {isLoading: meEndpointIsLoading, 
+    {
       isError: meEndpointIsError, 
       error: meEndpointError, 
       data: meEndpointData}
   ] = useMeEndpointMutation()
 
-  const [logout, 
-
-    {isLoading: logoutIsLoading, 
-      isError: logoutIsError,
-       error: logoutError,
-        data: logoutData}
-  ] = useLogoutMutation()
+  const [logout] = useLogoutMutation()
 
   useEffect(() => {
     if(isLoggedIn) {
