@@ -49,7 +49,7 @@ import { UsersType } from './userTypes'
 export type PostsTypes = {
   _id: string
   ba: string
-  boost: boolean
+  boost: string
   client: string
   content: string
   creator: UsersType

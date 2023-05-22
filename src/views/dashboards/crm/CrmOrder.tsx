@@ -4,6 +4,7 @@ import CardStatisticsVertical from 'src/@core/components/card-statistics/card-st
 const CrmOrder = () => {
   return (
     <CardStatisticsVertical
+      isLoading={false}
       title='Order'
       stats='$1,286'
       trend='negative'

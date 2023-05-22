@@ -23,7 +23,7 @@ const AnalyticsPostCount = () => {
     <CardStatisticsVertical
     isLoading ={isLoading || isLoadingPostCountForDm || isLoadingPostCountForC}
       title='Total Posts'
-      stats={ (data && data) || (PostCountForDmData && PostCountForDmData) || (PostCountForCData && PostCountForCData)}
+      stats={ (data ? data.toString() : PostCountForDmData ? PostCountForDmData.toString() : PostCountForCData ? PostCountForCData.toString()  : 'No Data')}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

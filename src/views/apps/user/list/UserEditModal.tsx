@@ -75,16 +75,11 @@ const UserEditModal = ({user} : pageProps) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = async (data: UserData, e: SubmitEvent) => {
-    e.stopPropagation()
-    console.log('done submitting', data)
+  const onSubmit = async (data: UserData) => {
     editUser(data)
     handleClose()
   }
 
-  const onError = (error) => {
-    console.log(error)
-  } 
 
   const handleClickOpen = () => setOpen(true)
 
@@ -95,7 +90,7 @@ const UserEditModal = ({user} : pageProps) => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: "Edit Error"})
+    showErrorAlert({error: error})
   } else if(data) {
     showSuccessAlert({text: 'User Created'})
   }
@@ -114,7 +109,7 @@ const UserEditModal = ({user} : pageProps) => {
             <Typography variant={'h4'}>Edit User Details:</Typography>
         </DialogTitle> 
         <Box sx={{ p: 5 }}>
-        <form onSubmit={handleSubmit(onSubmit, onError)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller

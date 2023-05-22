@@ -1,9 +1,22 @@
+import { SerializedError } from '@reduxjs/toolkit'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
 import Swal from 'sweetalert2'
 
 type alertParams = {
   text?: string
 }
+type dataType = {
+  errorMessage: string
+}
 
+type ExtendedSerializedError = errorParams & {
+  status: number
+  data: dataType
+}
+
+type errorParams = {
+  error: FetchBaseQueryError | SerializedError | undefined
+}
 export const showLoadingAlert = () => {
   Swal.fire({
     title: 'Loading!',
@@ -19,10 +32,11 @@ export const showLoadingAlert = () => {
     }
   })
 }
-export const showErrorAlert = ({ text }: alertParams) => {
+export const showErrorAlert = ({ error }: errorParams) => {
+  const extendedError: ExtendedSerializedError = error as ExtendedSerializedError
   Swal.fire({
     title: 'Error!',
-    text: text,
+    text: extendedError.status === 500 ? 'Internal Server Error' : extendedError.data.errorMessage,
     icon: 'error',
     toast: true,
     position: 'top',

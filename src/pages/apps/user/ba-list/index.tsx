@@ -13,6 +13,7 @@ import UserListTable from 'src/views/apps/user/list/UserListTable'
 //redux
 import { useFetchBaListQuery } from 'src/store/query/userApi'
 import Loader from 'src/shared-components/Loader'
+import { showErrorAlert } from 'src/utils/swal'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -35,7 +36,7 @@ const BaList = () => {
   if(isLoading) {
     console.log('getting data')
   } else if(isError) {
-    console.log(error.data.errorMessage)
+    showErrorAlert({error : error})
     console.log('error getting data')
   } else {
     console.log('rtk query data: ',baList)

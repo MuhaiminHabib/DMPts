@@ -38,6 +38,12 @@ const defaultValues = {
   newPasswordVerify: ''
 }
 
+interface FormData {
+  currentPassword: string, 
+  newPassword:  string, 
+  newPasswordVerify: string
+} 
+
 const schema = yup.object().shape({
   currentPassword: yup.string().min(8).required(),
   newPassword: yup
@@ -93,7 +99,7 @@ const ChangePasswordCard = () => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: error!.data.errorMessage})
+    showErrorAlert({error: error})
   } else if(data) {
     console.log(data)
   }

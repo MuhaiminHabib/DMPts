@@ -1,18 +1,20 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { BaseQueryFn, FetchArgs, FetchBaseQueryError, FetchBaseQueryMeta } from '@reduxjs/toolkit/query'
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { baseURL } from 'src/utils/constants'
 import authConfig from 'src/configs/auth'
 
-type RefreshResultData = {
-  accesstoken: string
-  refreshtoken: string
-}
+// type RefreshResultData = {
+//   accesstoken: string
+//   refreshtoken: string
+// }
 
-type RefreshResultType = {
-  data?: RefreshResultData | undefined
-  error?: FetchBaseQueryError
-  meta?: FetchBaseQueryMeta
-}
+// type RefreshResultType = {
+//   data: RefreshResultData | undefined
+//   error: FetchBaseQueryError
+//   meta: FetchBaseQueryMeta
+// }
+
+// const [logout] = useLogoutMutation()
 
 const baseQuery = fetchBaseQuery({
   baseUrl: baseURL,
@@ -48,11 +50,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   console.log('result is:', result)
   if (result.error && result.error.status === 401) {
     console.log('in 401')
-    const refreshResult: RefreshResultType = await baseQueryForAccessToken(
-      '/API/auth/get-access-token',
-      api,
-      extraOptions
-    )
+    const refreshResult: any = await baseQueryForAccessToken('/API/auth/get-access-token', api, extraOptions)
     if (refreshResult.data) {
       console.log('refresh result is:', refreshResult.data)
       console.log('refresh result accessToken:', refreshResult.data.accesstoken)
@@ -64,7 +62,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
       result = await baseQuery(args, api, extraOptions)
     } else {
-      api.dispatch(logOut())
+      //logout needed here
       window.localStorage.removeItem('userData')
       window.localStorage.removeItem(authConfig.storageTokenKeyName)
       window.location.replace('/login')

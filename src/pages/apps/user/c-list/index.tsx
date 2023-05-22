@@ -83,7 +83,7 @@ const CList = () => {
 
 
   if ((auth.user?.role === 'A' && isErrorCList) || (auth.user?.role === 'BA' && isErrorCListForBa) || (auth.user?.role === 'DM' && isErrorCListForDm)) {
-    showErrorAlert({text: cListError!.data.errorMessage || cListForBaError!.data.errorMessage || cListForDmError!.data.errorMessage})
+    showErrorAlert({error: cListError || cListForBaError || cListForDmError})
   } 
 
 

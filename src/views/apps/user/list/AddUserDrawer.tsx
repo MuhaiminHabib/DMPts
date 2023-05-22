@@ -42,7 +42,7 @@ interface UserData {
   email: string
   firstName: string
   lastName: string
-  type: 'BA' | 'DM' | 'C'
+  role: string
 }
 
 // const showErrors = (field: string, valueLen: number, min: number) => {
@@ -52,7 +52,6 @@ interface UserData {
 //     return `${field} must be at least ${min} characters`
 //   } else {
 //     return ''
-//   }
 // }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
@@ -108,8 +107,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const onSubmit = async (data: UserData, e: SubmitEvent) => {
-    e.stopPropagation()
+  const onSubmit = async (data: UserData) => {
     console.log('from form:', data)
     createUser(data)
     handleClose()
@@ -125,7 +123,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: error!.status === 500 ? "Internal Server Error" : error!.data.errorMessage })
+    showErrorAlert({error: error })
   } else if(data) {
     showSuccessAlert({text: 'User Created'})
   }

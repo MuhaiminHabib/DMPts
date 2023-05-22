@@ -45,8 +45,8 @@ interface PostData {
   boost: string
   client: string
   description: string
-  permissionLevel: 'D' | 'C'
-  platform: 'google' | 'fb'
+  permissionLevel: string
+  platform: string[]
   postingDate: string
   postingEndDate: string
   title: string
@@ -94,7 +94,7 @@ const defaultValues = {
   postingDate: '',
   postingEndDate: '',
   permissionLevel: '',
-  boost: 'false',
+  boost: '',
   url: '',
   fileName: '',
 }
@@ -133,10 +133,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const onSubmit = async (data: PostData, e: SubmitEvent) => {
-    e.stopPropagation()
-    console.log('submitted',data)
-    createPost(data)
+  const onSubmit = async (data: any) => {
+    data.platform = [data.platform]
+    createPost(data as PostData)
     handleClose()
   }
 
@@ -150,7 +149,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: error!.status === 500 ? 'Error Occured' : error!.data.errorMessage})
+    showErrorAlert({error: error})
   } else if(data) {
     showSuccessAlert({text: 'Post Created'})
   }
@@ -173,7 +172,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.role)} htmlFor='validation-billing-select'>
+            <InputLabel id='validation-billing-select' error={Boolean(errors.client)} htmlFor='validation-billing-select'>
             Select Client
             </InputLabel>
             <Controller
@@ -244,7 +243,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             {errors.description && <FormHelperText sx={{ color: 'error.main' }}>{errors.description.message}</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.role)} htmlFor='validation-billing-select'>
+            <InputLabel id='validation-billing-select' error={Boolean(errors.platform)} htmlFor='validation-billing-select'>
             Select platform
             </InputLabel>
             <Controller

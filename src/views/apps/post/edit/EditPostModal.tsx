@@ -24,7 +24,7 @@ type pageProps = {
 }
 
 type platform = {
-    platform: 'google' | 'fb'
+    platform: string
 }
 
 interface PostData {
@@ -64,11 +64,11 @@ const EditPostModal = ({post} : pageProps) => {
     id: post._id,
     title: post.title,
     description: post.description,
-    platform: post.platform[0].platform,
+    platform: post.platform[0],
     postingDate: new Date(post.postingDate).toISOString().split('T')[0],
     postingEndDate: new Date(post.postingEndDate).toISOString().split('T')[0],
-    permissionLevel: post.permissionLevel.permissionLevelName,
-    boost: post.boost,
+    permissionLevel: post.permissionLevel,
+    boost: post.boost.toString(),
     url: post.url,
   }
 
@@ -87,10 +87,9 @@ const EditPostModal = ({post} : pageProps) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = async (data: PostData, e: SubmitEvent) => {
-    e.stopPropagation()
-    console.log('submitted', data)
-    editPost(data)
+  const onSubmit = async (data: any) => {
+    data.platform = [data.platform]
+    editPost(data as PostData)
     handleClose()
   }
 
@@ -109,7 +108,7 @@ const EditPostModal = ({post} : pageProps) => {
     showLoadingAlert()
   } else if(isError) {
     console.log(error)
-    showErrorAlert({text: error!.status === 500 ? "Iternal Server Error" : error!.data.errorMessage})
+    showErrorAlert({error: error})
   } else if(data) {
     showSuccessAlert({text: 'Post Edited Successfully'})
   }
@@ -343,16 +342,6 @@ const EditPostModal = ({post} : pageProps) => {
               <FormHelperText sx={{ color: 'error.main' }}>{errors.url.message}</FormHelperText>
             )}
           </FormControl>
-
-          
-        {/* <DialogActions>
-          
-          <Button type='submit' variant='contained'>
-            Update Post
-          </Button>
-
-          <Button type='submit'>hello</Button>
-        </DialogActions> */}
         <Button variant='outlined' color='secondary' onClick={handleClose}>
             Close
           </Button>

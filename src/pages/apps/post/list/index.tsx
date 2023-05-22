@@ -32,17 +32,6 @@ import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useF
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 import { AbilityContext } from 'src/layouts/components/acl/Can'
-import { SerializedError } from '@reduxjs/toolkit'
-
-type dataType = {
-  errorMessage: string;
-}
-
-type ExtendedSerializedError = SerializedError & {
-  status: number;
-  data: dataType;
-}
-
 
 
 
@@ -56,7 +45,11 @@ const InvoiceList = () => {
 
   // ** Hooks
   const ability = useContext(AbilityContext)
-  const {isLoading, isError, error, data: posts} = useFetchPostsQuery(postPage)
+  const {isLoading, 
+
+    // isError, error, 
+    data: posts} = useFetchPostsQuery(postPage)
+
   const {isLoading: isLoadingFetchPostsforDm,
 
     //  isError: isErrorFetchPostsforDm, 
@@ -87,23 +80,10 @@ const InvoiceList = () => {
 
   
 
-  if(FetchPostsforCData) {
-    console.log('C posts are: ', FetchPostsforCData)
-  } else if(posts) {
-    console.log('posts posts are: ', posts)
-  } else if(FetchPostsforDmData) {
-    console.log('Dm posts are: ', FetchPostsforDmData)
-  }else if (isError) {
-    console.log(error)
-  } else if(isLoading) {
-    console.log('Loading')
-  }
-
   if(isDeletePostLoading) {
     showLoadingAlert()
   } else if (isDeletePostError) {
-    const naam : ExtendedSerializedError = deletePostError as ExtendedSerializedError
-    showErrorAlert({text: naam.status === 500 ? "Internal Server Error" : naam.data.errorMessage})
+    showErrorAlert({error : deletePostError})
   } else if(deletePostData) {
     showSuccessAlert({text: 'Post Deleted'})
   }

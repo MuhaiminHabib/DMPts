@@ -115,8 +115,8 @@ const UserListTable = ({
                   <TableRow
                     key={user._id}
                     sx={{
+                      '&:child td' : {background: !user.active ? '#c1c1c1' : 'fffff'},
                       '&:last-child td, &:last-child th': { border: 0 },
-                      background: !user.active && '#c1c1c1'
                     }}
                   >
                     <TableCell component='th' scope='row'>

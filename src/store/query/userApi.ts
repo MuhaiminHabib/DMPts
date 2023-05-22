@@ -18,7 +18,7 @@ type InactiveBaParams = {
 
 const userApi = baseApi.injectEndpoints({
   endpoints: build => ({
-    createUser: build.mutation<User, Omit<User, 'id'>>({
+    createUser: build.mutation<User, Partial<User>>({
       query(data) {
         return {
           url: `/API/auth/create-user`,
