@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment, useContext } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -22,6 +22,7 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
+import { AuthContext } from 'src/context/AuthContext'
 
 interface Props {
   settings: Settings
@@ -46,6 +47,7 @@ const UserDropdown = (props: Props) => {
   // ** Hooks
   const router = useRouter()
   const { logout } = useAuth()
+  const {user} = useContext(AuthContext)
 
   // ** Vars
   const { direction } = settings
@@ -118,18 +120,25 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt='avatar_image' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ ml: 3, display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{user!.username}</Typography>
               <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                Admin
+                {user!.role === 'A' ? 'Admin' 
+                  : user!.role === 'BA' ? "Business Admin"
+                  : user!.role === 'DM' ? 'Digital Manager' 
+                  : user!.role === 'C' ? 'Client' 
+                  : user!.role === 'CM' ? "Client Manager" 
+                  : null}
               </Typography>
             </Box>
           </Box>
         </Box>
+
         <Divider sx={{ mt: '0 !important' }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
+
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
           <Box sx={styles}>
             <Icon icon='bx:user' />
             Profile
@@ -146,15 +155,17 @@ const UserDropdown = (props: Props) => {
             <Icon icon='bx:message' />
             Chat
           </Box>
-        </MenuItem>
-        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
+        </MenuItem> */}
+        {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} /> */}
+
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/account-settings/account')}>
           <Box sx={styles}>
             <Icon icon='bx:cog' />
             Settings
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/pricing')}>
+
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/pricing')}>
           <Box sx={styles}>
             <Icon icon='bx:dollar' />
             Pricing
@@ -165,7 +176,7 @@ const UserDropdown = (props: Props) => {
             <Icon icon='bx:help-circle' />
             FAQ
           </Box>
-        </MenuItem>
+        </MenuItem> */}
         <Divider />
         <MenuItem
           onClick={handleLogout}

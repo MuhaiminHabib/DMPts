@@ -1,35 +1,25 @@
 import CardStatisticsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 
-import { useCmCountQuery, useCmCountforCQuery } from 'src/store/query/statusApi'
+import { useCmCountQuery, useCmCountforBAQuery, useCmCountforCQuery } from 'src/store/query/statusApi'
 
 
 
 const AnalyticsCMCount = () => {
   // ** Hook
-  // const theme = useTheme()
-  const {isLoading, isError, error, data} = useCmCountQuery()
-  const {isLoading : isLoadingCmCountforC, 
-    // isError: isErrorCmCountforC, 
-    // error : cmCountforCError, 
+  const {isLoading, data} = useCmCountQuery()
+  const {isLoading: cmCountforBaIsLoading, data : cmCountforBaData} = useCmCountforBAQuery()
+  const {
+    isLoading : isLoadingCmCountforC, 
     data : cmCountforCData} = useCmCountforCQuery()
   
 
-  if(data) {
-    console.log('cm count is: ',  data)
-  } else if (cmCountforCData) {
-    console.log('cm count for c is ',cmCountforCData)
-  }  else if (isError) {
-    console.log('post count error',error)
-  } else if(isLoading) {
-    console.log('Loading')
-  }
 
   return (
 
     <CardStatisticsVertical
-      isLoading={isLoading || isLoadingCmCountforC}
+      isLoading={isLoading || cmCountforBaIsLoading || isLoadingCmCountforC}
       title='Client Managers'
-      stats={(data ? data.toString() : cmCountforCData ? cmCountforCData.toString() : "No data")}
+      stats={(data ? data.toString() : cmCountforBaData ? cmCountforBaData.toString() : cmCountforCData ? cmCountforCData.toString() : "No data")}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

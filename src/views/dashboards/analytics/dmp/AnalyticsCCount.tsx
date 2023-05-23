@@ -1,19 +1,19 @@
 import CardStatisticsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 
-import { useCCountQuery, useCCountforDmQuery,  } from 'src/store/query/statusApi'
+import { useCCountQuery, useCCountforBAQuery, useCCountforDmQuery,  } from 'src/store/query/statusApi'
 
 
 
 const AnalyticsCCount = () => {
   // ** Hook
-  // const theme = useTheme()
-
-  const {isLoading, 
-    // isError, error, 
+  const {
+    isLoading, 
     data} = useCCountQuery()
-  const {isLoading: isLoadingCCountforDm, 
-    // isError: isErrorCCountforDm, 
-    // error: CCountforDmError, 
+  const {
+    isLoading : CCountforBaIsLoading, 
+    data: CCountforBaData} = useCCountforBAQuery()
+  const {
+    isLoading: isLoadingCCountforDm, 
     data: CCountforDmData} = useCCountforDmQuery()
   
 
@@ -25,9 +25,9 @@ const AnalyticsCCount = () => {
 
   return (
     <CardStatisticsVertical
-    isLoading={isLoading || isLoadingCCountforDm}
+    isLoading={isLoading || CCountforBaIsLoading || isLoadingCCountforDm}
       title='Total Clients'
-      stats={ data ? data.toString() : CCountforDmData ? CCountforDmData.toString() : 'No Data'}
+      stats={ data ? data.toString() : CCountforBaData ? CCountforBaData.toString() : CCountforDmData ? CCountforDmData.toString() : 'No Data'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

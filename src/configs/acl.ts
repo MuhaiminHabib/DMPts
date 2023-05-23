@@ -38,15 +38,15 @@ const defineRulesFor = (role: string, subject: string) => {
   console.log('role is:', role)
   if (role === 'A') {
     can('manage', 'all')
-    cannot(['read'], ['analytics-baStats', 'analytics-dmStats'])
+    cannot(['read'], ['analytics-baStats', 'analytics-dmStats', 'analytics-cStats'])
   } else if (role === 'BA') {
     can('manage', 'all')
-    cannot(['read'], ['businesses-navItem'])
-    cannot(['read'], ['analytics-aStats', 'analytics-dmStats'])
+    cannot(['read'], ['businesses-navItem', 'cm-navItem'])
+    cannot(['read'], ['analytics-aStats', 'analytics-dmStats', 'analytics-cStats', 'cm-list-page'])
   } else if (role === 'DM') {
     can('manage', 'all')
     cannot(['read'], ['businesses-navItem', 'dm-navItem'])
-    cannot(['read'], ['analytics-aStats', 'analytics-baStats'])
+    cannot(['read'], ['analytics-aStats', 'analytics-baStats', 'analytics-cStats'])
   } else if (role === 'C') {
     can(['manage'], 'all')
     cannot(
@@ -66,8 +66,8 @@ const defineRulesFor = (role: string, subject: string) => {
         'add-post',
         'ba-list-page',
         'c-list-page',
-        'cm-list-page',
-        'dm-list-page'
+        'dm-list-page',
+        'cm-list-page'
       ]
     )
   } else {

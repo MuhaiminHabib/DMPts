@@ -69,20 +69,16 @@ const LinkStyled = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main
 }))
 
+interface FormData {
+  username: string
+  password: string
+}
+
 const schema = yup.object().shape({
   username: yup.string().required(),
   password: yup.string().min(5).required()
 })
 
-const defaultValues = {
-  username: 'root',
-  password: 'Root@2023'
-}
-
-interface FormData {
-  username: string
-  password: string
-}
 
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
@@ -104,7 +100,10 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    defaultValues,
+    defaultValues : {
+      username: 'root',
+      password: 'Root@2023'
+    },
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
@@ -228,14 +227,6 @@ const LoginPage = () => {
             <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 4 }}>
               Sign in
             </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Typography variant='body2' sx={{ mr: 2 }}>
-                New on our platform?
-              </Typography>
-              {/* <Typography>
-                <LinkStyled href='/register'>Create an account</LinkStyled>
-              </Typography> */}
-            </Box>
           </form>
         </Box>
       </RightWrapper>

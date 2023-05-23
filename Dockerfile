@@ -12,7 +12,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# RUN npm run build
+RUN npm run build
 
 FROM node:18-alpine AS runner
 WORKDIR /app
@@ -33,4 +33,4 @@ EXPOSE 4000
 
 ENV PORT 4000
 
-CMD ["yarn","run", "dev"]
+CMD ["npm","run", "start"]

@@ -11,6 +11,7 @@ import authConfig from 'src/configs/auth'
 // ** Types
 import { AuthValuesType, LoginParams, UserDataType } from './types'
 import { useLogoutMutation, useLoginMutation, useMeEndpointMutation } from 'src/store/query/authApi'
+import { showErrorAlert } from 'src/utils/swal'
 
 
 // ** Defaults
@@ -41,6 +42,8 @@ const AuthProvider = ({ children }: Props) => {
 
   const [login, 
     {
+      isError: loginIsError,
+      error: loginError,
       data: loginData}
   ] = useLoginMutation()
 
@@ -82,6 +85,14 @@ const AuthProvider = ({ children }: Props) => {
       onSuccessLogin(loginData)
     }
   }, [loginData])
+
+  useEffect(() => {
+    if(loginIsError) {
+      setLoading(false)
+      showErrorAlert({error: loginError})
+      router.push('/login')
+    }
+  }, [loginIsError])
 
    const onSuccessfulLogout = () => {
       window.localStorage.removeItem('userData')

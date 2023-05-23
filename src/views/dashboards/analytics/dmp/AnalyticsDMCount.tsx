@@ -1,7 +1,7 @@
 import CardStatisticsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
+import { useDmCountQuery, useDmCountforBAQuery } from 'src/store/query/statusApi'
 
-// ** Custom Components Imports
-import { useDmCountQuery } from 'src/store/query/statusApi'
+
 
 
 const AnalyticsDMCount = () => {
@@ -9,22 +9,29 @@ const AnalyticsDMCount = () => {
   // const theme = useTheme()
 
 
-  const {isLoading, isError, error, data} = useDmCountQuery()
+  const {isLoading, data} = useDmCountQuery()
+
+  const {
+    isLoading : DmCountforBaIsLoading, 
+    isError: dmforBAIsError,
+    error: dmforBAError,
+    data: DmCountforBaData} = useDmCountforBAQuery()
+
   
 
-  if(data) {
-    console.log(' count of DM is : ',  data)
-  } else if (isError) {
-    console.log(' DM count error',error)
-  } else if(isLoading) {
-    console.log('Loading')
+  if(DmCountforBaData) {
+    console.log(' count of DM is : ',  DmCountforBaData)
+  } else if(dmforBAIsError) {
+    console.log(dmforBAError)
+  } else if(DmCountforBaIsLoading) {
+    console.log('it is loading')
   }
 
   return (
     <CardStatisticsVertical
-      isLoading= {isLoading}
+      isLoading= {isLoading || DmCountforBaIsLoading}
       title='Digital Managers'
-      stats={data? data.toString() : 'No data'}
+      stats={data? data.toString() : DmCountforBaData ? DmCountforBaData.toString() : '0'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

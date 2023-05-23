@@ -8,37 +8,62 @@ const userApi = baseApi.injectEndpoints({
   endpoints: build => ({
     //Admin
     baCount: build.query<StatusResponse, void>({
-      query: () => '/API/auth/total-of-ba'
+      query: () => '/API/auth/total-of-ba',
+      providesTags: [{ type: 'User', id: 'BA' }]
+    }),
+    dmCount: build.query<StatusResponse, void>({
+      query: () => '/API/auth/a-gets-total-of-dm',
+      providesTags: [{ type: 'User', id: 'DM' }]
+    }),
+    cCount: build.query<StatusResponse, void>({
+      query: () => '/API/auth/a-gets-total-of-c',
+      providesTags: [{ type: 'User', id: 'C' }]
+    }),
+    cmCount: build.query<StatusResponse, void>({
+      query: () => '/API/auth/a-gets-total-of-cm',
+      providesTags: [{ type: 'User', id: 'CM' }]
+    }),
+    postCount: build.query<StatusResponse, void>({
+      query: () => '/API/posting/a-get-total-of-posts',
+      providesTags: ['Post']
     }),
 
     //BA
-    dmCount: build.query<StatusResponse, void>({
-      query: () => '/API/auth/auth/ba-get-total-of-dm'
+    dmCountforBA: build.query<StatusResponse, void>({
+      query: () => 'API/auth/ba-gets-total-of-dm',
+      providesTags: [{ type: 'User', id: 'DM' }]
     }),
-    cCount: build.query<StatusResponse, void>({
-      query: () => '/API/auth/total-of-c'
+    cCountforBA: build.query<StatusResponse, void>({
+      query: () => '/API/auth/ba-gets-total-of-c',
+      providesTags: [{ type: 'User', id: 'C' }]
     }),
-    cmCount: build.query<StatusResponse, void>({
-      query: () => '/API/auth/ba-gets-total-of-cm'
+    cmCountforBA: build.query<StatusResponse, void>({
+      query: () => '/API/auth/ba-gets-total-of-cm',
+      providesTags: [{ type: 'User', id: 'CM' }]
     }),
-    postCount: build.query<StatusResponse, void>({
-      query: () => '/API/posting/ba-get-total-of-posts'
+    postCountforBA: build.query<StatusResponse, void>({
+      query: () => '/API/posting/ba-get-total-of-posts',
+      providesTags: ['Post']
     }),
 
     //DM
     cCountforDm: build.query<StatusResponse, void>({
-      query: () => '/API/auth/dm-gets-total-of-c'
+      query: () => '/API/auth/dm-gets-total-of-c',
+      providesTags: [{ type: 'User', id: 'C' }]
     }),
     postCountforDm: build.query<StatusResponse, void>({
-      query: () => '/API/posting/dm-get-total-of-posts'
+      query: () => '/API/posting/dm-get-total-of-posts',
+      providesTags: ['Post']
     }),
 
     //C
     cmCountforC: build.query<StatusResponse, void>({
-      query: () => '/API/auth/c-gets-total-of-cm'
+      query: () => '/API/auth/c-gets-total-of-cm',
+      providesTags: [{ type: 'User', id: 'CM' }]
     }),
     postCountforC: build.query<StatusResponse, void>({
-      query: () => '/API/posting/c-get-total-of-posts'
+      query: () => '/API/posting/c-get-total-of-posts',
+      providesTags: ['Post']
     })
   }),
   overrideExisting: false
@@ -50,6 +75,10 @@ export const {
   useCCountQuery,
   useCmCountQuery,
   usePostCountQuery,
+  useDmCountforBAQuery,
+  useCCountforBAQuery,
+  useCmCountforBAQuery,
+  usePostCountforBAQuery,
   useCCountforDmQuery,
   usePostCountforDmQuery,
   usePostCountforCQuery,

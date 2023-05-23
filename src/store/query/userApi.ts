@@ -147,15 +147,6 @@ const userApi = baseApi.injectEndpoints({
         }
       },
       invalidatesTags: [{ type: 'User', id: 'CM' }]
-    }),
-
-    logout: build.mutation<void, void>({
-      query() {
-        return {
-          url: '/API/auth/logout',
-          method: 'GET'
-        }
-      }
     })
   }),
   overrideExisting: false
@@ -178,6 +169,5 @@ export const {
   useFetchCListForDMQuery,
   useDmDeletesCMutation,
   useFetchCmListForCQuery,
-  useCDeletesCmMutation,
-  useLogoutMutation
+  useCDeletesCmMutation
 } = userApi

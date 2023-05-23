@@ -10,6 +10,10 @@ type LoginInputs = {
   username: string
   password: string
 }
+type ForgotPasswordInputs = {
+  username: string
+  email: string
+}
 type ChangePasswordInputs = {
   currentPassword: string
   newPassword: string
@@ -32,10 +36,11 @@ const authApi = baseApi.injectEndpoints({
         body: body
       })
     }),
-    logout: build.mutation<void, void>({
-      query: () => ({
-        url: `/API/auth/logout`,
-        method: 'GET'
+    forgotPassword: build.mutation<any, ForgotPasswordInputs>({
+      query: (body: ForgotPasswordInputs) => ({
+        url: `/API/auth/forget-password`,
+        method: 'POST',
+        body: body
       })
     }),
     meEndpoint: build.mutation<void, void>({
@@ -43,9 +48,22 @@ const authApi = baseApi.injectEndpoints({
         url: '/API/auth/info',
         method: 'GET'
       })
+    }),
+    logout: build.mutation<void, void>({
+      query: () => ({
+        url: `/API/auth/logout`,
+        method: 'GET'
+      }),
+      invalidatesTags: ['User', 'Post']
     })
   }),
   overrideExisting: false
 })
 
-export const { useLoginMutation, useChangePasswordMutation, useLogoutMutation, useMeEndpointMutation } = authApi
+export const {
+  useLoginMutation,
+  useChangePasswordMutation,
+  useForgotPasswordMutation,
+  useLogoutMutation,
+  useMeEndpointMutation
+} = authApi
