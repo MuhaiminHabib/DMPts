@@ -1,29 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
 import { useState, useEffect, useContext } from 'react'
-
-// ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
-
-
-// ** Actions Imports
-import { fetchCList, fetchCListforBA } from 'src/store/apps/user'
-
-
-// ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-
-// import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
-
-
-
-import axiosConfig from 'src/configs/axios'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 import { AuthContext } from 'src/context/AuthContext'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { showErrorAlert } from 'src/utils/swal'
 
-// import axiosConfig from 'src/configs/axios'
 
 interface UserRoleType {
   [key: string]: { icon: string; color: string }
@@ -56,26 +40,68 @@ const userStatusObj: UserStatusType = {
 
 
 
-const UserList = () => {
+const CList = () => {
+  
   // ** State
+  const [userList, setUserList] = useState<UsersType[]>([])
 
-  // ** Hooksß
-  const dispatch = useDispatch<AppDispatch>()
-  const {cList} = useSelector((state: RootState) => state.user)
+  // ** Hooks
+
   const auth = useContext(AuthContext)
+  const {
+    isLoading :isLoadingCList, 
+
+    isError: isErrorCList, 
+    error : cListError, 
+    data: cListData} = useFetchCListQuery()
+
+  const {
+    isLoading :isLoadingCListForBa, 
+
+    isError: isErrorCListForBa, 
+    error : cListForBaError, 
+    data: cListForBaData} = useFetchCListForBAQuery()
+    
+  const {
+    isLoading :isLoadingCListForDm, 
+
+    isError: isErrorCListForDm, 
+    error : cListForDmError, 
+    data: cListForDmData} = useFetchCListForDMQuery()
+  
 
   useEffect(() => {
     console.log(auth.user?.role)
-    if(auth.user?.role === 'A') {
-      dispatch(fetchCList())
-    } else if(auth.user?.role === 'BA') {
-      dispatch(fetchCListforBA())
+    if(auth.user?.role === 'A' && cListData) {
+      setUserList(cListData)
+    } else if(auth.user?.role === 'BA' && cListForBaData) {
+      setUserList(cListForBaData)
+    } else if(auth.user?.role === 'DM' && cListForDmData) {
+      setUserList(cListForDmData)
     }
-  }, [])
+  }, [cListData, cListForBaData, cListForDmData, auth])
+
+
+  if ((auth.user?.role === 'A' && isErrorCList) || (auth.user?.role === 'BA' && isErrorCListForBa) || (auth.user?.role === 'DM' && isErrorCListForDm)) {
+    showErrorAlert({error: cListError || cListForBaError || cListForDmError})
+  } 
+
 
   return (
-    <UserListTable title={'All Clients'} userList={cList} showAccociatedBtn={true} showHeader={true} addClient={true}/>
+    <UserListTable 
+      title={'All Clients'} 
+      userList={userList} 
+      showAccociatedBtn={true} 
+      showHeader={true} 
+      addClient={true}
+      showLoading={isLoadingCList || isLoadingCListForBa || isLoadingCListForDm} 
+      showDeleteBtn={auth.user?.role === 'BA' ? true : false}/>
   )
 }
 
-export default UserList
+CList.acl = {
+  action: 'read',
+  subject: 'c-list-page'
+}
+
+export default CList

@@ -1,12 +1,8 @@
 // ** React Imports
-import { useState, useEffect, forwardRef } from 'react'
-
-// ** Next Import
-import Link from 'next/link'
+import { useState, useContext } from 'react'
 
 // ** MUI Imports
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -19,51 +15,79 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip
+  Tooltip,
+
 } from '@mui/material'
 import PostDetailsModal from 'src/views/apps/post/view/PostDetailsModal'
-import { PostsTypes } from 'src/types/apps/postTypes'
+
 import Loader from 'src/shared-components/Loader'
-import { useDispatch } from 'react-redux'
-import { AppDispatch, RootState } from 'src/store'
-import { useSelector } from 'react-redux'
-import { deletePost, fetchPosts } from 'src/store/apps/post'
+
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import TableHeader from 'src/views/apps/post/list/TableHeader'
-import { fetchCList } from 'src/store/apps/user'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
+
 import EditPostModal from 'src/views/apps/post/edit/EditPostModal'
-import { UsersType } from 'src/types/apps/userTypes'
+
+import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useFetchPostsforDMQuery } from 'src/store/query/postApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
+
+import { AbilityContext } from 'src/layouts/components/acl/Can'
+
 
 
 const InvoiceList = () => {
   // ** State
-  const [postPage, setPostPage] = useState<number>(1)
+
+  // const [postPage, setPostPage] = useState<string>('1')
+
+  const postPage = '1'
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
+
   // ** Hooks
+  const ability = useContext(AbilityContext)
+  const {isLoading, 
 
-  const dispatch = useDispatch<AppDispatch>()
-  const {posts, isLoading} = useSelector((state: RootState) => state.post)
+    // isError, error, 
+    data: posts} = useFetchPostsQuery(postPage)
 
-  useEffect(() => {
-    dispatch(fetchCList())
-    dispatch(fetchPosts({
-      page: postPage
-    }))
-  }, [])
+  const {isLoading: isLoadingFetchPostsforDm,
 
-  useEffect(() => {
-    console.log(posts)
-  },[posts])
+    //  isError: isErrorFetchPostsforDm, 
+    //  error: FetchPostsforDmError,
+      data: FetchPostsforDmData} = useFetchPostsforDMQuery()
+  const {isLoading: isLoadingFetchPostsforC,
+
+    //  isError: isErrorFetchPostsforC, 
+    //  error: FetchPostsforCError,
+      data: FetchPostsforCData} = useFetchPostsforCQuery()
+  const [deletePost, {
+    isLoading: isDeletePostLoading, 
+    isError: isDeletePostError,
+    error: deletePostError, 
+    data: deletePostData
+  }] = useDeletePostMutation()
+
+
 
   // ** Functions
+
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
   const handlePostDelete = (postId: string) => {
     console.log('postId', postId)
-    dispatch(deletePost(postId))
+    deletePost(postId)
   }
+
+  
+
+  if(isDeletePostLoading) {
+    showLoadingAlert()
+  } else if (isDeletePostError) {
+    showErrorAlert({error : deletePostError})
+  } else if(deletePostData) {
+    showSuccessAlert({text: 'Post Deleted'})
+  }
+
 
 
   return (
@@ -73,10 +97,10 @@ const InvoiceList = () => {
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
           <CardHeader title='Posts' />
           <TableContainer component={Paper}>
-          {isLoading ? <Loader /> : 
+          {isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
-                <TableHeader toggle={toggleAddPostDrawer} />
+              {ability?.can('read', 'add-post') ? (<TableHeader toggle={toggleAddPostDrawer} />) : null}
                 <TableRow>
                   <TableCell>Title</TableCell>
                   <TableCell>Description</TableCell>
@@ -87,7 +111,34 @@ const InvoiceList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {posts.map(post => (
+                {(posts && posts.length > 0) ? posts.map(post => (
+                  <TableRow
+                    key={post._id}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 }
+                    }}>
+                    <TableCell component='th' scope='row'>
+                      {post.title}
+                    </TableCell>
+                    <TableCell component='th' scope='row'>
+                      {post.description}
+                    </TableCell>
+
+                    <TableCell align='right'>{post.creator.username}</TableCell> 
+                    <TableCell align='right'>
+                      <Tooltip title='Post Details' placement='top-start'>
+                        <PostDetailsModal post={post}/>
+                      </Tooltip>
+                      <Tooltip title='Post Edit' placement='top-start'>
+                        <EditPostModal post={post}/>
+                      </Tooltip>
+                      <Tooltip title='Post Delete' placement='top-start'>
+                        <Button startIcon={<DeleteForeverIcon />} onClick={() => handlePostDelete(post._id)}></Button>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                )) : 
+                (FetchPostsforDmData && FetchPostsforDmData.length > 0) ? FetchPostsforDmData.map(post => (
                   <TableRow
                     key={post._id}
                     sx={{
@@ -109,15 +160,38 @@ const InvoiceList = () => {
                       <Tooltip title='Post Edit' placement='top-start'>
                         <EditPostModal post={post}/>
                       </Tooltip>
+                      
                       <Tooltip title='Post Delete' placement='top-start'>
                         <Button startIcon={<DeleteForeverIcon />} onClick={() => handlePostDelete(post._id)}></Button>
+                      </Tooltip> 
+                    </TableCell>
+                  </TableRow>
+                )) : (FetchPostsforCData && FetchPostsforCData.length > 0) ? FetchPostsforCData.map(post => (
+    
+                  <TableRow
+                    key={post._id}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 }
+                    }}
+                  >
+                    
+                    <TableCell component='th' scope='row'>
+                      {post.title}
+                    </TableCell>
+                    <TableCell component='th' scope='row'>
+                      {post.description}
+                    </TableCell>
+
+                    <TableCell align='right'>{post.creator.username}</TableCell> 
+                    <TableCell align='right'>
+                      <Tooltip title='Post Details' placement='top-start'>
+                        <PostDetailsModal post={post}/>
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                ))}
+                )) : "No Posts to show"}
               </TableBody>
-            </Table>
-}
+            </Table>}
           </TableContainer>
         </Card>
       </Grid>

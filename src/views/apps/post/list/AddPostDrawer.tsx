@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -14,11 +14,7 @@ import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/lab'
+
 
 
 // ** Third Party Imports
@@ -30,17 +26,15 @@ import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
+
 
 // ** Actions Imports
-import { createBAUser, fetchCList } from 'src/store/apps/user'
+// import { createBAUser, fetchCList } from 'src/store/apps/user'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-import { UsersType } from 'src/types/apps/userTypes'
-import axiosConfig from 'src/configs/axios'
-import { createPost } from 'src/store/apps/post'
-import MenuBookIcon from '@mui/icons-material/MenuBook'
+import { useCreatePostMutation } from 'src/store/query/postApi'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 interface SidebarAddPostType {
   open: boolean
@@ -48,11 +42,11 @@ interface SidebarAddPostType {
 }
 
 interface PostData {
-  boost: false
+  boost: string
   client: string
   description: string
-  permissionLevel: 'D' | 'C'
-  platform: 'google' | 'fb'
+  permissionLevel: string
+  platform: string[]
   postingDate: string
   postingEndDate: string
   title: string
@@ -60,15 +54,15 @@ interface PostData {
   fileName: string
 }
 
-const showErrors = (field: string, valueLen: number, min: number) => {
-  if (valueLen === 0) {
-    return `${field} field is required`
-  } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
-  } else {
-    return ''
-  }
-}
+// const showErrors = (field: string, valueLen: number, min: number) => {
+//   if (valueLen === 0) {
+//     return `${field} field is required`
+//   } else if (valueLen > 0 && valueLen < min) {
+//     return `${field} must be at least ${min} characters`
+//   } else {
+//     return ''
+//   }
+// }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
@@ -87,7 +81,7 @@ const schema = yup.object().shape({
   postingDate: yup.string().required(),
   postingEndDate: yup.string().required(),
   permissionLevel: yup.string().required(),
-  boost: yup.boolean().required(),
+  boost: yup.string().required(),
   url: yup.string().required(),
   fileName: yup.string()
 })
@@ -100,7 +94,7 @@ const defaultValues = {
   postingDate: '',
   postingEndDate: '',
   permissionLevel: '',
-  boost: false,
+  boost: '',
   url: '',
   fileName: '',
 }
@@ -112,15 +106,26 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
   // ** State
 
   // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  const {cList} = useSelector((state: RootState) => state.user)
-  
+  const [createPost, {isLoading, isError, error, data}] = useCreatePostMutation()
+  const {
+      // isLoading: isLoadingFetchCListForBA, 
+      // isError: isErrorFetchCListForBA, 
+      // error: fetchCListForBAError, 
 
+      data: FetchCListForBaData} = useFetchCListForBAQuery()
+  const {
+      // isLoading: isLoadingFetchCListForDm, 
+      // isError: isErrorFetchCListForDm, 
+      // error: fetchCListForDmError, 
+
+      data: FetchCListForDmData} = useFetchCListForDMQuery()
   const {
     reset,
     control,
-    setValue,
-    setError,
+
+    // setValue,
+    // setError,
+
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -128,10 +133,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const onSubmit = async (data: PostData, e: SubmitEvent) => {
-    e.stopPropagation()
-    console.log('submitted',data)
-    dispatch(createPost(data))
+  const onSubmit = async (data: any) => {
+    data.platform = [data.platform]
+    createPost(data as PostData)
     handleClose()
   }
 
@@ -140,7 +144,15 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     reset()
   }
 
-
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({error: error})
+  } else if(data) {
+    showSuccessAlert({text: 'Post Created'})
+  }
 
   return (
     <Drawer
@@ -160,7 +172,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.role)} htmlFor='validation-billing-select'>
+            <InputLabel id='validation-billing-select' error={Boolean(errors.client)} htmlFor='validation-billing-select'>
             Select Client
             </InputLabel>
             <Controller
@@ -177,9 +189,11 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   aria-describedby='validation-billing-select'
                 >
                   <MenuItem value=''>none</MenuItem>
-                  {cList.map(item => (
-                    <MenuItem value={item._id}>{item.username}</MenuItem>
-
+                  {FetchCListForBaData  && FetchCListForBaData.map(item => (
+                    <MenuItem key={item._id} value={item._id}>{item.username}</MenuItem>
+                  ))}
+                  {FetchCListForDmData  && FetchCListForDmData.map(item => (
+                    <MenuItem key={item._id} value={item._id}>{item.username}</MenuItem>
                   ))}
                 </Select>
               )}
@@ -229,7 +243,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             {errors.description && <FormHelperText sx={{ color: 'error.main' }}>{errors.description.message}</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.role)} htmlFor='validation-billing-select'>
+            <InputLabel id='validation-billing-select' error={Boolean(errors.platform)} htmlFor='validation-billing-select'>
             Select platform
             </InputLabel>
             <Controller

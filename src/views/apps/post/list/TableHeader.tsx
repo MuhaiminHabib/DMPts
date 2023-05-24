@@ -1,7 +1,7 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -14,7 +14,7 @@ interface TableHeaderProps {
 
 const TableHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { handleFilter, toggle, value } = props
+  const { toggle } = props
 
   return (
     <Box

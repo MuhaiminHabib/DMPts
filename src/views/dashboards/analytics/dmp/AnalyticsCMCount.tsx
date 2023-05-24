@@ -1,55 +1,29 @@
 import CardStatisticsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 
-// ** MUI Imports
-import Card from '@mui/material/Card'
-import { useTheme } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-import Button from '@mui/joy/Button'
+import { useCmCountQuery, useCmCountforBAQuery, useCmCountforCQuery } from 'src/store/query/statusApi'
 
-// ** Third Party Imports
-import { ApexOptions } from 'apexcharts'
 
-// ** Custom Components Imports
-import ReactApexcharts from 'src/@core/components/react-apexcharts'
-import { useEffect, useState } from 'react'
-import axiosConfig from 'src/configs/axios'
-
-const series = [{ data: [30, 70, 35, 55, 45, 70] }]
 
 const AnalyticsCMCount = () => {
   // ** Hook
-  const theme = useTheme()
+  const {isLoading, data} = useCmCountQuery()
+  const {isLoading: cmCountforBaIsLoading, data : cmCountforBaData} = useCmCountforBAQuery()
+  const {
+    isLoading : isLoadingCmCountforC, 
+    data : cmCountforCData} = useCmCountforCQuery()
+  
 
-  const [count, setCount] = useState<number>(0)
-  const [isFetching, setIsFetching] = useState<boolean>(false)
-
-
-  const fetchCMCount = async () => {
-    setIsFetching(true)
-    try {
-      const res = await axiosConfig('/auth/ba-gets-total-of-cm')
-      console.log(res.data)
-      setCount(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-    setIsFetching(false)
-  }
-
-  useEffect(() => {
-    fetchCMCount()
-  }, [])
 
   return (
 
     <CardStatisticsVertical
+      isLoading={isLoading || cmCountforBaIsLoading || isLoadingCmCountforC}
       title='Client Managers'
-      stats={count.toString()}
+      stats={(data ? data.toString() : cmCountforBaData ? cmCountforBaData.toString() : cmCountforCData ? cmCountforCData.toString() : "No data")}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />
   )
 }
 
-export default AnalyticsCMCount
+export default AnalyticsCMCount 

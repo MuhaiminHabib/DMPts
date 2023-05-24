@@ -13,46 +13,46 @@ import {
   TableRow,
   Tooltip
 } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
+
 
 //icons
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import Diversity3Icon from '@mui/icons-material/Diversity3'
 
 
-
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import TableHeader from './TableHeader'
 import { UsersType } from 'src/types/apps/userTypes'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-import axiosConfig from 'src/configs/axios'
-import { useDispatch } from 'react-redux'
-import { baDeleteC, baDeleteDm, inactiveBa } from 'src/store/apps/user'
-import { useSelector } from 'react-redux'
-import { RootState } from 'src/store'
 import Loader from '../../../../shared-components/Loader'
 import UserEditModal from 'src/views/apps/user/list/UserEditModal'
-import { AuthContext } from 'src/context/AuthContext'
 import UserProfileModal from './UserProfileModal'
+import { useBaDeletesCMutation, useBaDeletesDmMutation, useCDeletesCmMutation, useInactivateBaMutation } from 'src/store/query/userApi'
+
 
 type props = {
   title: string
   userList: UsersType[]
   showAccociatedBtn?: boolean
   showHeader?: boolean
+  showDeleteBtn? : boolean
   showLoading?: boolean
   addClient?: boolean
   addDm?: boolean
+  addCm?: boolean
+
 }
 
 const UserListTable = ({
   title,
   userList,
   showAccociatedBtn = false,
-  showHeader = false,
+  showDeleteBtn = false,
   showLoading = false,
   addClient = false,
-  addDm = false
+  addDm = false,
+  addCm = false
+
 }: props) => {
 
   // ** States
@@ -60,14 +60,16 @@ const UserListTable = ({
 
 
   // ** Hooks
-  const { isLoading } = useSelector((state: RootState) => state.user)
+  // const { isLoading } = useSelector((state: RootState) => state.user)
+  const [inactivateBa, {isLoading: isLoadingInactivateBa}] = useInactivateBaMutation()
+  const [baDeletesDm, {isLoading: isLoadingBaDeletesDm}] = useBaDeletesDmMutation()
+  const [baDeletesC, {isLoading: isLoadingBaDeletesC}] = useBaDeletesCMutation()
+  const [cDeletesCm, {isLoading: isLoadingCDeletesCm}] = useCDeletesCmMutation()
+
 
 
   // ** Functions
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
-  const dispatch = useDispatch()
-
-
   const handleDelete = async (id: string, role: string, username: string) => {
     console.log('role is:', role) 
     if(role === 'BA') {
@@ -75,21 +77,15 @@ const UserListTable = ({
         BAID: id,
         username
       }
-      dispatch(inactiveBa(data))
+      inactivateBa(data)
     } else if(role === 'DM') {
-      const data = {
-        dmId : id
-      }
-      dispatch(baDeleteDm(data))  
+      baDeletesDm(id)
     } else if (role === 'C') {
-      const data = {
-        cId : id
-      }
-      dispatch(baDeleteC(data))
+      baDeletesC(id)
+    } else if (role === 'CM') {
+      cDeletesCm(id)
     }
   }
-
-
 
 
   return (
@@ -99,14 +95,14 @@ const UserListTable = ({
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
 
           <CardHeader title={title} />
-          {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null}
+          { <TableHeader toggle={toggleAddUserDrawer} />}
 
           <TableContainer component={Paper}>
-          {isLoading || showLoading ? <Loader /> : 
+          {isLoadingBaDeletesC || isLoadingBaDeletesDm || isLoadingInactivateBa || isLoadingCDeletesCm || showLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
-                  <TableCell>username</TableCell>
+                  <TableCell>Username</TableCell>
                   <TableCell align='right'>Email</TableCell>
                   <TableCell align='right'>FirstName</TableCell>
                   <TableCell align='right'>LastName</TableCell>
@@ -115,12 +111,12 @@ const UserListTable = ({
               </TableHead>
                 
               <TableBody>
-                {userList.map(user => (
+                {userList?.map(user => (
                   <TableRow
                     key={user._id}
                     sx={{
+                      '&:child td' : {background: !user.active ? '#c1c1c1' : 'fffff'},
                       '&:last-child td, &:last-child th': { border: 0 },
-                      background: !user.active && '#c1c1c1'
                     }}
                   >
                     <TableCell component='th' scope='row'>
@@ -144,12 +140,12 @@ const UserListTable = ({
                         <UserEditModal user={user}/>
                       </Tooltip>
 
-                      <Tooltip title='Delete User' placement='top-start'>
+                      {showDeleteBtn ? (<Tooltip title='Delete User' placement='top-start'>
                         <Button
                           onClick={() => handleDelete(user._id, user.role, user.username)}
                           startIcon={<DeleteForeverIcon />}
                         />
-                      </Tooltip>
+                      </Tooltip>) : null}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -161,7 +157,7 @@ const UserListTable = ({
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={addClient} addDm={addDm}/>
+      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={addClient} addDm={addDm} addCm={addCm}/>
     </Grid>
   )
 }

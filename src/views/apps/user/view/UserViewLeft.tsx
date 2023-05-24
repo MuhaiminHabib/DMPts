@@ -5,26 +5,11 @@ import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import Select from '@mui/material/Select'
-import Switch from '@mui/material/Switch'
 import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
 import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import InputAdornment from '@mui/material/InputAdornment'
-import LinearProgress from '@mui/material/LinearProgress'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import DialogContentText from '@mui/material/DialogContentText'
+
+
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -42,20 +27,22 @@ import { UsersType } from 'src/types/apps/userTypes'
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 
+
 interface ColorsType {
   [key: string]: ThemeColor
 }
 
 const data: UsersType = {
-  id: 123,
+  _id: '123',
   firstName: 'Muhaimin',
   lastName: 'Habib',
   username: 'habib',
   email: 'habib@123',
   password: '123',
   passwordVerify: '123',
-  status: 'Active',
-  type: 'BA'
+  active: true,
+  role: 'BA',
+  creator: 'Habib', customerID: '123', dm:[]
 }
 
 const roleColors: ColorsType = {
@@ -73,36 +60,27 @@ const statusColors: ColorsType = {
 }
 
 // ** Styled <sup> component
-const Sup = styled('sup')(({ theme }) => ({
-  top: '0.25rem',
-  left: '-1rem',
-  fontSize: '1.125rem',
-  position: 'absolute',
-  color: theme.palette.primary.main
-}))
+// const Sup = styled('sup')(({ theme }) => ({
+//   top: '0.25rem',
+//   left: '-1rem',
+//   fontSize: '1.125rem',
+//   position: 'absolute',
+//   color: theme.palette.primary.main
+// }))
 
 // ** Styled <sub> component
-const Sub = styled('sub')(({ theme }) => ({
-  fontSize: '1rem',
-  marginTop: '0.5rem',
-  alignSelf: 'flex-end',
-  color: theme.palette.text.secondary
-}))
+// const Sub = styled('sub')(({ theme }) => ({
+//   fontSize: '1rem',
+//   marginTop: '0.5rem',
+//   alignSelf: 'flex-end',
+//   color: theme.palette.text.secondary
+// }))
 
 const UserViewLeft = () => {
   // ** States
-  const [openEdit, setOpenEdit] = useState<boolean>(false)
-  const [openPlans, setOpenPlans] = useState<boolean>(false)
+
   const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
-
-  // Handle Edit dialog
-  const handleEditClickOpen = () => setOpenEdit(true)
-  const handleEditClose = () => setOpenEdit(false)
-
-  // Handle Upgrade Plan dialog
-  const handlePlansClickOpen = () => setOpenPlans(true)
-  const handlePlansClose = () => setOpenPlans(false)
 
   if (data) {
     return (
@@ -134,9 +112,9 @@ const UserViewLeft = () => {
                 rounded
                 skin='light'
                 size='small'
-                label={data.type}
+                label={data.role}
                 sx={{ fontWeight: 500 }}
-                color={roleColors[data.type]}
+                color={roleColors[data.role]}
               />
             </CardContent>
 
@@ -185,26 +163,26 @@ const UserViewLeft = () => {
                     rounded
                     skin='light'
                     size='small'
-                    label={data.status}
+                    label={data.active}
                     sx={{ fontWeight: 500 }}
-                    color={statusColors[data.status]}
+                    color={statusColors[data.active ? 'active' : 'inactive']}
                   />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 4 }}>
                   <Typography sx={{ mr: 2, fontWeight: 700, color: 'text.secondary' }}>Type:</Typography>
-                  <Typography sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>{data.type}</Typography>
+                  <Typography sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>{data.role}</Typography>
                 </Box>
               </Box>
             </CardContent>
 
-            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+            {/* <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
                 Edit
               </Button>
               <Button color='error' variant='outlined' onClick={() => setSuspendDialogOpen(true)}>
                 Suspend
               </Button>
-            </CardActions>
+            </CardActions> */}
 
             {/* Edit form start */}
             {/* <Dialog

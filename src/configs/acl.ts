@@ -12,6 +12,22 @@ export type ACLObj = {
 }
 
 /**
+ * const ability = defineAbility((can) => {
+  can('read', 'Post');
+});
+
+router.get('/posts', (req, res) => {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'block';
+
+  ability.beforeEach(() => {
+    loader.style.display = 'block';
+  });
+
+  ability.can('read', 'Post');
+
+  loader.style.display = 'none';
+});
  * Please define your own Ability rules according to your app requirements.
  * We have just shown Admin and Client rules for demo purpose where
  * admin can manage everything and client can just visit ACL page
@@ -22,16 +38,38 @@ const defineRulesFor = (role: string, subject: string) => {
   console.log('role is:', role)
   if (role === 'A') {
     can('manage', 'all')
+    cannot(['read'], ['analytics-baStats', 'analytics-dmStats', 'analytics-cStats'])
   } else if (role === 'BA') {
     can('manage', 'all')
-    cannot(['read'], ['businesses-page'])
-    cannot(['read'], ['analytics-baCount'])
+    cannot(['read'], ['businesses-navItem', 'cm-navItem'])
+    cannot(['read'], ['analytics-aStats', 'analytics-dmStats', 'analytics-cStats', 'cm-list-page'])
   } else if (role === 'DM') {
     can('manage', 'all')
+    cannot(['read'], ['businesses-navItem', 'dm-navItem'])
+    cannot(['read'], ['analytics-aStats', 'analytics-baStats', 'analytics-cStats'])
   } else if (role === 'C') {
-    can(['read'], 'acl-page')
+    can(['manage'], 'all')
+    cannot(
+      ['read'],
+      ['analytics-aStats', 'analytics-baStats', 'analytics-dmStats', 'businesses-navItem', 'dm-navItem', 'c-navItem']
+    )
   } else if (role === 'CM') {
-    can(['read'], 'acl-page')
+    can(['manage'], 'all')
+    cannot(
+      ['read'],
+      [
+        'analytics-aStats',
+        'analytics-baStats',
+        'analytics-dmStats',
+        'analytics-cStats',
+        'users-navItem',
+        'add-post',
+        'ba-list-page',
+        'c-list-page',
+        'dm-list-page',
+        'cm-list-page'
+      ]
+    )
   } else {
     can(['read', 'create', 'update', 'delete'], subject)
   }

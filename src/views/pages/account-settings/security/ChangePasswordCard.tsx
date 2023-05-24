@@ -21,11 +21,10 @@ import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import * as yup from 'yup'
-import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axiosConfig from 'src/configs/axios'
-import { AxiosPromise, AxiosResponse } from 'axios'
+import { useChangePasswordMutation } from 'src/store/query/authApi'
+import { showErrorAlert, showLoadingAlert } from 'src/utils/swal'
 
 interface State {
   showNewPassword: boolean
@@ -38,6 +37,12 @@ const defaultValues = {
   currentPassword: '',
   newPasswordVerify: ''
 }
+
+interface FormData {
+  currentPassword: string, 
+  newPassword:  string, 
+  newPasswordVerify: string
+} 
 
 const schema = yup.object().shape({
   currentPassword: yup.string().min(8).required(),
@@ -64,6 +69,7 @@ const ChangePasswordCard = () => {
   })
 
   // ** Hooks
+  const [changePassword, {isLoading, isError, error, data}] = useChangePasswordMutation()
   const {
     reset,
     control,
@@ -85,23 +91,17 @@ const ChangePasswordCard = () => {
 
   const onPasswordFormSubmit = async (data: FormData) => {
     console.log(data)
-    toast.loading('Sumitting...')
-    try {
-      const res = await axiosConfig.post('/auth/change-password', data)
-      
-      
-      console.log(res)
-      toast.success('Pw changed')
-    } catch (error) {
-      toast.error(error.response.data.errorMessage)
-      console.log(error.response.data.errorMessage)
-      console.log(error.message)
-      console.log(error.errorMessage)
-    } finally {
-      console.log('finally')
-    }
-    // toast.success('Password Changed Successfully')
-    // reset(defaultValues)
+    changePassword(data)
+  }
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({error: error})
+  } else if(data) {
+    console.log(data)
   }
 
   return (

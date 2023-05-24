@@ -24,6 +24,7 @@ export type CardStatsVerticalProps = {
   trend?: 'positive' | 'negative'
   optionsMenuProps?: OptionsMenuType
   avatarIconProps?: Omit<IconProps, 'icon'>
+  isLoading: boolean
 }
 
 export type CardStatsTargetProps = {

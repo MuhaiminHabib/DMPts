@@ -20,11 +20,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Icon from 'src/@core/components/icon'
 
 // ** Types
-import { PricingPlanType } from 'src/@core/components/plan-details/types'
 
 // ** Demo Tabs Imports
 import TabAccount from 'src/views/pages/account-settings/TabAccount'
-import TabBilling from 'src/views/pages/account-settings/TabBilling'
 import TabSecurity from 'src/views/pages/account-settings/TabSecurity'
 import TabConnections from 'src/views/pages/account-settings/TabConnections'
 import TabNotifications from 'src/views/pages/account-settings/TabNotifications'
@@ -71,8 +69,7 @@ const AccountSettings = ({ tab }: { tab: string }) => {
     account: <TabAccount />,
     security: <TabSecurity />,
     connections: <TabConnections />,
-    notifications: <TabNotifications />,
-    // 'billing-plan': <TabBilling />
+    notifications: <TabNotifications />
   }
 
   return (

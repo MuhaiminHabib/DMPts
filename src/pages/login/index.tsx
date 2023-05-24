@@ -1,13 +1,11 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
 
 // ** MUI Components
-import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
@@ -32,7 +30,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import useBgColor, { UseBgColorType } from 'src/@core/hooks/useBgColor'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Configs
@@ -40,6 +37,7 @@ import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+
 
 // ** Styled Components
 const LoginIllustration = styled('img')({
@@ -71,20 +69,16 @@ const LinkStyled = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main
 }))
 
+interface FormData {
+  username: string
+  password: string
+}
+
 const schema = yup.object().shape({
   username: yup.string().required(),
   password: yup.string().min(5).required()
 })
 
-const defaultValues = {
-  username: 'root',
-  password: 'Root@2023'
-}
-
-interface FormData {
-  username: string
-  password: string
-}
 
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
@@ -94,7 +88,7 @@ const LoginPage = () => {
   const auth = useAuth()
   const theme = useTheme()
   const { settings } = useSettings()
-  const bgColors: UseBgColorType = useBgColor()
+
   const hidden = useMediaQuery(theme.breakpoints.down('lg'))
 
   // ** Var
@@ -106,7 +100,10 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    defaultValues,
+    defaultValues : {
+      username: 'root',
+      password: 'Root@2023'
+    },
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
@@ -120,6 +117,8 @@ const LoginPage = () => {
       })
     })
   }
+
+
 
   return (
     <Box className='content-right'>
@@ -228,14 +227,6 @@ const LoginPage = () => {
             <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 4 }}>
               Sign in
             </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Typography variant='body2' sx={{ mr: 2 }}>
-                New on our platform?
-              </Typography>
-              <Typography>
-                <LinkStyled href='/register'>Create an account</LinkStyled>
-              </Typography>
-            </Box>
           </form>
         </Box>
       </RightWrapper>

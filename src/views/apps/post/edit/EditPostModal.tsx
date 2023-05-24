@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -7,26 +7,24 @@ import Dialog from '@mui/material/Dialog'
 import { useTheme } from '@mui/material/styles'
 import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import { PostsTypes } from 'src/types/apps/postTypes'
-import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material'
 
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import EditIcon from '@mui/icons-material/Edit';
-import { editPost } from 'src/store/apps/post'
-import { AppDispatch } from 'src/store'
-import { useDispatch } from 'react-redux'
+import { useEditPostMutation } from 'src/store/query/postApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 type pageProps = {
     post : PostsTypes
 }
 
 type platform = {
-    platform: 'google' | 'fb'
+    platform: string
 }
 
 interface PostData {
@@ -60,31 +58,28 @@ const EditPostModal = ({post} : pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const dispatch = useDispatch<AppDispatch>()
-
-//   const platform = () =>  {
-//     post.platform[0].platform === 'FB' ?
-//   }
+  const [editPost, {isLoading, isError, error, data}] = useEditPostMutation()
 
   const defaultValues = {
     id: post._id,
     title: post.title,
     description: post.description,
-    platform: post.platform[0].platform,
+    platform: post.platform[0],
     postingDate: new Date(post.postingDate).toISOString().split('T')[0],
     postingEndDate: new Date(post.postingEndDate).toISOString().split('T')[0],
-    permissionLevel: post.permissionLevel.permissionLevelName,
-    boost: post.boost,
+    permissionLevel: post.permissionLevel,
+    boost: post.boost.toString(),
     url: post.url,
   }
 
   const {
-    reset,
     control,
-    setValue,
-    setError,
+
+    // reset,
+    // setValue,
+    // setError,
+
     handleSubmit,
-    register,
     formState: { errors }
   } = useForm({
     defaultValues,
@@ -92,11 +87,10 @@ const EditPostModal = ({post} : pageProps) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = async (data: PostData, e: SubmitEvent) => {
-    e.stopPropagation()
-    console.log('submitted',  data)
-    dispatch(editPost(data))
-    // handleClose()
+  const onSubmit = async (data: any) => {
+    data.platform = [data.platform]
+    editPost(data as PostData)
+    handleClose()
   }
 
   const onError = (error: any ) => {
@@ -107,6 +101,17 @@ const EditPostModal = ({post} : pageProps) => {
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
+
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({error: error})
+  } else if(data) {
+    showSuccessAlert({text: 'Post Edited Successfully'})
+  }
 
 
   return (
@@ -197,7 +202,6 @@ const EditPostModal = ({post} : pageProps) => {
             Select platform
             </InputLabel>
             <Controller
-            //   {...register('platform')}
             name='platform'
               control={control}
               rules={{ required: true }}
@@ -222,7 +226,6 @@ const EditPostModal = ({post} : pageProps) => {
           {/* Posting Start Date */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-            //   {...register('postingDate')}
             name='postingDate'
               control={control}
               rules={{ required: true }}
@@ -339,16 +342,6 @@ const EditPostModal = ({post} : pageProps) => {
               <FormHelperText sx={{ color: 'error.main' }}>{errors.url.message}</FormHelperText>
             )}
           </FormControl>
-
-          
-        {/* <DialogActions>
-          
-          <Button type='submit' variant='contained'>
-            Update Post
-          </Button>
-
-          <Button type='submit'>hello</Button>
-        </DialogActions> */}
         <Button variant='outlined' color='secondary' onClick={handleClose}>
             Close
           </Button>

@@ -23,8 +23,6 @@ import 'src/configs/i18n'
 import { defaultACLObj } from 'src/configs/acl'
 import themeConfig from 'src/configs/themeConfig'
 
-//axios
-import axios from 'axios'
 
 // ** Third Party Import
 import { Toaster } from 'react-hot-toast'
@@ -121,7 +119,7 @@ const App = (props: ExtendedAppProps) => {
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+          <title>{themeConfig.templateName}</title>
           <meta
             name='description'
             content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}

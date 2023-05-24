@@ -1,52 +1,46 @@
 import CardStatisticsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 
-// ** MUI Imports
-import Card from '@mui/material/Card'
-import { useTheme } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-import Button from '@mui/joy/Button'
-
-// ** Third Party Imports
-import { ApexOptions } from 'apexcharts'
-
-// ** Custom Components Imports
-import ReactApexcharts from 'src/@core/components/react-apexcharts'
-import { useEffect, useState } from 'react'
-import axiosConfig from 'src/configs/axios'
-
-const series = [{ data: [30, 70, 35, 55, 45, 70] }]
+import { usePostCountQuery, usePostCountforBAQuery, usePostCountforCQuery, usePostCountforDmQuery } from 'src/store/query/statusApi'
 
 const AnalyticsPostCount = () => {
   // ** Hook
-  const theme = useTheme()
+  // const theme = useTheme()
 
-  const [count, setCount] = useState<number>(0)
-  const [isFetching, setIsFetching] = useState<boolean>(false)
+  const {
+    isLoading, 
+    data} = usePostCountQuery()
+  const {
+    isLoading: isLoadingPostCountforBa, 
+    data: PostCountforBaData} = usePostCountforBAQuery()
 
+    const {
+    isLoading: isLoadingPostCountForDm, 
+    isError,
+    error,
+    data: PostCountForDmData} = usePostCountforDmQuery()
 
+  const {
+    isLoading: isLoadingPostCountForC, 
+    data: PostCountForCData} = usePostCountforCQuery()
 
-  const fetchPostCount = async () => {
-    setIsFetching(true)
-    try {
-      const res = await axiosConfig('/posting/ba-get-total-of-posts')
-      console.log(res.data)
-      setCount(res.data)
-    } catch (error) {
+    if(isLoadingPostCountForDm) {
+      console.log('loading the right data')
+    } else if (PostCountForDmData) {
+      console.log('Post count data is: ', PostCountForDmData)
+    } else if(isError) {
       console.log(error)
     }
-    setIsFetching(false)
-  }
-
-  useEffect(() => {
-    fetchPostCount()
-  }, [])
-
+  
   return (
-
     <CardStatisticsVertical
+    isLoading ={isLoading || isLoadingPostCountforBa || isLoadingPostCountForDm || isLoadingPostCountForC}
       title='Total Posts'
-      stats={count.toString()}
+      stats={ 
+        (data ? data.toString() 
+        : PostCountforBaData? PostCountforBaData.toString() 
+        : PostCountForDmData ? PostCountForDmData.toString() 
+        : PostCountForCData ? PostCountForCData.toString()  
+        : '0')}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

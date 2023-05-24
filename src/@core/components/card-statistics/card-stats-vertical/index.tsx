@@ -13,6 +13,7 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import OptionsMenu from 'src/@core/components/option-menu'
+import Loader from 'src/shared-components/Loader'
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
   // ** Props
@@ -24,12 +25,13 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
     trendNumber,
     optionsMenuProps,
     trend = 'positive',
-    avatarColor = 'primary'
+    avatarColor = 'primary',
+    isLoading
   } = props
 
   return (
     <Card>
-      <CardContent sx={{ p: theme => `${theme.spacing(5, 5, 4)} !important` }}>
+       <CardContent sx={{ p: theme => `${theme.spacing(5, 5, 4)} !important` }}>
         <Box sx={{ display: 'flex', mb: 4, alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <CustomAvatar
             skin='light'
@@ -50,9 +52,9 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
           )}
         </Box>
         <Typography sx={{ mb: 0.5, fontWeight: 600, color: 'text.secondary' }}>{title}</Typography>
-        <Typography variant='h5' sx={{ mb: 2 }}>
-          {stats}
-        </Typography>
+        {<Typography variant='h5' sx={{ mb: 2 }}>
+        {isLoading ? <Loader /> : stats}
+        </Typography>}
         <Box
           sx={{
             display: 'flex',

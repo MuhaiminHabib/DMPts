@@ -30,7 +30,7 @@ export type UsersType = {
   creator: string
   customerID: string
   dm: []
-  role: 'BA' | 'DM' | 'C' | 'CM'
+  role: string
   avatarColor?: ThemeColor
 }
 

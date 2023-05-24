@@ -4,6 +4,7 @@ import CardStatisticsVertical from 'src/@core/components/card-statistics/card-st
 const EcommerceSales = () => {
   return (
     <CardStatisticsVertical
+      isLoading={false}
       title='Sales'
       stats='$4,679'
       trendNumber={28.14}

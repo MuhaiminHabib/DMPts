@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -7,12 +7,7 @@ import Dialog from '@mui/material/Dialog'
 import { useTheme } from '@mui/material/styles'
 import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { PostsTypes } from 'src/types/apps/postTypes'
-import { Box, FormControl, FormHelperText, InputLabel, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, FormControl, FormHelperText, TextField, Tooltip, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
 
@@ -21,9 +16,8 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import { UsersType } from 'src/types/apps/userTypes'
-import { editUserInfo } from 'src/store/apps/user'
-import { AppDispatch } from 'src/store'
-import { useDispatch } from 'react-redux'
+import { useEditUserMutation } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 
 type pageProps = {
@@ -31,6 +25,7 @@ type pageProps = {
 }
 
 interface UserData {
+  userId: string
   username: string
     email: string
     firstName: string
@@ -38,6 +33,7 @@ interface UserData {
   }
   
   const schema = yup.object().shape({
+    userId: yup.string(),
     username: yup.string().required(),
     email: yup.string().required(),
     firstName: yup.string().required(),
@@ -46,6 +42,7 @@ interface UserData {
 
 const UserEditModal = ({user} : pageProps) => {
     const defaultValues = {
+      userId: user._id,
       username: user.username,
         email: user.email,
         firstName: user.firstName,
@@ -58,12 +55,18 @@ const UserEditModal = ({user} : pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const dispatch = useDispatch<AppDispatch>()
+  const [editUser, 
+      {isLoading, 
+      isError, 
+      error, 
+      data}] = useEditUserMutation()
   const {
-    reset,
+
+    // reset,
+    // setValue,
+    // setError,
+    
     control,
-    setValue,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -72,20 +75,25 @@ const UserEditModal = ({user} : pageProps) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = async (data: UserData, e: SubmitEvent) => {
-    e.stopPropagation()
-    console.log('done submitting', data)
-    dispatch(editUserInfo(data))
+  const onSubmit = async (data: UserData) => {
+    editUser(data)
     handleClose()
   }
 
-  const onError = (error) => {
-    console.log(error)
-  } 
 
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({error: error})
+  } else if(data) {
+    showSuccessAlert({text: 'User Created'})
+  }
 
  
 
@@ -101,7 +109,7 @@ const UserEditModal = ({user} : pageProps) => {
             <Typography variant={'h4'}>Edit User Details:</Typography>
         </DialogTitle> 
         <Box sx={{ p: 5 }}>
-        <form onSubmit={handleSubmit(onSubmit, onError)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller

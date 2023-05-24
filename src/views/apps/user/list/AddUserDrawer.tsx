@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -23,25 +23,16 @@ import { useForm, Controller } from 'react-hook-form'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-// ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
-
-// ** Actions Imports
-
-
-// ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-import { UsersType } from 'src/types/apps/userTypes'
-import axiosConfig from 'src/configs/axios'
 import { AuthContext } from 'src/context/AuthContext'
-import { MenuList } from '@mui/material'
-import { createBAUser } from 'src/store/apps/user'
+import { useCreateUserMutation } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 interface SidebarAddUserType {
   open: boolean
   toggle: () => void
   addClient?: boolean
   addDm?: boolean
+  addCm?: boolean
 }
 
 interface UserData {
@@ -51,18 +42,17 @@ interface UserData {
   email: string
   firstName: string
   lastName: string
-  type: 'BA' | 'DM' | 'C'
+  role: string
 }
 
-const showErrors = (field: string, valueLen: number, min: number) => {
-  if (valueLen === 0) {
-    return `${field} field is required`
-  } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
-  } else {
-    return ''
-  }
-}
+// const showErrors = (field: string, valueLen: number, min: number) => {
+//   if (valueLen === 0) {
+//     return `${field} field is required`
+//   } else if (valueLen > 0 && valueLen < min) {
+//     return `${field} must be at least ${min} characters`
+//   } else {
+//     return ''
+// }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
@@ -92,34 +82,24 @@ const defaultValues = {
   role: ''
 }
 
-const aOptions = [
-  { value: 'BA', label: "Business" },
-];
-const baAddsDm = [
-  { value: 'DM', label: "Digital Manager" },
-];
-const baAddsC = [
 
-  { value: 'C', label: "Client" },
-];
 
 const SidebarAddUser = (props: SidebarAddUserType) => {
   // ** Props
-  const { open, toggle, addClient, addDm } = props
+  const { open, toggle, addClient, addDm, addCm } = props
 
   // ** State
-  // const [plan, setPlan] = useState<string>('basic')
-  const [role, setRole] = useState<string>('')
 
   // ** Hooks
   const auth = useContext(AuthContext)
-  const dispatch = useDispatch<AppDispatch>()
-  const store = useSelector((state: RootState) => state.user)
+  const [createUser, {isLoading, isError, error, data}] = useCreateUserMutation()
   const {
     reset,
     control,
-    setValue,
-    setError,
+
+    // setValue,
+    // setError,
+
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -127,16 +107,25 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const onSubmit = async (data: UserData, e: SubmitEvent) => {
-    e.stopPropagation()
-    dispatch(createBAUser(data))
+  const onSubmit = async (data: UserData) => {
+    console.log('from form:', data)
+    createUser(data)
     handleClose()
   }
 
   const handleClose = () => {
-    setRole('')
     toggle()
     reset()
+  }
+
+  if(isLoading) {
+    console.log('Loading')
+    showLoadingAlert()
+  } else if(isError) {
+    console.log(error)
+    showErrorAlert({error: error })
+  } else if(data) {
+    showSuccessAlert({text: 'User Created'})
   }
 
   return (
@@ -276,21 +265,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                   labelId='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 >
-                  {/* <option aria-label="None" value="" /> */}
-                  {/* {auth.user?.role === 'A' ? 
-                  aOptions.map(option => (
-                    <MenuItem value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  )) :
-                  auth.user?.role === 'BA' ?
-                  baOptions.map(option => (
-                    <MenuItem value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  )) : null
-                } */}
-
                   <option aria-label="None" value="" />
                   {auth.user?.role === 'A' ?
                    <MenuItem value='BA'>
@@ -303,6 +277,14 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                  (auth.user?.role === 'BA' && addClient)  ?
                  <MenuItem value='C'>
                   Client
+                </MenuItem> :
+                 (auth.user?.role === 'DM' && addClient)  ?
+                 <MenuItem value='C'>
+                  Client
+                </MenuItem> :
+                 (auth.user?.role === 'C' && addCm)  ?
+                 <MenuItem value='CM'>
+                  Client Manager
                 </MenuItem> : null
                  }
                 </Select>

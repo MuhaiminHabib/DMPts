@@ -7,15 +7,13 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
 
 // ** Custom Table Components Imports
-import axiosConfig from 'src/configs/axios'
+
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 
 //redux
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchBaList } from 'src/store/apps/user'
-import { RootState, AppDispatch } from 'src/store'
-
-import { fi } from 'date-fns/locale'
+import { useFetchBaListQuery } from 'src/store/query/userApi'
+import Loader from 'src/shared-components/Loader'
+import { showErrorAlert } from 'src/utils/swal'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -27,20 +25,37 @@ const userStatusObj: UserStatusType = {
   inactive: 'secondary'
 }
 
-const UserList = () => {
+const BaList = () => {
   // ** State
 
   // **Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  const {baList} = useSelector((state: RootState) => state.user)
 
-  useEffect(() => {
-    dispatch(fetchBaList())
-  }, [])
+  const {isLoading, isError, error, data : baList } = useFetchBaListQuery()
 
 
+  if(isLoading) {
+    console.log('getting data')
+  } else if(isError) {
+    showErrorAlert({error : error})
+    console.log('error getting data')
+  } else {
+    console.log('rtk query data: ',baList)
+  }
 
-  return <UserListTable title={'All Businesses'} userList={baList} showAccociatedBtn={true} showHeader={true} />
+  if(isLoading) {
+    return <Loader />
+  }
+
+  return (
+    <UserListTable title={'All Businesses'} userList={baList!} showAccociatedBtn={true} showHeader={true}/>
+      
+  )
+  
+}
+BaList.acl = {
+  action: 'read',
+  subject: 'ba-list-page'
 }
 
-export default UserList
+
+export default BaList
