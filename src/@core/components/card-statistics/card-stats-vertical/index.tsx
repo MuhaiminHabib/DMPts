@@ -7,12 +7,10 @@ import CardContent from '@mui/material/CardContent'
 // ** Types Imports
 import { CardStatsVerticalProps } from 'src/@core/components/card-statistics/types'
 
-// ** Icon Import
-import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import OptionsMenu from 'src/@core/components/option-menu'
+
 import Loader from 'src/shared-components/Loader'
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
@@ -22,9 +20,7 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
     stats,
     avatarSrc,
     avatarIcon,
-    trendNumber,
-    optionsMenuProps,
-    trend = 'positive',
+
     avatarColor = 'primary',
     isLoading
   } = props
@@ -42,34 +38,11 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
           >
             {avatarIcon && !avatarSrc ? avatarIcon : null}
           </CustomAvatar>
-          {optionsMenuProps ? (
-            <OptionsMenu {...optionsMenuProps} />
-          ) : (
-            <OptionsMenu
-              options={['Refresh', 'Share', 'Update']}
-              iconButtonProps={{ size: 'small', className: 'card-more-options', sx: { color: 'text.secondary' } }}
-            />
-          )}
         </Box>
         <Typography sx={{ mb: 0.5, fontWeight: 600, color: 'text.secondary' }}>{title}</Typography>
         {<Typography variant='h5' sx={{ mb: 2 }}>
         {isLoading ? <Loader /> : stats}
         </Typography>}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            '& svg': { mr: 1, color: `${trend === 'positive' ? 'success' : 'error'}.main` }
-          }}
-        >
-          <Icon fontSize={16} icon={trend === 'positive' ? 'bx:up-arrow-alt' : 'bx:down-arrow-alt'} />
-          <Typography
-            variant='body2'
-            sx={{ fontWeight: 500, color: `${trend === 'positive' ? 'success' : 'error'}.main` }}
-          >
-            {`${trendNumber}%`}
-          </Typography>
-        </Box>
       </CardContent>
     </Card>
   )
