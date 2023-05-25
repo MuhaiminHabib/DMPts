@@ -71,6 +71,24 @@ const AuthProvider = ({ children }: Props) => {
       initAuth()
     }
   }, [isLoggedIn])
+
+
+  // useEffect(() => {
+  //   if(meEndpointData) {
+  //     onSuccessMeEndpoint(meEndpointData)
+  //   }  
+  //   if(meEndpointIsError) {
+  //     onErrorMeEndpoint(meEndpointError)
+  //   }  
+  //   if(loginData) {
+  //     onSuccessLogin(loginData)
+  //   } 
+  //   if(loginIsError) {
+  //     setLoading(false)
+  //     showErrorAlert({error: loginError})
+  //     router.push('/login')
+  //   }
+  // }, [meEndpointData, meEndpointError, loginData, loginIsError])
   
 
   useEffect(() => {

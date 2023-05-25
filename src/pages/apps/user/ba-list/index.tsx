@@ -16,6 +16,7 @@ import UserListTable from 'src/views/apps/user/list/UserListTable'
 import { useFetchBaListQuery, useFetchInactiveBaListQuery } from 'src/store/query/userApi'
 import Loader from 'src/shared-components/Loader'
 import { showErrorAlert } from 'src/utils/swal'
+import { truncateSync } from 'fs'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -66,11 +67,7 @@ const BaList = (props: TabPanelProps) => {
           data : activeBaList 
         } = useFetchBaListQuery()
 
-  const {isLoading : inactiveBaListIsLoading,
-          isError : inactiveBaListIsError,
-          error : inactiveBaListError,
-          data : inactiveBaListData 
-        } = useFetchInactiveBaListQuery()
+
 
   return (
     <>
@@ -90,7 +87,7 @@ const BaList = (props: TabPanelProps) => {
                   <TabPanel value={value} index={0}>
                     <UserListTable 
                       title={'Active Businesses'} 
-                      userList={activeBaList} 
+                      userList={activeBaList.filter(user => (user.active))} 
                       showLoading={activeBaListIsLoading}
                       showAccociatedBtn={true} 
                       showHeader={true}
@@ -98,12 +95,12 @@ const BaList = (props: TabPanelProps) => {
                   </TabPanel>
                 )}
 
-                {inactiveBaListData && inactiveBaListData.length !== 0 && (
+                {activeBaList && activeBaList.length !== 0 && (
                 <TabPanel value={value} index={1}>
                   <UserListTable 
                     title={'Inactive Businesses'} 
-                    userList={inactiveBaListData} 
-                    showLoading={inactiveBaListIsLoading}
+                    userList={activeBaList.filter(user => (!user.active))} 
+                    showLoading={activeBaListIsLoading}
                     showAccociatedBtn={true} 
                     showActivateBtn= {true}
                     showDeleteBtn={false}/>
