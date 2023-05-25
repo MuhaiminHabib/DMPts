@@ -63,3 +63,18 @@ export const showSuccessAlert = ({ text }: alertParams) => {
     }
   })
 }
+export const showDeleteSuccessAlert = ({ text }: alertParams) => {
+  Swal.fire({
+    title: 'Operation Successful',
+    text: text,
+    icon: 'success',
+    toast: true,
+    position: 'top',
+    timer: 2000,
+    timerProgressBar: true
+  }).then(result => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      console.log('I was closed by the timer')
+    }
+  })
+}
