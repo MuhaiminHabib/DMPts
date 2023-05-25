@@ -64,7 +64,10 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 
 
 const schema = yup.object().shape({
-  username: yup.string().required(),
+  username: yup.string().min(4).matches(
+    /^[a-zA-Z0-9]{4,}$/,
+    'Must contain 4 characters of letters and digits only'
+    ).required(),
   email: yup.string().email().required(),
   firstName: yup.string().required(),
   lastName: yup.string().required(),
@@ -72,9 +75,10 @@ const schema = yup.object().shape({
   password: yup
   .string()
   .min(8)
+  .max(16)
   .matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-    'Must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,16})/,
+    'Must contain 8 to 16 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
     )
     .required(),
   passwordVerify: yup
