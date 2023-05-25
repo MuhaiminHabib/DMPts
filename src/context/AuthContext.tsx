@@ -71,6 +71,7 @@ const AuthProvider = ({ children }: Props) => {
       initAuth()
     }
   }, [isLoggedIn])
+  
 
   useEffect(() => {
     onSuccessMeEndpoint(meEndpointData)

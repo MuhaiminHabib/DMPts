@@ -62,14 +62,25 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
   backgroundColor: theme.palette.background.default
 }))
 
+
 const schema = yup.object().shape({
   username: yup.string().required(),
-  password: yup.string().required(),
-  passwordVerify: yup.string().required(),
   email: yup.string().email().required(),
   firstName: yup.string().required(),
   lastName: yup.string().required(),
-  role: yup.string().required()
+  role: yup.string().required(),
+  password: yup
+  .string()
+  .min(8)
+  .matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+    'Must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
+    )
+    .required(),
+  passwordVerify: yup
+  .string()
+  .required()
+  .oneOf([yup.ref('password')], 'Passwords must match')
 })
 
 const defaultValues = {

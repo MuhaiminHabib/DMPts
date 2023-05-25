@@ -76,44 +76,42 @@ const Hello = (props: TabPanelProps) => {
   }
 
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='BA Accociation' />
-          <CardContent>
-            <Box sx={{ width: '100%' }}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
-                  <Tab label='DM List' {...a11yProps(0)} />
-                  <Tab label='Client List' {...a11yProps(1)} onClick={() => cBelongToBa(userId as string)} />
-                </Tabs>
-              </Box>
-              {dmsBelongToBaData && dmsBelongToBaData.length !== 0 && (
-                <TabPanel value={value} index={0}>
-                  <UserListTable 
-                    title={'Accociated Digital Managers'} 
-                    userList={dmsBelongToBaData} 
-                    showLoading={dmsBelongToBaIsLoading} />
-                </TabPanel>
-              )}
+    <div>{`BA id is: ${userId}`}</div>
+    // <Grid container spacing={6}>
+    //   <Grid item xs={12}>
+    //     <Card>
+    //       <CardHeader title='BA Accociation' />
+    //       <CardContent>
+    //         <Box sx={{ width: '100%' }}>
+    //           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    //             <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
+    //               <Tab label='DM List' {...a11yProps(0)} />
+    //               <Tab label='Client List' {...a11yProps(1)} onClick={() => cBelongToBa(userId as string)} />
+    //             </Tabs>
+    //           </Box>
+    //           {dmsBelongToBaData && dmsBelongToBaData.length !== 0 && (
+    //             <TabPanel value={value} index={0}>
+    //               <UserListTable 
+    //                 title={'Accociated Digital Managers'} 
+    //                 userList={dmsBelongToBaData} 
+    //                 showLoading={dmsBelongToBaIsLoading} />
+    //             </TabPanel>
+    //           )}
 
-              {cBelongToBaData && cBelongToBaData.length !== 0 && (
-              <TabPanel value={value} index={1}>
-                <UserListTable 
-                  title={'Accociated Clients'} 
-                  userList={cBelongToBaData} 
-                  showLoading={cBelongToBaIsLoading} />
-              </TabPanel>
-              )}
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+    //           {cBelongToBaData && cBelongToBaData.length !== 0 && (
+    //           <TabPanel value={value} index={1}>
+    //             <UserListTable 
+    //               title={'Accociated Clients'} 
+    //               userList={cBelongToBaData} 
+    //               showLoading={cBelongToBaIsLoading} />
+    //           </TabPanel>
+    //           )}
+    //         </Box>
+    //       </CardContent>
+    //     </Card>
+    //   </Grid>
+    // </Grid>
   )
 }
-
-Hello.authGuard = true
-Hello.guestGuard = false
 
 export default Hello

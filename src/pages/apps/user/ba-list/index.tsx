@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+
+import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
 
 // import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
@@ -11,44 +13,109 @@ import { UsersType } from 'src/types/apps/userTypes'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 
 //redux
-import { useFetchBaListQuery } from 'src/store/query/userApi'
+import { useFetchBaListQuery, useFetchInactiveBaListQuery } from 'src/store/query/userApi'
 import Loader from 'src/shared-components/Loader'
 import { showErrorAlert } from 'src/utils/swal'
 
-interface UserStatusType {
-  [key: string]: ThemeColor
+interface TabPanelProps {
+  children?: React.ReactNode
+  index: number
+  value: number
 }
 
-const userStatusObj: UserStatusType = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props
+
+  return (
+    <div
+      role='tabpanel'
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  )
 }
 
-const BaList = () => {
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`
+  }
+}
+
+const BaList = (props: TabPanelProps) => {
   // ** State
 
   // **Hooks
+  const [value, setValue] = React.useState(0)
 
-  const {isLoading, isError, error, data : baList } = useFetchBaListQuery()
 
-
-  if(isLoading) {
-    console.log('getting data')
-  } else if(isError) {
-    showErrorAlert({error : error})
-    console.log('error getting data')
-  } else {
-    console.log('rtk query data: ',baList)
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue)
   }
+  const {isLoading : activeBaListIsLoading,
+          isError : activeBaListIsError,
+          error: activeBaListError,
+          data : activeBaList 
+        } = useFetchBaListQuery()
 
-  if(isLoading) {
-    return <Loader />
-  }
+  const {isLoading : inactiveBaListIsLoading,
+          isError : inactiveBaListIsError,
+          error : inactiveBaListError,
+          data : inactiveBaListData 
+        } = useFetchInactiveBaListQuery()
 
   return (
-    <UserListTable title={'All Businesses'} userList={baList!} showAccociatedBtn={true} showHeader={true}/>
-      
+    <>
+      <Grid container spacing={6}>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader title='Businesses' />
+            <CardContent>
+              <Box sx={{ width: '100%' }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
+                    <Tab label='Active Businesses' {...a11yProps(0)} />
+                    <Tab label='Inactive Businesses' {...a11yProps(1)} />
+                  </Tabs>
+                </Box>
+                {activeBaList && activeBaList.length !== 0 && (
+                  <TabPanel value={value} index={0}>
+                    <UserListTable 
+                      title={'Active Businesses'} 
+                      userList={activeBaList} 
+                      showLoading={activeBaListIsLoading}
+                      showAccociatedBtn={true} 
+                      showHeader={true}
+                      showDeleteBtn={true}/>
+                  </TabPanel>
+                )}
+
+                {inactiveBaListData && inactiveBaListData.length !== 0 && (
+                <TabPanel value={value} index={1}>
+                  <UserListTable 
+                    title={'Inactive Businesses'} 
+                    userList={inactiveBaListData} 
+                    showLoading={inactiveBaListIsLoading}
+                    showAccociatedBtn={true} 
+                    showActivateBtn= {true}
+                    showDeleteBtn={false}/>
+                </TabPanel>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </>
+
   )
   
 }
