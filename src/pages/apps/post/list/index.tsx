@@ -47,7 +47,6 @@ const InvoiceList = () => {
   // ** Hooks
   const ability = useContext(AbilityContext)
   const {isLoading, 
-
     // isError, error, 
     data: posts} = useFetchPostsQuery(postPage)
 
@@ -141,12 +140,6 @@ const InvoiceList = () => {
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post}/>
                       </Tooltip>
-                      <Tooltip title='Post Edit' placement='top-start'>
-                        <EditPostModal post={post}/>
-                      </Tooltip>
-                      <Tooltip title='Post Delete' placement='top-start'>
-                        <Button startIcon={<DeleteForeverIcon />} onClick={() => showDeleteConfirmationPopup(post._id, post.title)}></Button>
-                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 )) : 
@@ -169,13 +162,14 @@ const InvoiceList = () => {
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post}/>
                       </Tooltip>
+
                       <Tooltip title='Post Edit' placement='top-start'>
                         <EditPostModal post={post}/>
                       </Tooltip>
                       
                       <Tooltip title='Post Delete' placement='top-start'>
-                        <Button startIcon={<DeleteForeverIcon />} onClick={() => handlePostDelete(post._id)}></Button>
-                      </Tooltip> 
+                        <Button startIcon={<DeleteForeverIcon />} onClick={() => showDeleteConfirmationPopup(post._id, post.title)}></Button>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 )) : (FetchPostsforCData && FetchPostsforCData.length > 0) ? FetchPostsforCData.map(post => (
