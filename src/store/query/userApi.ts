@@ -42,11 +42,11 @@ const userApi = baseApi.injectEndpoints({
     //============Admin============
     fetchBaList: build.query<User[], void>({
       query: () => '/API/auth/ba-list',
-      providesTags: [{ type: 'User', id: 'BA_a' }]
+      providesTags: [{ type: 'User', id: 'BA' }]
     }),
     fetchInactiveBaList: build.query<User[], void>({
       query: () => '/API/auth/inactive-users',
-      providesTags: [{ type: 'User', id: 'BA_i' }]
+      providesTags: [{ type: 'User', id: 'BA' }]
     }),
     fetchDmList: build.query<User[], void>({
       query: () => '/API/auth/dm-list',
@@ -89,8 +89,9 @@ const userApi = baseApi.injectEndpoints({
         }
       },
       invalidatesTags: [
-        { type: 'User', id: 'BA_a' },
-        { type: 'User', id: 'BA_i' }
+        // { type: 'User', id: 'BA_a' },
+        // { type: 'User', id: 'BA_i' }
+        { type: 'User', id: 'BA' }
       ]
     }),
 
@@ -104,8 +105,9 @@ const userApi = baseApi.injectEndpoints({
         }
       },
       invalidatesTags: [
-        { type: 'User', id: 'BA_a' },
-        { type: 'User', id: 'BA_i' }
+        // { type: 'User', id: 'BA_a' },
+        // { type: 'User', id: 'BA_i' }
+        { type: 'User', id: 'BA' }
       ]
     }),
 
