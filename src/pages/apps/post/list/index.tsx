@@ -32,6 +32,7 @@ import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useF
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import Swal from 'sweetalert2'
 
 
 
@@ -72,6 +73,17 @@ const InvoiceList = () => {
   // ** Functions
 
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
+
+  const showDeleteConfirmationPopup = (id: string, title: string ) => {
+    Swal.fire({
+      title: `Do you want to delete ${title}?`,
+      showCancelButton: true,
+      confirmButtonText: 'Proceed',
+      denyButtonText: `Cancel`,
+    }).then(() => {
+      handlePostDelete(id)
+    })
+  }
 
   const handlePostDelete = (postId: string) => {
     console.log('postId', postId)
@@ -133,7 +145,7 @@ const InvoiceList = () => {
                         <EditPostModal post={post}/>
                       </Tooltip>
                       <Tooltip title='Post Delete' placement='top-start'>
-                        <Button startIcon={<DeleteForeverIcon />} onClick={() => handlePostDelete(post._id)}></Button>
+                        <Button startIcon={<DeleteForeverIcon />} onClick={() => showDeleteConfirmationPopup(post._id, post.title)}></Button>
                       </Tooltip>
                     </TableCell>
                   </TableRow>

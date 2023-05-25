@@ -91,6 +91,7 @@ const UserListTable = ({
       handleDelete(id, role, username)
     })
   }
+
   const showActivateConfirmationPopup = (id: string, username: string ) => {
     Swal.fire({
       title: `Do you want to activate ${username}?`,
