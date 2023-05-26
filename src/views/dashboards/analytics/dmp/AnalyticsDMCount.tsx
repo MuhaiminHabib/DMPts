@@ -30,7 +30,7 @@ const AnalyticsDMCount = () => {
   return (
     <CardStatisticsVertical
       isLoading= {isLoading || DmCountforBaIsLoading}
-      title='Digital Managers'
+      title='Active Digital Managers'
       stats={data? data.toString() : DmCountforBaData ? DmCountforBaData.toString() : '0'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'

@@ -174,7 +174,8 @@ const NotificationDropdown = (props: Props) => {
           <Icon icon='bx:bell' />
         </Badge>
       </IconButton>
-      <Menu
+      
+      {/* <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleDropdownClose}
@@ -230,7 +231,7 @@ const NotificationDropdown = (props: Props) => {
             Read All Notifications
           </Button>
         </MenuItem>
-      </Menu>
+      </Menu> */}
     </Fragment>
   )
 }

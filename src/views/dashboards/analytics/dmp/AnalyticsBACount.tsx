@@ -24,7 +24,7 @@ const AnalyticsBACount = () => {
 
     <CardStatisticsVertical
     isLoading={isLoading}
-      title='BA Count'
+      title='Active Businesses'
       stats={data ? data.toString() : '0'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'

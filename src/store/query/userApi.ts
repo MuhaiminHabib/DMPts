@@ -6,16 +6,6 @@ type InactiveBaParams = {
   username: string
 }
 
-// interface createUserParams {
-//   username: string
-//   password: string
-//   passwordVerify: string
-//   email: string
-//   firstName: string
-//   lastName: string
-//   type: string
-// }
-
 const userApi = baseApi.injectEndpoints({
   endpoints: build => ({
     createUser: build.mutation<User, Partial<User>>({

@@ -42,14 +42,16 @@ const AnalyticsCongratulations = () => {
               Welcome {user?.username}! 🎉
             </Typography>
             <Typography sx={{ color: 'text.secondary' }}>Get ready to set and check your digital assets.</Typography>
-            <Typography sx={{ mb: 3, color: 'text.secondary' }}>Check your new badge in your profile.</Typography>
+
+            {/* <Typography sx={{ mb: 3, color: 'text.secondary' }}>Check your new badge in your profile.</Typography>
             <Button size='small' variant='outlined'>
               View Badges
-            </Button>
+            </Button> */}
           </Grid>
-          <StyledGrid item xs={12} sm={6}>
+          
+          {/* <StyledGrid item xs={12} sm={6}>
             <Img alt='Congratulations John' src={`/images/cards/illustration-john-${theme.palette.mode}.png`} />
-          </StyledGrid>
+          </StyledGrid> */}
         </Grid>
       </CardContent>
     </Card>
