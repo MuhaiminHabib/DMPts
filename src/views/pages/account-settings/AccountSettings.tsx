@@ -24,8 +24,7 @@ import Icon from 'src/@core/components/icon'
 // ** Demo Tabs Imports
 import TabAccount from 'src/views/pages/account-settings/TabAccount'
 import TabSecurity from 'src/views/pages/account-settings/TabSecurity'
-import TabConnections from 'src/views/pages/account-settings/TabConnections'
-import TabNotifications from 'src/views/pages/account-settings/TabNotifications'
+
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   '& .MuiTabs-indicator': {

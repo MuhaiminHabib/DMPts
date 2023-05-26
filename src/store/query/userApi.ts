@@ -88,27 +88,18 @@ const userApi = baseApi.injectEndpoints({
           body: { BAID, username }
         }
       },
-      invalidatesTags: [
-        // { type: 'User', id: 'BA_a' },
-        // { type: 'User', id: 'BA_i' }
-        { type: 'User', id: 'BA' }
-      ]
+      invalidatesTags: [{ type: 'User', id: 'BA' }]
     }),
 
     activateBa: build.mutation<User, string>({
       query(userID) {
-        console.log('i am being called')
         return {
           url: `API/auth/active-an-user`,
           method: 'POST',
           body: { userID }
         }
       },
-      invalidatesTags: [
-        // { type: 'User', id: 'BA_a' },
-        // { type: 'User', id: 'BA_i' }
-        { type: 'User', id: 'BA' }
-      ]
+      invalidatesTags: [{ type: 'User', id: 'BA' }]
     }),
 
     //============BA============

@@ -191,7 +191,7 @@ const UserListTable = ({
 
                       {showDeleteBtn ? (<Tooltip title='Delete User' placement='top-start'>
                         <Button
-                          // onClick={() => handleDelete(user._id, user.role, user.username)}
+
                           onClick={() => showDeleteConfirmationPopup(user._id, user.role, user.username)}
                           startIcon={<DeleteForeverIcon />}
                         />
