@@ -23,7 +23,7 @@ export const showLoadingAlert = () => {
     text: 'Fetching Data',
     icon: 'warning',
     toast: true,
-    position: 'top',
+    position: 'bottom',
     timer: 2000,
     timerProgressBar: true
   }).then(result => {
@@ -39,7 +39,7 @@ export const showErrorAlert = ({ error }: errorParams) => {
     text: extendedError.status === 500 ? 'Internal Server Error' : extendedError.data.errorMessage,
     icon: 'error',
     toast: true,
-    position: 'top',
+    position: 'bottom',
     timer: 4000,
     timerProgressBar: true
   }).then(result => {
@@ -54,7 +54,22 @@ export const showSuccessAlert = ({ text }: alertParams) => {
     text: text,
     icon: 'success',
     toast: true,
-    position: 'top',
+    position: 'bottom',
+    timer: 2000,
+    timerProgressBar: true
+  }).then(result => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      console.log('I was closed by the timer')
+    }
+  })
+}
+export const showDeleteSuccessAlert = ({ text }: alertParams) => {
+  Swal.fire({
+    title: 'Operation Successful',
+    text: text,
+    icon: 'success',
+    toast: true,
+    position: 'bottom',
     timer: 2000,
     timerProgressBar: true
   }).then(result => {

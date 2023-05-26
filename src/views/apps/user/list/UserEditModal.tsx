@@ -92,7 +92,7 @@ const UserEditModal = ({user} : pageProps) => {
     console.log(error)
     showErrorAlert({error: error})
   } else if(data) {
-    showSuccessAlert({text: 'User Created'})
+    showSuccessAlert({text: 'User Info Updated'})
   }
 
  

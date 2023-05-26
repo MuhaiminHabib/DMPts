@@ -27,7 +27,7 @@ const AnalyticsCCount = () => {
     <CardStatisticsVertical
     isLoading={isLoading || CCountforBaIsLoading || isLoadingCCountforDm}
       title='Total Clients'
-      stats={ data ? data.toString() : CCountforBaData ? CCountforBaData.toString() : CCountforDmData ? CCountforDmData.toString() : 'No Data'}
+      stats={ data ? data.toString() : CCountforBaData ? CCountforBaData.toString() : CCountforDmData ? CCountforDmData.toString() : '0'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />

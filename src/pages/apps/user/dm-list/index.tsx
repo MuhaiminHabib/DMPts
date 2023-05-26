@@ -10,32 +10,8 @@ import { showErrorAlert } from 'src/utils/swal'
 
 
 
-interface UserRoleType {
-  [key: string]: { icon: string; color: string }
-}
-
-interface UserStatusType {
-  [key: string]: ThemeColor
-}
 
 // ** Vars
-const userRoleObj: UserRoleType = {
-  admin: { icon: 'bx:mobile-alt', color: 'error' },
-  author: { icon: 'bx:cog', color: 'warning' },
-  editor: { icon: 'bx:edit', color: 'info' },
-  maintainer: { icon: 'bx:pie-chart-alt', color: 'success' },
-  subscriber: { icon: 'bx:user', color: 'primary' }
-}
-
-
-
-const userStatusObj: UserStatusType = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
-}
-
-
 
 
 
@@ -73,7 +49,6 @@ const [userList, setUserList] = useState<UsersType[]>([])
     showErrorAlert({error: errorFetchDmListError || errorFetchDmListForBa})
   } 
 
-  
   return (
     <UserListTable 
       title={'All Digital Managers'} 

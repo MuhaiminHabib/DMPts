@@ -44,6 +44,10 @@ const userApi = baseApi.injectEndpoints({
       query: () => '/API/auth/ba-list',
       providesTags: [{ type: 'User', id: 'BA' }]
     }),
+    fetchInactiveBaList: build.query<User[], void>({
+      query: () => '/API/auth/inactive-users',
+      providesTags: [{ type: 'User', id: 'BA' }]
+    }),
     fetchDmList: build.query<User[], void>({
       query: () => '/API/auth/dm-list',
       providesTags: [{ type: 'User', id: 'DM' }]
@@ -80,8 +84,19 @@ const userApi = baseApi.injectEndpoints({
       query({ BAID, username }) {
         return {
           url: `/API/auth/inactive-ba`,
-          method: 'DELETE',
+          method: 'POST',
           body: { BAID, username }
+        }
+      },
+      invalidatesTags: [{ type: 'User', id: 'BA' }]
+    }),
+
+    activateBa: build.mutation<User, string>({
+      query(userID) {
+        return {
+          url: `API/auth/active-an-user`,
+          method: 'POST',
+          body: { userID }
         }
       },
       invalidatesTags: [{ type: 'User', id: 'BA' }]
@@ -156,12 +171,14 @@ export const {
   useCreateUserMutation,
   useEditUserMutation,
   useFetchBaListQuery,
+  useFetchInactiveBaListQuery,
   useFetchDmListQuery,
   useFetchCListQuery,
   useFetchCmListQuery,
   useDmsBelongToBaMutation,
   useCBelongToBaMutation,
   useInactivateBaMutation,
+  useActivateBaMutation,
   useFetchDmListForBaQuery,
   useBaDeletesDmMutation,
   useFetchCListForBAQuery,
