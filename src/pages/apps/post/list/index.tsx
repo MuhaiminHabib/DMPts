@@ -113,21 +113,21 @@ const InvoiceList = () => {
               <TableHead>
               {ability?.can('read', 'add-post') ? (<TableHeader toggle={toggleAddPostDrawer} />) : null}
                 <TableRow>
+                  <TableCell>Index</TableCell>
                   <TableCell>Title</TableCell>
                   <TableCell>Description</TableCell>
-
                   <TableCell align='right'>Client</TableCell>
-
                   <TableCell align='right'>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(posts && posts.length > 0) ? posts.map(post => (
+                {(posts && posts.length > 0) ? posts.map((post, i) => (
                   <TableRow
                     key={post._id}
                     sx={{
                       '&:last-child td, &:last-child th': { border: 0 }
                     }}>
+                      <TableCell>{i + 1}</TableCell>
                     <TableCell component='th' scope='row'>
                       {post.title}
                     </TableCell>
@@ -143,13 +143,14 @@ const InvoiceList = () => {
                     </TableCell>
                   </TableRow>
                 )) : 
-                (FetchPostsforDmData && FetchPostsforDmData.length > 0) ? FetchPostsforDmData.map(post => (
+                (FetchPostsforDmData && FetchPostsforDmData.length > 0) ? FetchPostsforDmData.map((post, i) => (
                   <TableRow
                     key={post._id}
                     sx={{
                       '&:last-child td, &:last-child th': { border: 0 }
                     }}
                   >
+                    <TableCell>{i + 1}</TableCell>
                     <TableCell component='th' scope='row'>
                       {post.title}
                     </TableCell>
@@ -172,7 +173,7 @@ const InvoiceList = () => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                )) : (FetchPostsforCData && FetchPostsforCData.length > 0) ? FetchPostsforCData.map(post => (
+                )) : (FetchPostsforCData && FetchPostsforCData.length > 0) ? FetchPostsforCData.map((post, i) => (
     
                   <TableRow
                     key={post._id}
@@ -180,7 +181,7 @@ const InvoiceList = () => {
                       '&:last-child td, &:last-child th': { border: 0 }
                     }}
                   >
-                    
+                    <TableCell>{i + 1}</TableCell>
                     <TableCell component='th' scope='row'>
                       {post.title}
                     </TableCell>

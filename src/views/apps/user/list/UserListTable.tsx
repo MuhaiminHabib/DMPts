@@ -148,6 +148,7 @@ const UserListTable = ({
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
+                  <TableCell>Index</TableCell>
                   <TableCell>Username</TableCell>
                   <TableCell align='right'>Email</TableCell>
                   <TableCell align='right'>FirstName</TableCell>
@@ -157,7 +158,7 @@ const UserListTable = ({
               </TableHead>
                 
               <TableBody>
-                {userList?.map(user => (
+                {userList?.map((user, i) => (
                   <TableRow
                     key={user._id}
                     sx={{
@@ -165,6 +166,7 @@ const UserListTable = ({
                       '&:last-child td, &:last-child th': { border: 0 },
                     }}
                   >
+                    <TableCell>{i + 1}</TableCell>
                     <TableCell component='th' scope='row'>
                       {user.username}
                     </TableCell>
