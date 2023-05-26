@@ -103,15 +103,6 @@ const CList = () => {
 
 
   return (
-    // <UserListTable 
-    //   title={'All Clients'} 
-    //   userList={userList} 
-    //   showAccociatedBtn={true} 
-    //   showHeader={true} 
-    //   addClient={true}
-    //   showLoading={isLoadingCList || isLoadingCListForBa || isLoadingCListForDm} 
-    //   showDeleteBtn={auth.user?.role === 'BA' ? true : false}/>
-
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>

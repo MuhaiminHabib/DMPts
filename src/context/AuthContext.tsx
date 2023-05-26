@@ -70,7 +70,7 @@ const AuthProvider = ({ children }: Props) => {
       }
       initAuth()
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, meEndpoint])
 
 
   // useEffect(() => {
@@ -97,7 +97,7 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     onErrorMeEndpoint(meEndpointError)
-  }, [meEndpointIsError])
+  }, [meEndpointIsError, meEndpointError])
 
   useEffect(() => {
     if(loginData) {
@@ -111,7 +111,7 @@ const AuthProvider = ({ children }: Props) => {
       showErrorAlert({error: loginError})
       router.push('/login')
     }
-  }, [loginIsError])
+  }, [loginIsError, loginError, router])
 
    const onSuccessfulLogout = () => {
       window.localStorage.removeItem('userData')

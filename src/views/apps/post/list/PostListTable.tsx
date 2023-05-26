@@ -11,7 +11,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 type inputProps = {
     isLoading: boolean,
     posts: Posts[],
-    handlePostDelete: Function,
+    handlePostDelete: (postId: string, title: string) => void,
 
 }
 
@@ -19,7 +19,9 @@ type inputProps = {
 const PostListTable = ({isLoading, posts, handlePostDelete}: inputProps) => {
     // **States
     const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
+    
     // **Hooks
+
     const ability = useContext(AbilityContext)
 
     // **Functions
