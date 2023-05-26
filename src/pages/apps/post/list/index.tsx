@@ -33,6 +33,7 @@ import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/sw
 
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import Swal from 'sweetalert2'
+import PostListTable from 'src/views/apps/post/list/PostListTable'
 
 
 
@@ -55,11 +56,13 @@ const InvoiceList = () => {
     //  isError: isErrorFetchPostsforDm, 
     //  error: FetchPostsforDmError,
       data: FetchPostsforDmData} = useFetchPostsforDMQuery()
+
   const {isLoading: isLoadingFetchPostsforC,
 
     //  isError: isErrorFetchPostsforC, 
     //  error: FetchPostsforCError,
       data: FetchPostsforCData} = useFetchPostsforCQuery()
+
   const [deletePost, {
     isLoading: isDeletePostLoading, 
     isError: isDeletePostError,
@@ -73,23 +76,24 @@ const InvoiceList = () => {
 
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
-  const showDeleteConfirmationPopup = (id: string, title: string ) => {
+  const showDeleteConfirmationPopup = (postId: string, title: string ) => {
     Swal.fire({
       title: `Do you want to delete ${title}?`,
       showCancelButton: true,
       confirmButtonText: 'Proceed',
       denyButtonText: `Cancel`,
-    }).then(() => {
-      handlePostDelete(id)
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletePost(postId)
+      }
     })
   }
 
-  const handlePostDelete = (postId: string) => {
+  const handlePostDelete = (postId: string, title: string) => {
     console.log('postId', postId)
-    deletePost(postId)
+    showDeleteConfirmationPopup(postId, title)
   }
 
-  
 
   if(isDeletePostLoading) {
     showLoadingAlert()
@@ -107,99 +111,11 @@ const InvoiceList = () => {
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
           <CardHeader title='Posts' />
-          <TableContainer component={Paper}>
-          {isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC ? <Loader /> : 
-            <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-              <TableHead>
-              {ability?.can('read', 'add-post') ? (<TableHeader toggle={toggleAddPostDrawer} />) : null}
-                <TableRow>
-                  <TableCell>Index</TableCell>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell align='right'>Client</TableCell>
-                  <TableCell align='right'>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(posts && posts.length > 0) ? posts.map((post, i) => (
-                  <TableRow
-                    key={post._id}
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 }
-                    }}>
-                      <TableCell>{i + 1}</TableCell>
-                    <TableCell component='th' scope='row'>
-                      {post.title}
-                    </TableCell>
-                    <TableCell component='th' scope='row'>
-                      {post.description}
-                    </TableCell>
 
-                    <TableCell align='right'>{post.creator.username}</TableCell> 
-                    <TableCell align='right'>
-                      <Tooltip title='Post Details' placement='top-start'>
-                        <PostDetailsModal post={post}/>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                )) : 
-                (FetchPostsforDmData && FetchPostsforDmData.length > 0) ? FetchPostsforDmData.map((post, i) => (
-                  <TableRow
-                    key={post._id}
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 }
-                    }}
-                  >
-                    <TableCell>{i + 1}</TableCell>
-                    <TableCell component='th' scope='row'>
-                      {post.title}
-                    </TableCell>
-                    <TableCell component='th' scope='row'>
-                      {post.description}
-                    </TableCell>
-
-                    <TableCell align='right'>{post.creator.username}</TableCell> 
-                    <TableCell align='right'>
-                      <Tooltip title='Post Details' placement='top-start'>
-                        <PostDetailsModal post={post}/>
-                      </Tooltip>
-
-                      <Tooltip title='Post Edit' placement='top-start'>
-                        <EditPostModal post={post}/>
-                      </Tooltip>
-                      
-                      <Tooltip title='Post Delete' placement='top-start'>
-                        <Button startIcon={<DeleteForeverIcon />} onClick={() => showDeleteConfirmationPopup(post._id, post.title)}></Button>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                )) : (FetchPostsforCData && FetchPostsforCData.length > 0) ? FetchPostsforCData.map((post, i) => (
-    
-                  <TableRow
-                    key={post._id}
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 }
-                    }}
-                  >
-                    <TableCell>{i + 1}</TableCell>
-                    <TableCell component='th' scope='row'>
-                      {post.title}
-                    </TableCell>
-                    <TableCell component='th' scope='row'>
-                      {post.description}
-                    </TableCell>
-
-                    <TableCell align='right'>{post.creator.username}</TableCell> 
-                    <TableCell align='right'>
-                      <Tooltip title='Post Details' placement='top-start'>
-                        <PostDetailsModal post={post}/>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                )) : "No Posts to show"}
-              </TableBody>
-            </Table>}
-          </TableContainer>
+          <PostListTable 
+            isLoading={isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC} 
+            posts={posts ? posts : FetchPostsforDmData? FetchPostsforDmData : FetchPostsforCData? FetchPostsforCData : []}
+            handlePostDelete={handlePostDelete}/>
         </Card>
       </Grid>
 

@@ -21,9 +21,9 @@ const AnalyticsDashboard = () => {
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
-        <Grid item xs={12} lg={8} sx={{ order: -1 }}>
+        {ability?.can('read', 'welcome-card') ? (<Grid item xs={12} lg={8} sx={{ order: -1 }}>
           <AnalyticsCongratulations />
-        </Grid>
+        </Grid>) : null}
         
 
         {/* A */}

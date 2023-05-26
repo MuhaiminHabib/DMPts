@@ -96,11 +96,12 @@ const UserDropdown = (props: Props) => {
         }}
       >
         <Avatar
+
           alt='John Doe'
-          src='/images/avatars/1.png'
+          // src='/images/avatars/1.png'
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-        />
+        >{user?.username.charAt(0)}</Avatar>
       </Badge>
       <Menu
         anchorEl={anchorEl}
@@ -120,7 +121,11 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='avatar_image' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar  
+                alt='avatar_image' 
+                // src='/images/avatars/1.png' 
+                sx={{ width: '2.5rem', height: '2.5rem' }} 
+                >{user?.username.charAt(0)}</Avatar>
             </Badge>
             <Box sx={{ ml: 3, display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography sx={{ fontWeight: 500 }}>{user!.username}</Typography>

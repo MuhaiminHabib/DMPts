@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, SyntheticEvent } from 'react'
 
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
 
@@ -55,16 +55,16 @@ const BaList = (props: TabPanelProps) => {
   // ** State
 
   // **Hooks
-  const [value, setValue] = React.useState(0)
+  const [value, setValue] = useState(0)
 
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
-  const {isLoading : activeBaListIsLoading,
-          isError : activeBaListIsError,
-          error: activeBaListError,
-          data : activeBaList 
+  const {isLoading : baListIsLoading,
+          isError : baListIsError,
+          error: baListError,
+          data : baList 
         } = useFetchBaListQuery()
 
 
@@ -83,24 +83,24 @@ const BaList = (props: TabPanelProps) => {
                     <Tab label='Inactive Businesses' {...a11yProps(1)} />
                   </Tabs>
                 </Box>
-                {activeBaList && activeBaList.length !== 0 && (
+                {baList && baList.length !== 0 && (
                   <TabPanel value={value} index={0}>
                     <UserListTable 
                       title={'Active Businesses'} 
-                      userList={activeBaList.filter(user => (user.active))} 
-                      showLoading={activeBaListIsLoading}
+                      userList={baList.filter(user => (user.active))} 
+                      showLoading={baListIsLoading}
                       showAccociatedBtn={true} 
                       showHeader={true}
                       showDeleteBtn={true}/>
                   </TabPanel>
                 )}
 
-                {activeBaList && activeBaList.length !== 0 && (
+                {baList && baList.length !== 0 && (
                 <TabPanel value={value} index={1}>
                   <UserListTable 
                     title={'Inactive Businesses'} 
-                    userList={activeBaList.filter(user => (!user.active))} 
-                    showLoading={activeBaListIsLoading}
+                    userList={baList.filter(user => (!user.active))} 
+                    showLoading={baListIsLoading}
                     showAccociatedBtn={true} 
                     showActivateBtn= {true}
                     showDeleteBtn={false}/>

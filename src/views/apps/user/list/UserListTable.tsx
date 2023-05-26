@@ -87,8 +87,10 @@ const UserListTable = ({
       showCancelButton: true,
       confirmButtonText: 'Proceed',
       denyButtonText: `Cancel`,
-    }).then(() => {
+    }).then((result) => {
+      if (result.isConfirmed) {
       handleDelete(id, role, username)
+      }
     })
   }
 
@@ -98,8 +100,10 @@ const UserListTable = ({
       showCancelButton: true,
       confirmButtonText: 'Proceed',
       denyButtonText: `Cancel`,
-    }).then(() => {
+    }).then((result) => {
+      if (result.isConfirmed) {
       handleUserActivation(id)
+      }
     })
   }
 
