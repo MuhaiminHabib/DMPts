@@ -1,36 +1,37 @@
 // ** MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
+
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import Grid, { GridProps } from '@mui/material/Grid'
-import { styled, useTheme } from '@mui/material/styles'
+import Grid from '@mui/material/Grid'
+
 import { useContext } from 'react'
 import { AuthContext } from 'src/context/AuthContext'
 
 // Styled Grid component
-const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    order: -1,
-    display: 'flex',
-    justifyContent: 'center'
-  }
-}))
+// const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
+//   [theme.breakpoints.down('sm')]: {
+//     order: -1,
+//     display: 'flex',
+//     justifyContent: 'center'
+//   }
+// }))
 
 // Styled component for the image
-const Img = styled('img')(({ theme }) => ({
-  right: 60,
-  bottom: -1,
-  height: 170,
-  position: 'absolute',
-  [theme.breakpoints.down('sm')]: {
-    position: 'static'
-  }
-}))
+// const Img = styled('img')(({ theme }) => ({
+//   right: 60,
+//   bottom: -1,
+//   height: 170,
+//   position: 'absolute',
+//   [theme.breakpoints.down('sm')]: {
+//     position: 'static'
+//   }
+// }))
 
 const AnalyticsCongratulations = () => {
   // ** Hook
-  const theme = useTheme()
+
+  // const theme = useTheme()
   const {user} = useContext(AuthContext)
 
   return (
@@ -48,7 +49,7 @@ const AnalyticsCongratulations = () => {
               View Badges
             </Button> */}
           </Grid>
-          
+
           {/* <StyledGrid item xs={12} sm={6}>
             <Img alt='Congratulations John' src={`/images/cards/illustration-john-${theme.palette.mode}.png`} />
           </StyledGrid> */}

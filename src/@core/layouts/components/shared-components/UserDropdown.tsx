@@ -98,6 +98,7 @@ const UserDropdown = (props: Props) => {
         <Avatar
 
           alt='John Doe'
+          
           // src='/images/avatars/1.png'
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
@@ -123,6 +124,7 @@ const UserDropdown = (props: Props) => {
             >
               <Avatar  
                 alt='avatar_image' 
+
                 // src='/images/avatars/1.png' 
                 sx={{ width: '2.5rem', height: '2.5rem' }} 
                 >{user?.username.charAt(0)}</Avatar>

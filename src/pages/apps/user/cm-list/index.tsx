@@ -77,7 +77,6 @@ const {isLoading : isLoadingFetchCmListForC,
   }
 
   return (
-    // <UserListTable title={'All Clients Managers'} userList={userList} showAccociatedBtn={true} addCm={true} showDeleteBtn={user?.role === 'C'}/>
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
