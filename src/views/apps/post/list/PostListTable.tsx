@@ -12,9 +12,7 @@ type inputProps = {
     isLoading: boolean,
     posts: Posts[],
     handlePostDelete: (postId: string, title: string) => void,
-
 }
-
 
 const PostListTable = ({isLoading, posts, handlePostDelete}: inputProps) => {
     // **States

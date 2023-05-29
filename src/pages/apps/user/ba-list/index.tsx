@@ -19,6 +19,9 @@ import { showErrorAlert } from 'src/utils/swal'
 import { truncateSync } from 'fs'
 import { AuthContext } from 'src/context/AuthContext'
 
+import TableHeader from 'src/views/apps/user/list/TableHeader'
+import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
@@ -56,6 +59,9 @@ const BaList = (props: TabPanelProps) => {
   // ** State
   const [value, setValue] = useState(0)
 
+  const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
+  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+
   // **Hooks
   const {user} = useContext(AuthContext)
 
@@ -77,6 +83,13 @@ const BaList = (props: TabPanelProps) => {
         <Grid item xs={12}>
           <Card>
             <CardHeader title='Businesses' />
+
+            {user!.role === 'A' ? 
+          <CardHeader title='Businesses' action={
+            <TableHeader toggle={toggleAddUserDrawer} /> }
+            /> :
+            <CardHeader title='Businesses' />
+          }
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -112,6 +125,7 @@ const BaList = (props: TabPanelProps) => {
             </CardContent>
           </Card>
         </Grid>
+        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
       </Grid>
     </>
 
