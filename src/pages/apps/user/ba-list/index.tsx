@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import React, { useState, useEffect, SyntheticEvent } from 'react'
+import React, { useState, useEffect, SyntheticEvent, useContext } from 'react'
 
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
 
@@ -17,6 +17,7 @@ import { useFetchBaListQuery, useFetchInactiveBaListQuery } from 'src/store/quer
 import Loader from 'src/shared-components/Loader'
 import { showErrorAlert } from 'src/utils/swal'
 import { truncateSync } from 'fs'
+import { AuthContext } from 'src/context/AuthContext'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -53,9 +54,10 @@ function a11yProps(index: number) {
 
 const BaList = (props: TabPanelProps) => {
   // ** State
+  const [value, setValue] = useState(0)
 
   // **Hooks
-  const [value, setValue] = useState(0)
+  const {user} = useContext(AuthContext)
 
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -90,7 +92,7 @@ const BaList = (props: TabPanelProps) => {
                       userList={baList.filter(user => (user.active))} 
                       showLoading={baListIsLoading}
                       showAccociatedBtn={true} 
-                      showHeader={true}
+                      showHeader={user!.role === 'A'}
                       showDeleteBtn={true}/>
                   </TabPanel>
                 )}

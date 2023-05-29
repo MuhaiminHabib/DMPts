@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 // ** MUI Imports
 import {
@@ -13,6 +13,8 @@ import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useF
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
+import TableHeader from 'src/views/apps/post/list/TableHeader'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 
 
@@ -25,6 +27,7 @@ const InvoiceList = () => {
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
+  const ability = useContext(AbilityContext)
   const {isLoading, 
 
     // isError, error, 
@@ -89,8 +92,12 @@ const InvoiceList = () => {
       <Grid item xs={12}>
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
-          <CardHeader title='Posts' />
-
+          {ability?.can('read', 'add-post') ?
+          <CardHeader title='Client Managers' action={
+            <TableHeader toggle={toggleAddPostDrawer} /> }
+            /> :
+            <CardHeader title='Posts' />
+          }
           <PostListTable 
             isLoading={isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC} 
             posts={posts ? posts : FetchPostsforDmData? FetchPostsforDmData : FetchPostsforCData? FetchPostsforCData : []}
