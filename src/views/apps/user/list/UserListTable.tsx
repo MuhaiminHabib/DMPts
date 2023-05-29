@@ -19,10 +19,9 @@ import {
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import Diversity3Icon from '@mui/icons-material/Diversity3'
 import RestoreIcon from '@mui/icons-material/Restore';
-import React, { useState } from 'react'
-import TableHeader from './TableHeader'
+import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
+import React from 'react'
 import { UsersType } from 'src/types/apps/userTypes'
-import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import Loader from '../../../../shared-components/Loader'
 import UserEditModal from 'src/views/apps/user/list/UserEditModal'
 import UserProfileModal from './UserProfileModal'
@@ -52,18 +51,13 @@ const UserListTable = ({
   showDeleteBtn = false,
   showActivateBtn = false,
   showLoading = false,
-  addClient = false,
-  addDm = false,
-  addCm = false,
-  showHeader= false,
-
 }: props) => {
 
   // ** States
-  const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
 
   // ** Hooks
+
   const [activateBa, {isLoading: isLoadingActivateBa, isError: ActivateBaIsError, error: activateBaError, data: activateBaData}] = useActivateBaMutation()
   const [inactivateBa, 
     {isLoading: isLoadingInactivateBa,
@@ -75,9 +69,8 @@ const UserListTable = ({
   const [cDeletesCm, {isLoading: isLoadingCDeletesCm, isError: isErrorCDeletesCm, error: cDeletesCmError, data: cDeletesCmData}] = useCDeletesCmMutation()
 
 
-
   // ** Functions
-  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+
 
 
 
@@ -146,7 +139,6 @@ const UserListTable = ({
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
           <CardHeader title={title} />
-          {showHeader ? <TableHeader toggle={toggleAddUserDrawer} /> : null}
           <TableContainer component={Paper}>
           {isLoadingBaDeletesC || isLoadingBaDeletesDm || isLoadingInactivateBa || isLoadingCDeletesCm || isLoadingActivateBa || showLoading ? <Loader /> : 
             <Table sx={{ minWidth: 650 }} aria-label='simple table'>
@@ -195,13 +187,13 @@ const UserListTable = ({
                         <UserEditModal user={user}/>
                       </Tooltip>
 
-                      {showDeleteBtn ? (<Tooltip title='Delete User' placement='top-start'>
+                      {showDeleteBtn ? (<Tooltip title={user.role === "BA" ?'Inactive User' : 'Delete User'} placement='top-start'>
                         <Button
-
                           onClick={() => showDeleteConfirmationPopup(user._id, user.role, user.username)}
-                          startIcon={<DeleteForeverIcon />}
+                          startIcon={user.role === "BA" ? <PersonRemoveAlt1Icon/> : <DeleteForeverIcon />}
                         />
                       </Tooltip>) : null}
+
                       {showActivateBtn ? (<Tooltip title='Activate User' placement='top-start'>
                         <Button
                           onClick={() => showActivateConfirmationPopup(user._id, user.username)}
@@ -219,7 +211,7 @@ const UserListTable = ({
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={addClient} addDm={addDm} addCm={addCm}/>
+     
     </Grid>
   )
 }

@@ -7,6 +7,9 @@ import { useFetchCmListForCQuery, useFetchCmListQuery } from 'src/store/query/us
 import { AuthContext } from 'src/context/AuthContext'
 import { UsersType } from 'src/types/apps/userTypes'
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
+import TableHeader from 'src/views/apps/user/list/TableHeader'
+import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -51,6 +54,9 @@ const CmList = () => {
   const [cmList, setCmList] = useState<UsersType[]>([])
   const [value, setValue] = useState(0)
 
+  const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
+  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+
   // ** Hooks
 const {user} = useContext(AuthContext)
 
@@ -81,7 +87,14 @@ const {isLoading : isLoadingFetchCmListForC,
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+
+          {user!.role === 'C' ? 
+          <CardHeader title='Client Managers' action={
+            <TableHeader toggle={toggleAddUserDrawer} /> }
+            /> :
             <CardHeader title='Client Managers' />
+          }
+            
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -115,6 +128,7 @@ const {isLoading : isLoadingFetchCmListForC,
             </CardContent>
           </Card>
         </Grid>
+        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={user!.role=== 'C'}/>
       </Grid>
     </>
   )

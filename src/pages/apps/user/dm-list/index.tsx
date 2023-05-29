@@ -8,6 +8,8 @@ import { AuthContext } from 'src/context/AuthContext'
 import { useFetchDmListForBaQuery, useFetchDmListQuery } from 'src/store/query/userApi'
 import { showErrorAlert } from 'src/utils/swal'
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
+import TableHeader from 'src/views/apps/user/list/TableHeader'
+import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 
 
 
@@ -55,6 +57,9 @@ const DmList = () => {
 const [dmList, setDmList] = useState<UsersType[]>([])
 const [value, setValue] = useState(0)
 
+const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
+const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+
   // ** Hooks
 
   const auth = useContext(AuthContext)
@@ -81,6 +86,8 @@ const [value, setValue] = useState(0)
   }, [fetchDmListforBaData, auth.user?.role, fetchDmListData ])
 
 
+
+
   // **Functions
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -96,7 +103,12 @@ const [value, setValue] = useState(0)
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title='Digital Managers' />
+          {auth.user!.role === 'BA' ? 
+          <CardHeader title='Digital Managers' action={
+            <TableHeader toggle={toggleAddUserDrawer} /> }
+            /> :
+          <CardHeader title='Digital Managers' />
+          }
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -111,7 +123,7 @@ const [value, setValue] = useState(0)
                       title={'Active Digital Managers'} 
                       userList={dmList.filter(user => (user.active))} 
                       showLoading={isLoadingFetchDmList || isLoadingFetchDmListForBa}
-                      showHeader={true}
+                      showHeader={auth.user!.role === "BA"}
                       showDeleteBtn={true}/>
                   </TabPanel>
                 )}
@@ -130,6 +142,7 @@ const [value, setValue] = useState(0)
             </CardContent>
           </Card>
         </Grid>
+        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addDm={auth.user!.role=== 'BA'}/>
       </Grid>
     </>
   )

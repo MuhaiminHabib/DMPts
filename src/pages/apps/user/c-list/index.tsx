@@ -8,7 +8,8 @@ import { AuthContext } from 'src/context/AuthContext'
 import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert } from 'src/utils/swal'
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
-
+import TableHeader from 'src/views/apps/user/list/TableHeader'
+import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -53,6 +54,9 @@ const CList = () => {
   const [cList, setCList] = useState<UsersType[]>([])
   const [value, setValue] = useState(0)
 
+  const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
+const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+
   // ** Hooks
 
   const auth = useContext(AuthContext)
@@ -65,17 +69,14 @@ const CList = () => {
     isError: isErrorCList, 
     error : cListError, 
     data: cListData} = useFetchCListQuery()
-
   const {
     isLoading :isLoadingCListForBa, 
 
     isError: isErrorCListForBa, 
     error : cListForBaError, 
     data: cListForBaData} = useFetchCListForBAQuery()
-    
   const {
     isLoading :isLoadingCListForDm, 
-
     isError: isErrorCListForDm, 
     error : cListForDmError, 
     data: cListForDmData} = useFetchCListForDMQuery()
@@ -107,7 +108,13 @@ const CList = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+          {auth.user!.role === 'BA' ||  auth.user!.role === 'DM'? 
+          <CardHeader title='Clients' action={
+            <TableHeader toggle={toggleAddUserDrawer} /> }
+            /> :
             <CardHeader title='Clients' />
+          }
+            
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -141,6 +148,7 @@ const CList = () => {
             </CardContent>
           </Card>
         </Grid>
+        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={auth.user!.role=== 'BA' || auth.user!.role=== 'DM'}/>
       </Grid>
     </>
   )
