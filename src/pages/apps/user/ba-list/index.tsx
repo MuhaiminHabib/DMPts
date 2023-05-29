@@ -81,9 +81,7 @@ const BaList = (props: TabPanelProps) => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Card>
-            <CardHeader title='Businesses' />
-
+          <Card> 
             {user!.role === 'A' ? 
           <CardHeader title='Businesses' action={
             <TableHeader toggle={toggleAddUserDrawer} /> }
