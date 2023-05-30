@@ -49,6 +49,7 @@ const AuthProvider = ({ children }: Props) => {
 
   const [meEndpoint, 
     {
+      isLoading: isLoadingMeEndpoint,
       isError: meEndpointIsError, 
       error: meEndpointError, 
       data: meEndpointData}
@@ -57,6 +58,7 @@ const AuthProvider = ({ children }: Props) => {
   const [logout] = useLogoutMutation()
 
   useEffect(() => {
+    console.log('isLoggedIn is:', isLoggedIn)
     if(isLoggedIn) {
       const initAuth = async (): Promise<void> => {
         const userData = localStorage.getItem('userData')!
@@ -69,34 +71,32 @@ const AuthProvider = ({ children }: Props) => {
         }
       }
       initAuth()
+    } else {
+      setLoading(false)
+      router.push('/login')
+      console.log('i am in else')
     }
   }, [isLoggedIn, meEndpoint])
 
 
-  // useEffect(() => {
-  //   if(meEndpointData) {
-  //     onSuccessMeEndpoint(meEndpointData)
-  //   }  
-  //   if(meEndpointIsError) {
-  //     onErrorMeEndpoint(meEndpointError)
-  //   }  
-  //   if(loginData) {
-  //     onSuccessLogin(loginData)
-  //   } 
-  //   if(loginIsError) {
-  //     setLoading(false)
-  //     showErrorAlert({error: loginError})
-  //     router.push('/login')
-  //   }
-  // }, [meEndpointData, meEndpointError, loginData, loginIsError])
+  useEffect(() => {
+    if(isLoadingMeEndpoint) {
+      console.log('trying to fetch me endpoint')
+    }
+  }, [isLoadingMeEndpoint])
   
 
   useEffect(() => {
-    onSuccessMeEndpoint(meEndpointData)
+    if(meEndpointData) {
+      console.log('meEndpointData ', meEndpointData)
+      onSuccessMeEndpoint(meEndpointData)
+    }
   }, [meEndpointData])
 
+
   useEffect(() => {
-    onErrorMeEndpoint(meEndpointError)
+    // if(meEndpointError)
+     onErrorMeEndpoint(meEndpointError)
   }, [meEndpointIsError, meEndpointError])
 
   useEffect(() => {
@@ -108,12 +108,14 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     if(loginIsError) {
       setLoading(false)
+      console.log("loginError",loginError)
       showErrorAlert({error: loginError})
       router.push('/login')
     }
-  }, [loginIsError, loginError, router])
+  }, [loginIsError, loginError])
 
    const onSuccessfulLogout = () => {
+      alert("i am on onSuccessfulLogout")
       window.localStorage.removeItem('userData')
       window.localStorage.removeItem(authConfig.storageTokenKeyName)
       window.localStorage.removeItem(authConfig.onTokenExpiration)

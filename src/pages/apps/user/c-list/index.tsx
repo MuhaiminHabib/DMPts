@@ -120,7 +120,7 @@ const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
                     <Tab label='Active Clients' {...a11yProps(0)} />
-                    <Tab label='Inactive Clients' {...a11yProps(1)} />
+                    {/* <Tab label='Inactive Clients' {...a11yProps(1)} /> */}
                   </Tabs>
                 </Box>
                 {cList && cList.length !== 0 && (
@@ -129,21 +129,20 @@ const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
                       title={'Active Clients'} 
                       userList={cList.filter(user => (user.active))} 
                       showLoading={isLoadingCList || isLoadingCListForBa || isLoadingCListForDm}
-                      showHeader={true}
-                      showDeleteBtn={true}/>
+                      showEditBtn={auth.user!.role === "BA" || auth.user!.role === "DM"}
+                      showDeleteBtn={auth.user!.role === "BA" }/>
                   </TabPanel>
                 )}
 
-                {cList && cList.length !== 0 && (
+                {/* {cList && cList.length !== 0 && (
                 <TabPanel value={value} index={1}>
                   <UserListTable 
                     title={'Inactive Clients'} 
                     userList={cList.filter(user => (!user.active))} 
                     showLoading={isLoadingCList || isLoadingCListForBa || isLoadingCListForDm}
-                    showActivateBtn= {true}
-                    showDeleteBtn={false}/>
+                    />
                 </TabPanel>
-                )}
+                )} */}
               </Box>
             </CardContent>
           </Card>

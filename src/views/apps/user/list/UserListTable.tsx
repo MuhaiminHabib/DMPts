@@ -36,6 +36,7 @@ type props = {
   showAccociatedBtn?: boolean
   showHeader?: boolean
   showDeleteBtn? : boolean
+  showEditBtn? : boolean
   showActivateBtn? : boolean
   showLoading?: boolean
   addClient?: boolean
@@ -49,6 +50,7 @@ const UserListTable = ({
   userList,
   showAccociatedBtn = false,
   showDeleteBtn = false,
+  showEditBtn = false,
   showActivateBtn = false,
   showLoading = false,
 }: props) => {
@@ -183,9 +185,9 @@ const UserListTable = ({
                         </Tooltip>
                       ) : null}
 
-                      <Tooltip title='Edit User Details' placement='top-start'>
+                      {showEditBtn ? (<Tooltip title='Edit User Details' placement='top-start'>
                         <UserEditModal user={user}/>
-                      </Tooltip>
+                      </Tooltip>) : null}
 
                       {showDeleteBtn ? (<Tooltip title={user.role === "BA" ?'Inactive User' : 'Delete User'} placement='top-start'>
                         <Button

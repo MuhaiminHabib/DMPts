@@ -15,6 +15,7 @@ import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
 import TableHeader from 'src/views/apps/post/list/TableHeader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { AuthContext } from 'src/context/AuthContext'
 
 
 
@@ -27,6 +28,7 @@ const InvoiceList = () => {
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
+  const {user} = useContext(AuthContext)
   const ability = useContext(AbilityContext)
   const {isLoading, 
 
@@ -85,6 +87,12 @@ const InvoiceList = () => {
     showSuccessAlert({text: 'Post Deleted'})
   }
 
+  if(FetchPostsforCData) {
+    console.log('FetchPostsforCData is:', FetchPostsforCData)
+    console.log('posts is:', posts)
+    console.log('FetchPostsforDmData is:', FetchPostsforDmData)
+  } 
+
 
 
   return (
@@ -93,14 +101,14 @@ const InvoiceList = () => {
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
           {ability?.can('read', 'add-post') ?
-          <CardHeader title='Client Managers' action={
+          <CardHeader title='Posts' action={
             <TableHeader toggle={toggleAddPostDrawer} /> }
             /> :
             <CardHeader title='Posts' />
           }
           <PostListTable 
-            isLoading={isLoading || isLoadingFetchPostsforDm || isLoadingFetchPostsforC} 
-            posts={posts ? posts : FetchPostsforDmData? FetchPostsforDmData : FetchPostsforCData? FetchPostsforCData : []}
+            isLoading={((user!.role === 'A' || user!.role === 'BA') && isLoading) || (user!.role === 'DM' && isLoadingFetchPostsforDm) || (user!.role === 'C' && isLoadingFetchPostsforC)} 
+            posts={posts ? posts : FetchPostsforDmData && FetchPostsforDmData.length > 0 ? FetchPostsforDmData : FetchPostsforCData ? FetchPostsforCData : []}
             handlePostDelete={handlePostDelete}/>
         </Card>
       </Grid>

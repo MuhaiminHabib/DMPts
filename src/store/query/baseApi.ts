@@ -63,6 +63,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
       result = await baseQuery(args, api, extraOptions)
     } else {
+      console.log('i am in base query and i will logout now')
       await baseQuery('/API/auth/logout', api, extraOptions)
       window.localStorage.removeItem('userData')
       window.localStorage.removeItem(authConfig.storageTokenKeyName)
