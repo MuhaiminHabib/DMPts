@@ -22,6 +22,12 @@ const PostListTable = ({isLoading, posts, handlePostDelete}: inputProps) => {
     const ability = useContext(AbilityContext)
 
     // **Functions
+
+    if(posts) {
+      console.log(
+        'posts are', posts
+      )
+    }
   return (
     <TableContainer component={Paper}>
     {isLoading  ? <Loader /> : 
@@ -36,7 +42,7 @@ const PostListTable = ({isLoading, posts, handlePostDelete}: inputProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {(posts && posts.length > 0) ? posts.map((post, i) => (
+          {(posts && posts.length > -1) ? posts.map((post, i) => (
             <TableRow
               key={post._id}
               sx={{

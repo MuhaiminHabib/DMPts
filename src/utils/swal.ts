@@ -10,7 +10,7 @@ type dataType = {
 }
 
 type ExtendedSerializedError = errorParams & {
-  status: number
+  status: number | string
   data: dataType
 }
 
@@ -36,7 +36,14 @@ export const showErrorAlert = ({ error }: errorParams) => {
   const extendedError: ExtendedSerializedError = error as ExtendedSerializedError
   Swal.fire({
     title: 'Error!',
-    text: extendedError.status === 500 ? 'Internal Server Error' : extendedError.data.errorMessage,
+    text:
+      extendedError.status === 500
+        ? 'Internal Server Error'
+        : extendedError.status === 'FETCH_ERROR'
+        ? 'Network Error'
+        : extendedError.data?.errorMessage
+        ? extendedError.data.errorMessage
+        : 'Unknown Error',
     icon: 'error',
     toast: true,
     position: 'bottom',

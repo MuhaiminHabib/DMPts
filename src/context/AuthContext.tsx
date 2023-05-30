@@ -74,30 +74,13 @@ const AuthProvider = ({ children }: Props) => {
     } else {
       setLoading(false)
       router.push('/login')
+      console.log('i am in else')
     }
   }, [isLoggedIn, meEndpoint])
 
 
-  // useEffect(() => {
-  //   if(meEndpointData) {
-  //     onSuccessMeEndpoint(meEndpointData)
-  //   }  
-  //   if(meEndpointIsError) {
-  //     onErrorMeEndpoint(meEndpointError)
-  //   }  
-  //   if(loginData) {
-  //     onSuccessLogin(loginData)
-  //   } 
-  //   if(loginIsError) {
-  //     setLoading(false)
-  //     showErrorAlert({error: loginError})
-  //     router.push('/login')
-  //   }
-  // }, [meEndpointData, meEndpointError, loginData, loginIsError])
-
   useEffect(() => {
     if(isLoadingMeEndpoint) {
-
       console.log('trying to fetch me endpoint')
     }
   }, [isLoadingMeEndpoint])
@@ -105,13 +88,15 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if(meEndpointData) {
+      console.log('meEndpointData ', meEndpointData)
       onSuccessMeEndpoint(meEndpointData)
     }
   }, [meEndpointData])
 
 
   useEffect(() => {
-    if(meEndpointError) onErrorMeEndpoint(meEndpointError)
+    // if(meEndpointError)
+     onErrorMeEndpoint(meEndpointError)
   }, [meEndpointIsError, meEndpointError])
 
   useEffect(() => {
@@ -123,10 +108,11 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     if(loginIsError) {
       setLoading(false)
+      console.log("loginError",loginError)
       showErrorAlert({error: loginError})
       router.push('/login')
     }
-  }, [loginIsError, loginError, router])
+  }, [loginIsError, loginError])
 
    const onSuccessfulLogout = () => {
       alert("i am on onSuccessfulLogout")

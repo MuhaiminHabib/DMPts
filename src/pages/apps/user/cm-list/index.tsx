@@ -100,7 +100,7 @@ const {isLoading : isLoadingFetchCmListForC,
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
                     <Tab label='Active Client Managers' {...a11yProps(0)} />
-                    <Tab label='Inactive Client Managers' {...a11yProps(1)} />
+                    {/* <Tab label='Inactive Client Managers' {...a11yProps(1)} /> */}
                   </Tabs>
                 </Box>
                 {cmList && cmList.length !== 0 && (
@@ -109,26 +109,25 @@ const {isLoading : isLoadingFetchCmListForC,
                       title={'Active Client Managers'} 
                       userList={cmList.filter(user => (user.active))} 
                       showLoading={isLoading || isLoadingFetchCmListForC }
-                      showHeader={true}
-                      showDeleteBtn={true}/>
+                      showEditBtn={user!.role === "C"}
+                      showDeleteBtn={user!.role === "C"}/>
                   </TabPanel>
                 )}
 
-                {cmList && cmList.length !== 0 && (
+                {/* {cmList && cmList.length !== 0 && (
                 <TabPanel value={value} index={1}>
                   <UserListTable 
                     title={'Inactive Client Managers'} 
                     userList={cmList.filter(user => (!user.active))} 
                     showLoading={isLoading || isLoadingFetchCmListForC}
-                    showActivateBtn= {true}
-                    showDeleteBtn={false}/>
+                    />
                 </TabPanel>
-                )}
+                )} */}
               </Box>
             </CardContent>
           </Card>
         </Grid>
-        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={user!.role=== 'C'}/>
+        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer}  addCm={user!.role=== 'C'}/>
       </Grid>
     </>
   )
