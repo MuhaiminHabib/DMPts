@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 
-const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
+const Spinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
   // ** Hook
   const theme = useTheme()
 
@@ -39,4 +39,4 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
   )
 }
 
-export default FallbackSpinner
+export default Spinner
