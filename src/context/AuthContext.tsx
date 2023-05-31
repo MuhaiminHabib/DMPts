@@ -56,11 +56,28 @@ const AuthProvider = ({ children }: Props) => {
   const hasLoginBeenCalled = useRef(false)
 
   useEffect(() => {
-    if (loginData && !hasLoginBeenCalled.current) {
+    // if (loginData && !hasLoginBeenCalled.current) {
+    //   onSuccessfulLogin(loginData)
+    //   hasLoginBeenCalled.current = true
+    // }
+    // if (meEndpointData) onSuccessfulMeEndpoint(meEndpointData)
+
+    if (loginIsError) {
+      // Handle login error
+      showErrorAlert({ error: loginError })
+      setLoading(false)
+    } else if (loginData && !hasLoginBeenCalled.current) {
       onSuccessfulLogin(loginData)
       hasLoginBeenCalled.current = true
     }
-    if (meEndpointData) onSuccessfulMeEndpoint(meEndpointData)
+
+    if (meEndpointIsError) {
+      // Handle meEndpoint error
+      showErrorAlert({ error: meEndpointError })
+      setLoading(false)
+    } else if (meEndpointData) {
+      onSuccessfulMeEndpoint(meEndpointData)
+    }
   }, [loginData, meEndpointData])
 
   // useEffect(() => {
