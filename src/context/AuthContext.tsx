@@ -4,7 +4,6 @@ import { createContext, useEffect, useState, ReactNode } from 'react'
 // ** Next Import
 import { useRouter } from 'next/router'
 
-
 // ** Config
 import authConfig from 'src/configs/auth'
 
@@ -12,7 +11,6 @@ import authConfig from 'src/configs/auth'
 import { AuthValuesType, LoginParams, UserDataType } from './types'
 import { useLogoutMutation, useLoginMutation, useMeEndpointMutation } from 'src/store/query/authApi'
 import { showErrorAlert } from 'src/utils/swal'
-
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -40,101 +38,55 @@ const AuthProvider = ({ children }: Props) => {
   // ** Hooks
   const router = useRouter()
 
-  const [login, 
-    {
-      isError: loginIsError,
-      error: loginError,
-      data: loginData}
-  ] = useLoginMutation()
+  const [login, { isError: loginIsError, error: loginError, data: loginData }] = useLoginMutation()
 
-  const [meEndpoint, 
-    {
-      isLoading: isLoadingMeEndpoint,
-      isError: meEndpointIsError, 
-      error: meEndpointError, 
-      data: meEndpointData}
+  const [
+    meEndpoint,
+    { isLoading: isLoadingMeEndpoint, isError: meEndpointIsError, error: meEndpointError, data: meEndpointData }
   ] = useMeEndpointMutation()
 
   const [logout] = useLogoutMutation()
 
   useEffect(() => {
-    console.log('isLoggedIn is:', isLoggedIn)
-    if(isLoggedIn) {
-      const initAuth = async (): Promise<void> => {
-        const userData = localStorage.getItem('userData')!
-        if (!userData || userData === 'undefined') {
-          setLoading(true)
-          meEndpoint()
-        } else {
-          setUser(JSON.parse(userData))
-          setLoading(false)
-        }
+    if (isLoggedIn) {
+      const userData = localStorage.getItem('userData')!
+      if (!userData || userData === 'undefined') {
+        // if user not logged in previously
+        meEndpoint()
+      } else {
+        console.log('🚀 ~ file: AuthContext.tsx:57 ~ useEffect ~ else:')
+        // if user logged in previously and have the userData on the localStorage
+
+        setUser(JSON.parse(userData))
+        setLoading(false)
       }
-      initAuth()
     } else {
       setLoading(false)
       router.push('/login')
-      console.log('i am in else')
     }
-  }, [isLoggedIn, meEndpoint])
-
-
-  useEffect(() => {
-    if(isLoadingMeEndpoint) {
-      console.log('trying to fetch me endpoint')
-    }
-  }, [isLoadingMeEndpoint])
-  
+  }, [isLoggedIn])
 
   useEffect(() => {
-    if(meEndpointData) {
-      console.log('meEndpointData ', meEndpointData)
-      onSuccessMeEndpoint(meEndpointData)
-    }
-  }, [meEndpointData])
-
-
-  useEffect(() => {
-    // if(meEndpointError)
-     onErrorMeEndpoint(meEndpointError)
-  }, [meEndpointIsError, meEndpointError])
-
-  useEffect(() => {
-    if(loginData) {
-      onSuccessLogin(loginData)
-    }
-  }, [loginData])
-
-  useEffect(() => {
-    if(loginIsError) {
+    if (meEndpointError) onErrorMeEndpoint(meEndpointError)
+    if (loginData) onSuccessfulLogin(loginData)
+    if (meEndpointData) onSuccessMeEndpoint(meEndpointData)
+    if (loginIsError) {
       setLoading(false)
-      console.log("loginError",loginError)
-      showErrorAlert({error: loginError})
+      console.log('loginError', loginError)
+      showErrorAlert({ error: loginError })
       router.push('/login')
     }
-  }, [loginIsError, loginError])
+  }, [meEndpointIsError, meEndpointError, loginData, meEndpointData, loginIsError, loginError])
 
-   const onSuccessfulLogout = () => {
-      alert("i am on onSuccessfulLogout")
-      window.localStorage.removeItem('userData')
-      window.localStorage.removeItem(authConfig.storageTokenKeyName)
-      window.localStorage.removeItem(authConfig.onTokenExpiration)
-      setIsLoggedIn(false)
-      setLoading(false)
-      router.push('/login')
-   }
-
-  
   const onSuccessMeEndpoint = (meEndpointData: any) => {
-    console.log('me endpoint data', meEndpointData)
     setUser(meEndpointData)
-    window.localStorage.setItem('userData', JSON.stringify(meEndpointData))
+    localStorage.setItem('userData', JSON.stringify(meEndpointData))
     const returnUrl = router.query.returnUrl
     const redirectURL = returnUrl && returnUrl !== '/dashboards/analytics/' ? returnUrl : '/dashboards/analytics/'
     setLoading(false)
     router.replace(redirectURL as string)
   }
-  
+
   const onErrorMeEndpoint = (meEndpointError: any) => {
     console.log('meEndpointError', meEndpointError)
     setLoading(false)
@@ -148,20 +100,18 @@ const AuthProvider = ({ children }: Props) => {
     }
   }
 
-  const onSuccessLogin = (loginData: any) => {
+  const onSuccessfulLogin = (loginData: any) => {
     console.log(loginData)
     if (rememberMe) {
-      window.localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
-      window.localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
+      localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
+      localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
     }
-    setIsLoggedIn(true)
+    setIsLoggedIn(true) // this is trigger a useEffect which will call meEndpoint
   }
-
-
 
   const handleLogin = (params: LoginParams) => {
     setLoading(true)
-    const {rememberMe} = params
+    const { rememberMe } = params
     setRememberMe(rememberMe!)
     login(params)
   }
@@ -169,9 +119,12 @@ const AuthProvider = ({ children }: Props) => {
   const handleLogout = () => {
     logout()
     setUser(null)
-    console.log('i am here in logout')
-    onSuccessfulLogout()
-
+    localStorage.removeItem('userData')
+    localStorage.removeItem(authConfig.storageTokenKeyName)
+    localStorage.removeItem(authConfig.onTokenExpiration)
+    setIsLoggedIn(false)
+    setLoading(false)
+    router.push('/login')
   }
 
   const values = {

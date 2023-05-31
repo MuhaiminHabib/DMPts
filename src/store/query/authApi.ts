@@ -1,8 +1,8 @@
 import { baseApi } from './baseApi'
 
 type AuthResponse = {
-  accessToken: string
-  refreshToken: string
+  accesstoken: string
+  refreshtoken: string
   userId: string
 }
 

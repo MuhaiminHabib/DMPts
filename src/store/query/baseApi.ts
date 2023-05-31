@@ -50,8 +50,9 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   let result = await baseQuery(args, api, extraOptions)
   console.log('result is:', result)
   if (result.error && result.error.status === 401) {
-    console.log('in 401')
+    alert('in 401')
     const refreshResult: any = await baseQueryForAccessToken('/API/auth/get-access-token', api, extraOptions)
+    alert(JSON.stringify(refreshResult.data))
     if (refreshResult.data) {
       console.log('refresh result is:', refreshResult.data)
       console.log('refresh result accessToken:', refreshResult.data.accesstoken)
