@@ -21,59 +21,91 @@ const AnalyticsDashboard = () => {
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
-        {ability?.can('read', 'welcome-card') ? (<Grid item xs={12} lg={8} sx={{ order: -1 }}>
-          <AnalyticsCongratulations />
-        </Grid>) : null}
-        
+        {ability?.can('read', 'welcome-card') ? (
+          <Grid item xs={12} lg={8} sx={{ order: -1 }}>
+            <AnalyticsCongratulations />
+          </Grid>
+        ) : null}
 
         {/* A */}
         {ability?.can('read', 'analytics-aStats') ? (
-        <>
-          <Grid item xs={12} md={4} sx={{ order: -1 }}>
-            <Grid container spacing={6}>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsBACount />
-              </Grid>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsSales />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} md={4} sx={{ order: -1 }}>
-            <Grid container spacing={6}>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsDMCount />
-              </Grid>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsCCount />
+          <>
+            <Grid item xs={12} md={4} sx={{ order: -1 }}>
+              <Grid container spacing={6}>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsBACount />
+                </Grid>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsSales />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} md={4} sx={{ order: -1 }}>
-            <Grid container spacing={6}>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsCMCount />
-              </Grid>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsPostCount />
+            <Grid item xs={12} md={4} sx={{ order: -1 }}>
+              <Grid container spacing={6}>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsDMCount />
+                </Grid>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsCCount />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </>) : null }
+            <Grid item xs={12} md={4} sx={{ order: -1 }}>
+              <Grid container spacing={6}>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsCMCount />
+                </Grid>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsPostCount />
+                </Grid>
+              </Grid>
+            </Grid>
+          </>
+        ) : null}
 
         {/* BA */}
 
-        {ability?.can('read', 'analytics-baStats') ?(<>
-        <Grid item xs={12} md={4} sx={{ order: -1 }}>
-            <Grid container spacing={6}>
-              <Grid item xs={6} md={12} lg={6}>
-                <AnalyticsDMCount />
+        {ability?.can('read', 'analytics-baStats') ? (
+          <>
+            <Grid item xs={12} md={4} sx={{ order: -1 }}>
+              <Grid container spacing={6}>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsDMCount />
+                </Grid>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsCCount />
+                </Grid>
               </Grid>
+            </Grid>
+            <Grid item xs={12} md={4} sx={{ order: -1 }}>
+              <Grid container spacing={6}>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsCMCount />
+                </Grid>
+                <Grid item xs={6} md={12} lg={6}>
+                  <AnalyticsPostCount />
+                </Grid>
+              </Grid>
+            </Grid>
+          </>
+        ) : null}
+
+        {/* DM */}
+
+        {ability?.can('read', 'analytics-dmStats') ? (
+          <Grid item xs={12} md={4} sx={{ order: -1 }}>
+            <Grid container spacing={6}>
               <Grid item xs={6} md={12} lg={6}>
                 <AnalyticsCCount />
               </Grid>
+              <Grid item xs={6} md={12} lg={6}>
+                <AnalyticsPostCount />
+              </Grid>
             </Grid>
           </Grid>
+        ) : null}
+
+        {ability?.can('read', 'analytics-cStats') ? (
           <Grid item xs={12} md={4} sx={{ order: -1 }}>
             <Grid container spacing={6}>
               <Grid item xs={6} md={12} lg={6}>
@@ -84,32 +116,18 @@ const AnalyticsDashboard = () => {
               </Grid>
             </Grid>
           </Grid>
-          </>) : null }
+        ) : null}
 
-          {/* DM */}
-
-
-          {ability?.can('read', 'analytics-dmStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
-          <Grid container spacing={6}>
-            <Grid item xs={6} md={12} lg={6}>
-            <AnalyticsCCount />
-            </Grid>
-            <Grid item xs={6} md={12} lg={6}>
-            <AnalyticsPostCount />
+        {ability?.can('read', 'analytics-cmStats') ? (
+          <Grid item xs={12} md={4} sx={{ order: -1 }}>
+            <Grid container spacing={6}>
+              <Grid item xs={6} md={12} lg={6}>
+                <AnalyticsPostCount />
+              </Grid>
+              <Grid item xs={6} md={12} lg={6}></Grid>
             </Grid>
           </Grid>
-        </Grid>) : null }
-
-          {ability?.can('read', 'analytics-cStats') ? (<Grid item xs={12} md={4} sx={{ order: -1 }}>
-          <Grid container spacing={6}>
-            <Grid item xs={6} md={12} lg={6}>
-            <AnalyticsCMCount />
-            </Grid>
-            <Grid item xs={6} md={12} lg={6}>
-            <AnalyticsPostCount />
-            </Grid>
-          </Grid>
-        </Grid>) : null }
+        ) : null}
       </Grid>
     </ApexChartWrapper>
   )
