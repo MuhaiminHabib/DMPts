@@ -50,19 +50,27 @@ const Hello = (props: TabPanelProps) => {
   //* Hooks
   const { userId } = useRouter().query
 
-  const [dmsBelongToBa, {
-    isLoading:  dmsBelongToBaIsLoading, 
-    
-    // isError: dmsBelongToBaIsError, 
-    // error : dmsBelongToBaError, 
-    data: dmsBelongToBaData}] = useDmsBelongToBaMutation()
+  const [
+    dmsBelongToBa,
+    {
+      isLoading: dmsBelongToBaIsLoading,
 
-  const [cBelongToBa, {
-    isLoading:  cBelongToBaIsLoading, 
+      // isError: dmsBelongToBaIsError,
+      // error : dmsBelongToBaError,
+      data: dmsBelongToBaData
+    }
+  ] = useDmsBelongToBaMutation()
 
-    // isError: cBelongToBaIsError, 
-    // error : cBelongToBaError, 
-    data: cBelongToBaData}] = useCBelongToBaMutation()
+  const [
+    cBelongToBa,
+    {
+      isLoading: cBelongToBaIsLoading,
+
+      // isError: cBelongToBaIsError,
+      // error : cBelongToBaError,
+      data: cBelongToBaData
+    }
+  ] = useCBelongToBaMutation()
 
   useEffect(() => {
     dmsBelongToBa(userId as string)
@@ -70,48 +78,47 @@ const Hello = (props: TabPanelProps) => {
 
   const [value, setValue] = React.useState(0)
 
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
 
   return (
-    <div>{`BA id is: ${userId}`}</div>
-    
-    // <Grid container spacing={6}>
-    //   <Grid item xs={12}>
-    //     <Card>
-    //       <CardHeader title='BA Accociation' />
-    //       <CardContent>
-    //         <Box sx={{ width: '100%' }}>
-    //           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-    //             <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
-    //               <Tab label='DM List' {...a11yProps(0)} />
-    //               <Tab label='Client List' {...a11yProps(1)} onClick={() => cBelongToBa(userId as string)} />
-    //             </Tabs>
-    //           </Box>
-    //           {dmsBelongToBaData && dmsBelongToBaData.length !== 0 && (
-    //             <TabPanel value={value} index={0}>
-    //               <UserListTable 
-    //                 title={'Accociated Digital Managers'} 
-    //                 userList={dmsBelongToBaData} 
-    //                 showLoading={dmsBelongToBaIsLoading} />
-    //             </TabPanel>
-    //           )}
+    <Grid container spacing={6}>
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title='BA Accociation' />
+          <CardContent>
+            <Box sx={{ width: '100%' }}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
+                  <Tab label='DM List' {...a11yProps(0)} />
+                  <Tab label='Client List' {...a11yProps(1)} onClick={() => cBelongToBa(userId as string)} />
+                </Tabs>
+              </Box>
+              {dmsBelongToBaData && dmsBelongToBaData.length !== 0 && (
+                <TabPanel value={value} index={0}>
+                  <UserListTable
+                    title={'Accociated Digital Managers'}
+                    userList={dmsBelongToBaData}
+                    showLoading={dmsBelongToBaIsLoading}
+                  />
+                </TabPanel>
+              )}
 
-    //           {cBelongToBaData && cBelongToBaData.length !== 0 && (
-    //           <TabPanel value={value} index={1}>
-    //             <UserListTable 
-    //               title={'Accociated Clients'} 
-    //               userList={cBelongToBaData} 
-    //               showLoading={cBelongToBaIsLoading} />
-    //           </TabPanel>
-    //           )}
-    //         </Box>
-    //       </CardContent>
-    //     </Card>
-    //   </Grid>
-    // </Grid>
+              {cBelongToBaData && cBelongToBaData.length !== 0 && (
+                <TabPanel value={value} index={1}>
+                  <UserListTable
+                    title={'Accociated Clients'}
+                    userList={cBelongToBaData}
+                    showLoading={cBelongToBaIsLoading}
+                  />
+                </TabPanel>
+              )}
+            </Box>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   )
 }
 
