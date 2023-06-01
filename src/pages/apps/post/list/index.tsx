@@ -2,22 +2,21 @@
 import { useContext, useState } from 'react'
 
 // ** MUI Imports
-import {
-  Box,
-  Card,
-  CardHeader,
-  Grid,
-} from '@mui/material'
+import { Box, Card, CardHeader, Grid } from '@mui/material'
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
-import { useDeletePostMutation, useFetchPostsQuery, useFetchPostsforCQuery, useFetchPostsforDMQuery } from 'src/store/query/postApi'
+import {
+  useDeletePostMutation,
+  useFetchPostsQuery,
+  useFetchPostsforCQuery,
+  useFetchPostsforCmQuery,
+  useFetchPostsforDMQuery
+} from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
 import TableHeader from 'src/views/apps/post/list/TableHeader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { AuthContext } from 'src/context/AuthContext'
-
-
 
 const InvoiceList = () => {
   // ** State
@@ -28,45 +27,54 @@ const InvoiceList = () => {
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
-  const {user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   const ability = useContext(AbilityContext)
-  const {isLoading, 
+  const {
+    isLoading,
 
-    // isError, error, 
-    data: posts} = useFetchPostsQuery(postPage)
+    // isError, error,
+    data: posts
+  } = useFetchPostsQuery(postPage)
 
-  const {isLoading: isLoadingFetchPostsforDm,
+  const {
+    isLoading: isLoadingFetchPostsforDm,
 
-    //  isError: isErrorFetchPostsforDm, 
+    //  isError: isErrorFetchPostsforDm,
     //  error: FetchPostsforDmError,
-      data: FetchPostsforDmData} = useFetchPostsforDMQuery()
+    data: FetchPostsforDmData
+  } = useFetchPostsforDMQuery()
 
-  const {isLoading: isLoadingFetchPostsforC,
+  const {
+    isLoading: isLoadingFetchPostsforC,
 
-    //  isError: isErrorFetchPostsforC, 
+    //  isError: isErrorFetchPostsforC,
     //  error: FetchPostsforCError,
-      data: FetchPostsforCData} = useFetchPostsforCQuery()
+    data: FetchPostsforCData
+  } = useFetchPostsforCQuery()
+  const {
+    isLoading: isLoadingFetchPostsforCm,
 
-  const [deletePost, {
-    isLoading: isDeletePostLoading, 
-    isError: isDeletePostError,
-    error: deletePostError, 
-    data: deletePostData
-  }] = useDeletePostMutation()
+    //  isError: isErrorFetchPostsforCm,
+    //  error: FetchPostsforCmError,
+    data: FetchPostsforCmData
+  } = useFetchPostsforCmQuery()
 
-
+  const [
+    deletePost,
+    { isLoading: isDeletePostLoading, isError: isDeletePostError, error: deletePostError, data: deletePostData }
+  ] = useDeletePostMutation()
 
   // ** Functions
 
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
-  const showDeleteConfirmationPopup = (postId: string, title: string ) => {
+  const showDeleteConfirmationPopup = (postId: string, title: string) => {
     Swal.fire({
       title: `Do you want to delete ${title}?`,
       showCancelButton: true,
       confirmButtonText: 'Proceed',
-      denyButtonText: `Cancel`,
-    }).then((result) => {
+      denyButtonText: `Cancel`
+    }).then(result => {
       if (result.isConfirmed) {
         deletePost(postId)
       }
@@ -78,38 +86,50 @@ const InvoiceList = () => {
     showDeleteConfirmationPopup(postId, title)
   }
 
-
-  if(isDeletePostLoading) {
+  if (isDeletePostLoading) {
     showLoadingAlert()
   } else if (isDeletePostError) {
-    showErrorAlert({error : deletePostError})
-  } else if(deletePostData) {
-    showSuccessAlert({text: 'Post Deleted'})
+    showErrorAlert({ error: deletePostError })
+  } else if (deletePostData) {
+    showSuccessAlert({ text: 'Post Deleted' })
   }
 
-  if(FetchPostsforCData) {
+  if (FetchPostsforCData) {
     console.log('FetchPostsforCData is:', FetchPostsforCData)
     console.log('posts is:', posts)
     console.log('FetchPostsforDmData is:', FetchPostsforDmData)
-  } 
-
-
+  }
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
-          {ability?.can('read', 'add-post') ?
-          <CardHeader title='Posts' action={
-            <TableHeader toggle={toggleAddPostDrawer} /> }
-            /> :
+          {ability?.can('read', 'add-post') ? (
+            <CardHeader title='Posts' action={<TableHeader toggle={toggleAddPostDrawer} />} />
+          ) : (
             <CardHeader title='Posts' />
-          }
-          <PostListTable 
-            isLoading={((user!.role === 'A' || user!.role === 'BA') && isLoading) || (user!.role === 'DM' && isLoadingFetchPostsforDm) || (user!.role === 'C' && isLoadingFetchPostsforC)} 
-            posts={posts ? posts : FetchPostsforDmData && FetchPostsforDmData.length > 0 ? FetchPostsforDmData : FetchPostsforCData ? FetchPostsforCData : []}
-            handlePostDelete={handlePostDelete}/>
+          )}
+          <PostListTable
+            isLoading={
+              ((user!.role === 'A' || user!.role === 'BA') && isLoading) ||
+              (user!.role === 'DM' && isLoadingFetchPostsforDm) ||
+              (user!.role === 'C' && isLoadingFetchPostsforC) ||
+              (user!.role === 'CM' && isLoadingFetchPostsforCm)
+            }
+            posts={
+              posts && posts?.length > 0
+                ? posts
+                : FetchPostsforDmData && FetchPostsforDmData.length > 0
+                ? FetchPostsforDmData
+                : FetchPostsforCData && FetchPostsforCData?.length > 0
+                ? FetchPostsforCData
+                : FetchPostsforCmData && FetchPostsforCmData?.length > 0
+                ? FetchPostsforCmData
+                : []
+            }
+            handlePostDelete={handlePostDelete}
+          />
         </Card>
       </Grid>
 

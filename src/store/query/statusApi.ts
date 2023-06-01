@@ -64,6 +64,12 @@ const userApi = baseApi.injectEndpoints({
     postCountforC: build.query<StatusResponse, void>({
       query: () => '/API/posting/c-get-total-of-posts',
       providesTags: ['Post']
+    }),
+
+    //CM
+    postCountforCm: build.query<StatusResponse, void>({
+      query: () => '/API/posting/cm-gets-total-of-post',
+      providesTags: ['Post']
     })
   }),
   overrideExisting: false
@@ -82,5 +88,6 @@ export const {
   useCCountforDmQuery,
   usePostCountforDmQuery,
   usePostCountforCQuery,
-  useCmCountforCQuery
+  useCmCountforCQuery,
+  usePostCountforCmQuery
 } = userApi

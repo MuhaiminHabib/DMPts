@@ -107,10 +107,9 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
         .then(token => {
           if (typeof originalRequest === 'object') {
             originalRequest.headers = { ...originalRequest.headers, accesstoken: `${token}` }
+
             return baseQuery(originalRequest, api, extraOptions)
           } else {
-            // Handle the case where originalRequest is a string.
-            // You may need to adjust this based on your requirements.
             throw new Error('originalRequest is not an object')
           }
         })
