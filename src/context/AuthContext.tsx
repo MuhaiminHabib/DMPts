@@ -38,12 +38,10 @@ const AuthProvider = ({ children }: Props) => {
 
   const [login, { isError: loginIsError, error: loginError, data: loginData }] = useLoginMutation()
 
-  const [
-    meEndpoint,
-    { isLoading: isLoadingMeEndpoint, isError: meEndpointIsError, error: meEndpointError, data: meEndpointData }
-  ] = useMeEndpointMutation()
+  const [meEndpoint, { isError: meEndpointIsError, error: meEndpointError, data: meEndpointData }] =
+    useMeEndpointMutation()
 
-  const [logout, { isError: logoutIsError, error: logoutError }] = useLogoutMutation()
+  const [logout] = useLogoutMutation()
 
   useEffect(() => {
     const userData = localStorage.getItem('userData')!
@@ -83,6 +81,7 @@ const AuthProvider = ({ children }: Props) => {
 
   const onErrorMeEndpoint = (error: any) => {
     setLoading(false)
+    showErrorAlert({ error })
     localStorage.removeItem('userData')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('accessToken')
