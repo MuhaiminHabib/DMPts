@@ -43,7 +43,7 @@ const AuthProvider = ({ children }: Props) => {
     { isLoading: isLoadingMeEndpoint, isError: meEndpointIsError, error: meEndpointError, data: meEndpointData }
   ] = useMeEndpointMutation()
 
-  const [logout] = useLogoutMutation()
+  const [logout, { isError: logoutIsError, error: logoutError }] = useLogoutMutation()
 
   useEffect(() => {
     const userData = localStorage.getItem('userData')!
@@ -56,16 +56,9 @@ const AuthProvider = ({ children }: Props) => {
   const hasLoginBeenCalled = useRef(false)
 
   useEffect(() => {
-    // if (loginData && !hasLoginBeenCalled.current) {
-    //   onSuccessfulLogin(loginData)
-    //   hasLoginBeenCalled.current = true
-    // }
-    // if (meEndpointData) onSuccessfulMeEndpoint(meEndpointData)
-
     if (loginIsError) {
       // Handle login error
-      showErrorAlert({ error: loginError })
-      setLoading(false)
+      onErrorLogin(loginError)
     } else if (loginData && !hasLoginBeenCalled.current) {
       onSuccessfulLogin(loginData)
       hasLoginBeenCalled.current = true
@@ -73,48 +66,40 @@ const AuthProvider = ({ children }: Props) => {
 
     if (meEndpointIsError) {
       // Handle meEndpoint error
-      showErrorAlert({ error: meEndpointError })
-      setLoading(false)
+      onErrorMeEndpoint(meEndpointError)
     } else if (meEndpointData) {
       onSuccessfulMeEndpoint(meEndpointData)
     }
   }, [loginData, meEndpointData])
-
-  // useEffect(() => {
-  //   if (meEndpointError) onErrorMeEndpoint(meEndpointError)
-  //   if (loginData) onSuccessfulLogin(loginData)
-  //   if (meEndpointData) onSuccessMeEndpoint(meEndpointData)
-  //   if (loginIsError) {
-  //     setLoading(false)
-  //     console.log('loginError', loginError)
-  //     showErrorAlert({ error: loginError })
-  //     router.push('/login')
-  //   }
-  // }, [meEndpointIsError, meEndpointError, loginData, meEndpointData, loginIsError, loginError])
 
   const onSuccessfulMeEndpoint = (meEndpointData: any) => {
     setUser(meEndpointData)
     localStorage.setItem('userData', JSON.stringify(meEndpointData))
     setLoading(false)
     const returnUrl = router.query.returnUrl
-    const redirectURL = returnUrl && returnUrl !== '/dashboards/analytics/' ? returnUrl : '/dashboards/analytics/'
+    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
     router.replace(redirectURL as string)
   }
 
-  // const onErrorMeEndpoint = (meEndpointError: any) => {
-  //   alert('me endpoint error')
-  //   setLoading(false)
-  //   localStorage.removeItem('userData')
-  //   localStorage.removeItem('refreshToken')
-  //   localStorage.removeItem('accessToken')
-  //   setUser(null)
-  //   router.replace('/login')
-  // }
+  const onErrorMeEndpoint = (error: any) => {
+    setLoading(false)
+    localStorage.removeItem('userData')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('accessToken')
+    setUser(null)
+    router.replace('/login')
+  }
 
   const onSuccessfulLogin = (loginData: any) => {
     localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
     localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
     meEndpoint()
+  }
+
+  const onErrorLogin = (error: any) => {
+    showErrorAlert({ error })
+    setLoading(false)
+    router.push('/login')
   }
 
   const handleLogin = (params: LoginParams) => {
@@ -125,6 +110,7 @@ const AuthProvider = ({ children }: Props) => {
   const handleLogout = () => {
     logout()
     setUser(null)
+    hasLoginBeenCalled.current = false
     localStorage.removeItem('userData')
     localStorage.removeItem(authConfig.storageTokenKeyName)
     localStorage.removeItem(authConfig.onTokenExpiration)
