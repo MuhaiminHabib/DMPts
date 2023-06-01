@@ -11,48 +11,41 @@ export type ACLObj = {
   subject: string
 }
 
-/**
- * const ability = defineAbility((can) => {
-  can('read', 'Post');
-});
-
-router.get('/posts', (req, res) => {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'block';
-
-  ability.beforeEach(() => {
-    loader.style.display = 'block';
-  });
-
-  ability.can('read', 'Post');
-
-  loader.style.display = 'none';
-});
- * Please define your own Ability rules according to your app requirements.
- * We have just shown Admin and Client rules for demo purpose where
- * admin can manage everything and client can just visit ACL page
- */
 const defineRulesFor = (role: string, subject: string) => {
   const { can, cannot, rules } = new AbilityBuilder(AppAbility)
 
   console.log('role is:', role)
   if (role === 'A') {
     can('manage', 'all')
-    cannot(['read'], ['analytics-baStats', 'analytics-dmStats', 'analytics-cStats', 'welcome-card'])
+    cannot(
+      ['read'],
+      ['analytics-baStats', 'analytics-dmStats', 'analytics-cStats', 'analytics-cmStats', 'welcome-card']
+    )
     cannot(['read'], ['edit-post', 'delete-post', 'add-post'])
   } else if (role === 'BA') {
     can('manage', 'all')
     cannot(['read'], ['businesses-navItem', 'cm-navItem'])
-    cannot(['read'], ['analytics-aStats', 'analytics-dmStats', 'analytics-cStats', 'cm-list-page'])
+    cannot(['read'], ['analytics-aStats', 'analytics-dmStats', 'analytics-cStats', 'analytics-cmStats', 'cm-list-page'])
   } else if (role === 'DM') {
     can('manage', 'all')
     cannot(['read'], ['businesses-navItem', 'dm-navItem'])
-    cannot(['read'], ['analytics-aStats', 'analytics-baStats', 'analytics-cStats'])
+    cannot(['read'], ['analytics-aStats', 'analytics-baStats', 'analytics-cStats', 'analytics-cmStats'])
   } else if (role === 'C') {
     can(['manage'], 'all')
     cannot(
       ['read'],
-      ['analytics-aStats', 'analytics-baStats', 'analytics-dmStats', 'businesses-navItem', 'dm-navItem', 'c-navItem']
+      [
+        'analytics-aStats',
+        'analytics-baStats',
+        'analytics-dmStats',
+        'analytics-cmStats',
+        'businesses-navItem',
+        'dm-navItem',
+        'c-navItem',
+        'edit-post',
+        'delete-post',
+        'add-post'
+      ]
     )
   } else if (role === 'CM') {
     can(['manage'], 'all')
@@ -68,7 +61,10 @@ const defineRulesFor = (role: string, subject: string) => {
         'ba-list-page',
         'c-list-page',
         'dm-list-page',
-        'cm-list-page'
+        'cm-list-page',
+        'edit-post',
+        'delete-post',
+        'add-post'
       ]
     )
   } else {
