@@ -68,7 +68,7 @@ const userApi = baseApi.injectEndpoints({
 
     //CM
     postCountforCm: build.query<StatusResponse, void>({
-      query: () => '/API/posting/cm-gets-total-of-post',
+      query: () => '/API/posting/cm-gets-total-of-posts',
       providesTags: ['Post']
     })
   }),
