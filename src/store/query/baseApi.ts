@@ -2,19 +2,22 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { baseURL } from 'src/utils/constants'
 import authConfig from 'src/configs/auth'
+import { showErrorAlert } from 'src/utils/swal'
 
-// type RefreshResultData = {
-//   accesstoken: string
-//   refreshtoken: string
-// }
+let isRefreshing = false
+let failedQueue: Array<{ resolve: (value: string | PromiseLike<string>) => void; reject: (reason?: any) => void }> = []
 
-// type RefreshResultType = {
-//   data: RefreshResultData | undefined
-//   error: FetchBaseQueryError
-//   meta: FetchBaseQueryMeta
-// }
+const processQueue = (error: any, token: string | null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token as string)
+    }
+  })
 
-// const [logout] = useLogoutMutation()
+  failedQueue = []
+}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: baseURL,
@@ -42,32 +45,77 @@ const baseQueryForAccessToken = fetchBaseQuery({
   }
 })
 
+// const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+//   args,
+//   api,
+//   extraOptions
+// ) => {
+//   let result = await baseQuery(args, api, extraOptions)
+//   if (result.error && result.error.status === 401) {
+//     try {
+//       const refreshResult: any = await baseQueryForAccessToken('/API/auth/get-access-token', api, extraOptions)
+//       localStorage.setItem(authConfig.storageTokenKeyName, refreshResult.data.accesstoken)
+//       localStorage.setItem(authConfig.onTokenExpiration, refreshResult.data.refreshtoken)
+//       result = await baseQuery(args, api, extraOptions)
+//     } catch (e) {
+//       alert('I am poor')
+//       const error = e as FetchBaseQueryError
+//       showErrorAlert({ error: error })
+//       await baseQuery('/API/auth/logout', api, extraOptions)
+//       window.localStorage.removeItem('userData')
+//       window.localStorage.removeItem(authConfig.storageTokenKeyName)
+//       window.location.replace('/login')
+//     }
+//   }
+
+//   return result
+// }
+
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
   extraOptions
 ) => {
   let result = await baseQuery(args, api, extraOptions)
-  console.log('result is:', result)
+
   if (result.error && result.error.status === 401) {
-    console.log('in 401')
-    const refreshResult: any = await baseQueryForAccessToken('/API/auth/get-access-token', api, extraOptions)
-    if (refreshResult.data) {
-      console.log('refresh result is:', refreshResult.data)
-      console.log('refresh result accessToken:', refreshResult.data.accesstoken)
-      console.log('refresh result refreshToken:', refreshResult.data.refreshtoken)
-      localStorage.setItem(authConfig.storageTokenKeyName, refreshResult.data.accesstoken)
-      localStorage.setItem(authConfig.onTokenExpiration, refreshResult.data.refreshtoken)
+    const originalRequest = args
 
-      // retry the initial query
+    if (!isRefreshing) {
+      isRefreshing = true
 
-      result = await baseQuery(args, api, extraOptions)
+      try {
+        const refreshResult: any = await baseQueryForAccessToken('/API/auth/get-access-token', api, extraOptions)
+        localStorage.setItem(authConfig.storageTokenKeyName, refreshResult.data.accesstoken)
+        localStorage.setItem(authConfig.onTokenExpiration, refreshResult.data.refreshtoken)
+        isRefreshing = false
+        processQueue(null, refreshResult.data.accesstoken)
+        result = await baseQuery(args, api, extraOptions)
+      } catch (e) {
+        processQueue(e, null)
+        const error = e as FetchBaseQueryError
+        showErrorAlert({ error: error })
+        await baseQuery('/API/auth/logout', api, extraOptions)
+        window.localStorage.removeItem('userData')
+        window.localStorage.removeItem(authConfig.storageTokenKeyName)
+        window.location.replace('/login')
+      }
     } else {
-      console.log('i am in base query and i will logout now')
-      await baseQuery('/API/auth/logout', api, extraOptions)
-      window.localStorage.removeItem('userData')
-      window.localStorage.removeItem(authConfig.storageTokenKeyName)
-      window.location.replace('/login')
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject })
+      })
+        .then(token => {
+          if (typeof originalRequest === 'object') {
+            originalRequest.headers = { ...originalRequest.headers, accesstoken: `${token}` }
+
+            return baseQuery(originalRequest, api, extraOptions)
+          } else {
+            throw new Error('originalRequest is not an object')
+          }
+        })
+        .catch(err => {
+          return { error: err }
+        })
     }
   }
 

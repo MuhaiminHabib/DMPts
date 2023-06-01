@@ -1,9 +1,8 @@
 // ** React Imports
-import { createContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useEffect, useState, ReactNode, useRef } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
-
 
 // ** Config
 import authConfig from 'src/configs/auth'
@@ -13,11 +12,10 @@ import { AuthValuesType, LoginParams, UserDataType } from './types'
 import { useLogoutMutation, useLoginMutation, useMeEndpointMutation } from 'src/store/query/authApi'
 import { showErrorAlert } from 'src/utils/swal'
 
-
 // ** Defaults
 const defaultProvider: AuthValuesType = {
   user: null,
-  loading: true,
+  loading: false,
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
@@ -34,144 +32,89 @@ const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-  const [rememberMe, setRememberMe] = useState<boolean>(false)
 
   // ** Hooks
   const router = useRouter()
 
-  const [login, 
-    {
-      isError: loginIsError,
-      error: loginError,
-      data: loginData}
-  ] = useLoginMutation()
+  const [login, { isError: loginIsError, error: loginError, data: loginData }] = useLoginMutation()
 
-  const [meEndpoint, 
-    {
-      isLoading: isLoadingMeEndpoint,
-      isError: meEndpointIsError, 
-      error: meEndpointError, 
-      data: meEndpointData}
-  ] = useMeEndpointMutation()
+  const [meEndpoint, { isError: meEndpointIsError, error: meEndpointError, data: meEndpointData }] =
+    useMeEndpointMutation()
 
   const [logout] = useLogoutMutation()
 
   useEffect(() => {
-    console.log('isLoggedIn is:', isLoggedIn)
-    if(isLoggedIn) {
-      const initAuth = async (): Promise<void> => {
-        const userData = localStorage.getItem('userData')!
-        if (!userData || userData === 'undefined') {
-          setLoading(true)
-          meEndpoint()
-        } else {
-          setUser(JSON.parse(userData))
-          setLoading(false)
-        }
-      }
-      initAuth()
-    } else {
+    const userData = localStorage.getItem('userData')!
+    if (userData) {
+      setUser(JSON.parse(userData))
       setLoading(false)
-      router.push('/login')
-      console.log('i am in else')
     }
-  }, [isLoggedIn, meEndpoint])
+  }, [])
 
+  const hasLoginBeenCalled = useRef(false)
 
   useEffect(() => {
-    if(isLoadingMeEndpoint) {
-      console.log('trying to fetch me endpoint')
+    if (loginIsError) {
+      // Handle login error
+      onErrorLogin(loginError)
+    } else if (loginData && !hasLoginBeenCalled.current) {
+      onSuccessfulLogin(loginData)
+      hasLoginBeenCalled.current = true
     }
-  }, [isLoadingMeEndpoint])
-  
 
-  useEffect(() => {
-    if(meEndpointData) {
-      console.log('meEndpointData ', meEndpointData)
-      onSuccessMeEndpoint(meEndpointData)
+    if (meEndpointIsError) {
+      // Handle meEndpoint error
+      onErrorMeEndpoint(meEndpointError)
+    } else if (meEndpointData) {
+      onSuccessfulMeEndpoint(meEndpointData)
     }
-  }, [meEndpointData])
+  }, [loginData, meEndpointData])
 
-
-  useEffect(() => {
-    // if(meEndpointError)
-     onErrorMeEndpoint(meEndpointError)
-  }, [meEndpointIsError, meEndpointError])
-
-  useEffect(() => {
-    if(loginData) {
-      onSuccessLogin(loginData)
-    }
-  }, [loginData])
-
-  useEffect(() => {
-    if(loginIsError) {
-      setLoading(false)
-      console.log("loginError",loginError)
-      showErrorAlert({error: loginError})
-      router.push('/login')
-    }
-  }, [loginIsError, loginError])
-
-   const onSuccessfulLogout = () => {
-      alert("i am on onSuccessfulLogout")
-      window.localStorage.removeItem('userData')
-      window.localStorage.removeItem(authConfig.storageTokenKeyName)
-      window.localStorage.removeItem(authConfig.onTokenExpiration)
-      setIsLoggedIn(false)
-      setLoading(false)
-      router.push('/login')
-   }
-
-  
-  const onSuccessMeEndpoint = (meEndpointData: any) => {
-    console.log('me endpoint data', meEndpointData)
+  const onSuccessfulMeEndpoint = (meEndpointData: any) => {
     setUser(meEndpointData)
-    window.localStorage.setItem('userData', JSON.stringify(meEndpointData))
-    const returnUrl = router.query.returnUrl
-    const redirectURL = returnUrl && returnUrl !== '/dashboards/analytics/' ? returnUrl : '/dashboards/analytics/'
+    localStorage.setItem('userData', JSON.stringify(meEndpointData))
     setLoading(false)
+    const returnUrl = router.query.returnUrl
+    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
     router.replace(redirectURL as string)
   }
-  
-  const onErrorMeEndpoint = (meEndpointError: any) => {
-    console.log('meEndpointError', meEndpointError)
+
+  const onErrorMeEndpoint = (error: any) => {
     setLoading(false)
+    showErrorAlert({ error })
     localStorage.removeItem('userData')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('accessToken')
     setUser(null)
     router.replace('/login')
-    if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-      console.log('routing to login page')
-    }
   }
 
-  const onSuccessLogin = (loginData: any) => {
-    console.log(loginData)
-    if (rememberMe) {
-      window.localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
-      window.localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
-    }
-    setIsLoggedIn(true)
+  const onSuccessfulLogin = (loginData: any) => {
+    localStorage.setItem(authConfig.storageTokenKeyName, loginData.accesstoken)
+    localStorage.setItem(authConfig.onTokenExpiration, loginData.refreshtoken)
+    meEndpoint()
   }
 
-
+  const onErrorLogin = (error: any) => {
+    showErrorAlert({ error })
+    setLoading(false)
+    router.push('/login')
+  }
 
   const handleLogin = (params: LoginParams) => {
     setLoading(true)
-    const {rememberMe} = params
-    setRememberMe(rememberMe!)
     login(params)
   }
 
   const handleLogout = () => {
     logout()
     setUser(null)
-    console.log('i am here in logout')
-    onSuccessfulLogout()
-
+    hasLoginBeenCalled.current = false
+    localStorage.removeItem('userData')
+    localStorage.removeItem(authConfig.storageTokenKeyName)
+    localStorage.removeItem(authConfig.onTokenExpiration)
+    setLoading(false)
+    router.push('/login')
   }
 
   const values = {

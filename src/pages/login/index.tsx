@@ -6,7 +6,6 @@ import Link from 'next/link'
 
 // ** MUI Components
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
@@ -18,7 +17,6 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
-import FormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -37,7 +35,6 @@ import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-
 
 // ** Styled Components
 const LoginIllustration = styled('img')({
@@ -79,9 +76,7 @@ const schema = yup.object().shape({
   password: yup.string().min(5).required()
 })
 
-
 const LoginPage = () => {
-  const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
   // ** Hooks
@@ -100,7 +95,7 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    defaultValues : {
+    defaultValues: {
       username: 'root',
       password: 'Root@2023'
     },
@@ -110,15 +105,13 @@ const LoginPage = () => {
 
   const onSubmit = (data: FormData) => {
     const { username, password } = data
-    auth.login({ username, password, rememberMe }, () => {
+    auth.login({ username, password }, () => {
       setError('username', {
         type: 'manual',
         message: 'Username or Password is invalid'
       })
     })
   }
-
-
 
   return (
     <Box className='content-right'>
@@ -217,11 +210,6 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel
-                label='Remember Me'
-                sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', color: 'text.secondary' } }}
-                control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
-              />
               <LinkStyled href='/forgot-password'>Forgot Password?</LinkStyled>
             </Box>
             <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 4 }}>
@@ -235,7 +223,6 @@ const LoginPage = () => {
 }
 
 LoginPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
-
 LoginPage.guestGuard = true
 
 export default LoginPage
