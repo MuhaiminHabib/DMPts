@@ -1,6 +1,5 @@
 // ** React Imports
 
-
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
 import Select from '@mui/material/Select'
@@ -10,12 +9,10 @@ import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import InputLabel from '@mui/material/InputLabel'
-import Typography from '@mui/material/Typography'
+import Typography, { TypographyProps } from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-
-
 
 // ** Third Party Imports
 import * as yup from 'yup'
@@ -27,7 +24,6 @@ import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
 
-
 // ** Actions Imports
 // import { createBAUser, fetchCList } from 'src/store/apps/user'
 
@@ -35,6 +31,11 @@ import Icon from 'src/@core/components/icon'
 import { useCreatePostMutation } from 'src/store/query/postApi'
 import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
+import FileUploaderSingle from 'src/views/forms/form-elements/file-uploader/FileUploaderSingle'
+import { useEffect, useState } from 'react'
+import { useTheme } from '@mui/material'
+import { useDropzone } from 'react-dropzone'
+import Link from 'next/link'
 
 interface SidebarAddPostType {
   open: boolean
@@ -51,7 +52,7 @@ interface PostData {
   postingEndDate: string
   title: string
   url: string
-  fileName: string
+  file: string
 }
 
 // const showErrors = (field: string, valueLen: number, min: number) => {
@@ -73,17 +74,16 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-
-  client: yup.string().required(),
-  title: yup.string().required(),
-  description: yup.string().required(),
-  platform: yup.string().required(),
-  postingDate: yup.string().required(),
-  postingEndDate: yup.string().required(),
-  permissionLevel: yup.string().required(),
-  boost: yup.string().required(),
-  url: yup.string().required(),
-  fileName: yup.string()
+  // client: yup.string().required(),
+  // title: yup.string().required(),
+  // description: yup.string().required(),
+  // platform: yup.string().required(),
+  // postingDate: yup.string().required(),
+  // postingEndDate: yup.string().required(),
+  // permissionLevel: yup.string().required(),
+  // boost: yup.string().required(),
+  // url: yup.string().required(),
+  file: yup.mixed().required()
 })
 
 const defaultValues = {
@@ -96,29 +96,79 @@ const defaultValues = {
   permissionLevel: '',
   boost: '',
   url: '',
-  fileName: '',
+  file: ''
 }
 
+interface FileProp {
+  name: string
+  type: string
+  size: number
+}
+
+// Styled component for the upload image inside the dropzone area
+const Img = styled('img')(({ theme }) => ({
+  width: 300,
+  [theme.breakpoints.up('md')]: {
+    marginRight: theme.spacing(15.75)
+  },
+  [theme.breakpoints.down('md')]: {
+    width: 250,
+    marginBottom: theme.spacing(4)
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: 200
+  }
+}))
+
+// Styled component for the heading inside the dropzone area
+const HeadingTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
+  marginBottom: theme.spacing(5),
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: theme.spacing(4)
+  }
+}))
+
 const SidebarAddPost = (props: SidebarAddPostType) => {
+  // ** State
+  const [files, setFiles] = useState<File[]>([])
+
+  // ** Hook
+  const theme = useTheme()
+  const { getRootProps, getInputProps } = useDropzone({
+    multiple: false,
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+    },
+    onDrop: (acceptedFiles: File[]) => {
+      setFiles(acceptedFiles.map((file: File) => Object.assign(file)))
+    }
+  })
+
+  const img = files.map((file: FileProp) => (
+    <img key={file.name} alt={file.name} className='single-file-image' src={URL.createObjectURL(file as any)} />
+  ))
+
   // ** Props
   const { open, toggle } = props
 
   // ** State
 
   // ** Hooks
-  const [createPost, {isLoading, isError, error, data}] = useCreatePostMutation()
+  const [createPost, { isLoading, isError, error, data }] = useCreatePostMutation()
   const {
-      // isLoading: isLoadingFetchCListForBA, 
-      // isError: isErrorFetchCListForBA, 
-      // error: fetchCListForBAError, 
+    // isLoading: isLoadingFetchCListForBA,
+    // isError: isErrorFetchCListForBA,
+    // error: fetchCListForBAError,
 
-      data: FetchCListForBaData} = useFetchCListForBAQuery()
+    data: FetchCListForBaData
+  } = useFetchCListForBAQuery()
   const {
-      // isLoading: isLoadingFetchCListForDm, 
-      // isError: isErrorFetchCListForDm, 
-      // error: fetchCListForDmError, 
+    // isLoading: isLoadingFetchCListForDm,
+    // isError: isErrorFetchCListForDm,
+    // error: fetchCListForDmError,
 
-      data: FetchCListForDmData} = useFetchCListForDMQuery()
+    data: FetchCListForDmData
+  } = useFetchCListForDMQuery()
   const {
     reset,
     control,
@@ -133,10 +183,18 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
+
+  useEffect(() => {
+    if (data) {
+      showSuccessAlert({ text: 'Post Created' })
+      handleClose()
+    }
+  }, [data])
   const onSubmit = async (data: any) => {
     data.platform = [data.platform]
-    createPost(data as PostData)
-    handleClose()
+    data.file = files
+    console.log(data)
+    // createPost(data as PostData)
   }
 
   const handleClose = () => {
@@ -144,14 +202,13 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     reset()
   }
 
-  if(isLoading) {
+  if (isLoading) {
     console.log('Loading')
     showLoadingAlert()
-  } else if(isError) {
+  } else if (isError) {
     console.log(error)
-    showErrorAlert({error: error})
-  } else if(data) {
-    showSuccessAlert({text: 'Post Created'})
+    showErrorAlert({ error: error })
+  } else if (data) {
   }
 
   return (
@@ -169,11 +226,16 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
           <Icon icon='bx:x' fontSize={20} />
         </IconButton>
       </Header>
+
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-        <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.client)} htmlFor='validation-billing-select'>
-            Select Client
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <InputLabel
+              id='validation-billing-select'
+              error={Boolean(errors.client)}
+              htmlFor='validation-billing-select'
+            >
+              Select Client
             </InputLabel>
             <Controller
               name='client'
@@ -189,12 +251,18 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   aria-describedby='validation-billing-select'
                 >
                   <MenuItem value=''>none</MenuItem>
-                  {FetchCListForBaData  && FetchCListForBaData.map(item => (
-                    <MenuItem key={item._id} value={item._id}>{item.username}</MenuItem>
-                  ))}
-                  {FetchCListForDmData  && FetchCListForDmData.map(item => (
-                    <MenuItem key={item._id} value={item._id}>{item.username}</MenuItem>
-                  ))}
+                  {FetchCListForBaData &&
+                    FetchCListForBaData.map(item => (
+                      <MenuItem key={item._id} value={item._id}>
+                        {item.username}
+                      </MenuItem>
+                    ))}
+                  {FetchCListForDmData &&
+                    FetchCListForDmData.map(item => (
+                      <MenuItem key={item._id} value={item._id}>
+                        {item.username}
+                      </MenuItem>
+                    ))}
                 </Select>
               )}
             />
@@ -204,6 +272,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               </FormHelperText>
             )}
           </FormControl>
+
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='title'
@@ -223,6 +292,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             />
             {errors.title && <FormHelperText sx={{ color: 'error.main' }}>{errors.title.message}</FormHelperText>}
           </FormControl>
+
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='description'
@@ -240,11 +310,18 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                 />
               )}
             />
-            {errors.description && <FormHelperText sx={{ color: 'error.main' }}>{errors.description.message}</FormHelperText>}
+            {errors.description && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.description.message}</FormHelperText>
+            )}
           </FormControl>
+
           <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='validation-billing-select' error={Boolean(errors.platform)} htmlFor='validation-billing-select'>
-            Select platform
+            <InputLabel
+              id='validation-billing-select'
+              error={Boolean(errors.platform)}
+              htmlFor='validation-billing-select'
+            >
+              Select platform
             </InputLabel>
             <Controller
               name='platform'
@@ -272,7 +349,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             )}
           </FormControl>
 
-
           {/* Posting Start Date */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
@@ -280,17 +356,19 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
-               
                 <TextField
                   type={'date'}
                   value={value}
                   label='Posting Date'
                   onChange={onChange}
                   error={Boolean(errors.postingDate)}
-                  InputLabelProps={{ shrink: true }} />
+                  InputLabelProps={{ shrink: true }}
+                />
               )}
             />
-            {errors.postingDate && <FormHelperText sx={{ color: 'error.main' }}>{errors.postingDate.message}</FormHelperText>}
+            {errors.postingDate && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.postingDate.message}</FormHelperText>
+            )}
           </FormControl>
 
           {/* Posting End Date */}
@@ -318,7 +396,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
           {/* Permission Level */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel id='permissionLevel' error={Boolean(errors.permissionLevel)} htmlFor='permissionLevel'>
-            Permission Level
+              Permission Level
             </InputLabel>
             <Controller
               name='permissionLevel'
@@ -346,11 +424,10 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             )}
           </FormControl>
 
-
           {/* boost */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel id='boost' error={Boolean(errors.boost)} htmlFor='validation-billing-select'>
-            Boosted
+              Boosted
             </InputLabel>
             <Controller
               name='boost'
@@ -367,7 +444,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                 >
                   <MenuItem value='false'>No</MenuItem>
                   <MenuItem value='true'>Yes</MenuItem>
-                  </Select>
+                </Select>
               )}
             />
             {errors.boost && (
@@ -384,23 +461,17 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
-                <TextField
-                  value={value}
-                  label='Post URL'
-                  onChange={onChange}
-                  error={Boolean(errors.url)}
-                />
+                <TextField value={value} label='Post URL' onChange={onChange} error={Boolean(errors.url)} />
               )}
             />
-            {errors.url && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.url.message}</FormHelperText>
-            )}
+            {errors.url && <FormHelperText sx={{ color: 'error.main' }}>{errors.url.message}</FormHelperText>}
           </FormControl>
 
-          {/* fileName */}
-          <FormControl fullWidth sx={{ mb: 6 }}>
+          {/* file */}
+
+          {/* <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-              name='fileName'
+              name='file'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
@@ -410,12 +481,45 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   onChange={onChange}
                   error={Boolean(errors.fileName)}
                 />
-              )}
-            />
-            {errors.fileName && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.fileName.message}</FormHelperText>
+                )}
+            /> 
+             {errors.file && <FormHelperText sx={{ color: 'error.main' }}>{errors.file.message}</FormHelperText>}
+          </FormControl> */}
+
+          {/* <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 450 } : {}}>
+            <input {...getInputProps()} />
+            {files.length ? (
+              img
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
+                <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />
+                <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
+                  <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
+                  <Typography color='textSecondary' sx={{ '& a': { color: 'primary.main', textDecoration: 'none' } }}>
+                    Drop files here or click{' '}
+                    <Link href='/' onClick={e => e.preventDefault()}>
+                      browse
+                    </Link>{' '}
+                    thorough your machine
+                  </Typography>
+                </Box>
+              </Box>
             )}
-          </FormControl>
+          </Box> */}
+
+          <Controller
+            name='file'
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { value, onChange } }) => (
+              <input
+                type='file'
+                value={value}
+                placeholder='insert file'
+                onChange={e => console.log(e.target.files![0])}
+              />
+            )}
+          />
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
