@@ -52,7 +52,7 @@ interface PostData {
   postingEndDate: string
   title: string
   url: string
-  file: string
+  file: File
 }
 
 // const showErrors = (field: string, valueLen: number, min: number) => {
@@ -191,10 +191,19 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     }
   }, [data])
   const onSubmit = async (data: any) => {
-    data.platform = [data.platform]
-    data.file = files
+    const formData = new FormData()
     console.log(data)
-    // createPost(data as PostData)
+
+    Object.keys(data).forEach(key => {
+      if (key === 'file') {
+        formData.append('file', data.file[0])
+      } else {
+        formData.append(key, data[key])
+      }
+    })
+
+    // createPost(formData as PostData)
+    createPost(formData as any)
   }
 
   const handleClose = () => {
@@ -511,12 +520,14 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             name='file'
             control={control}
             rules={{ required: true }}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
+              // <input type='file' value={value} placeholder='insert file' onChange={onChange} />
               <input
                 type='file'
-                value={value}
-                placeholder='insert file'
-                onChange={e => console.log(e.target.files![0])}
+                accept='image/jpg, image/png, image/jpeg'
+                onChange={e => {
+                  onChange(e.target.files)
+                }}
               />
             )}
           />
