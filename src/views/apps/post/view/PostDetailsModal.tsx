@@ -12,14 +12,13 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import { PostsTypes } from 'src/types/apps/postTypes'
 import { Tooltip, Typography } from '@mui/material'
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-
+import MenuBookIcon from '@mui/icons-material/MenuBook'
 
 type pageProps = {
-    post : PostsTypes
+  post: PostsTypes
 }
 
-const PostDetailsModal = ({post} : pageProps) => {
+const PostDetailsModal = ({ post }: pageProps) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
@@ -31,38 +30,90 @@ const PostDetailsModal = ({post} : pageProps) => {
 
   const handleClose = () => setOpen(false)
 
+  const FilePreview = file => {
+    const splitArray = file.split('.')
+    const fileType = splitArray[length - 1]
+
+    const renderPreview = () => {
+      if (
+        fileType === 'jpg' ||
+        'jpeg' ||
+        'png' ||
+        'gif' ||
+        'bmp' ||
+        'tif' ||
+        'tiff' ||
+        'svg' ||
+        'webp' ||
+        'heic' ||
+        'heif' ||
+        'ico'
+      ) {
+        return <img src={file.createObjectURL(file)} alt='Preview' />
+      }
+
+      if (fileType === 'video') {
+        return <video src={URL.createObjectURL(file)} controls />
+      }
+
+      if (fileType === 'audio') {
+        return <audio src={URL.createObjectURL(file)} controls />
+      }
+
+      return <p>Preview not available</p>
+    }
+
+    return (
+      <div>
+        <h3>File Preview</h3>
+        {renderPreview()}
+      </div>
+    )
+  }
+
   return (
     <Fragment>
-      <Tooltip title="Post Details" placement='top-start'>
+      <Tooltip title='Post Details' placement='top-start'>
         <Button variant='text' onClick={handleClickOpen} startIcon={<MenuBookIcon />} />
       </Tooltip>
-        
 
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>
         <DialogTitle>
-        <Typography variant={'h4'}>{post.title}</Typography>
+          <Typography variant={'h4'}>{post.title}</Typography>
 
-        <DialogContentText>
-            <Typography component={'span'} sx={{fontWeight : 'bold'}}>Posted On: </Typography>
+          <DialogContentText>
+            <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+              Posted On:{' '}
+            </Typography>
             <Typography component={'span'}>{post.postingDate.substring(0, 10)}</Typography>
           </DialogContentText>
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-          <Typography component={'span'} sx={{fontWeight : 'bold'}}>Description: </Typography>
+            <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+              Description:{' '}
+            </Typography>
             <Typography component={'span'}>{post.description}</Typography>
           </DialogContentText>
           <DialogContentText>
-            <Typography component={'span'} sx={{fontWeight : 'bold'}}>Created By: </Typography>
+            <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+              Created By:{' '}
+            </Typography>
             <Typography component={'span'}>habib </Typography>
           </DialogContentText>
           <DialogContentText>
-            <Typography component={'span'} sx={{fontWeight : 'bold'}}>Boosted: </Typography>
+            <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+              Boosted:{' '}
+            </Typography>
             <Typography component={'span'}>{post.boost ? 'Yes' : 'No'}</Typography>
           </DialogContentText>
           <DialogContentText>
-            <Typography component={'span'} sx={{fontWeight : 'bold'}}>Filename: </Typography>
-            <Typography component={'span'}><a href={post.fileName} target='blank'>{post.fileName}</a></Typography>
+            <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+              File:{' '}
+            </Typography>
+            <Typography component={'span'}>
+              {post.content ? <a href='#'>{post.content}</a> : 'No Files Attached'}
+            </Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
