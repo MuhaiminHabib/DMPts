@@ -14,14 +14,9 @@ import { PostsTypes } from 'src/types/apps/postTypes'
 import { Box, Tooltip, Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { useDownloadAttachmentMutation } from 'src/store/query/postApi'
-import { showErrorAlert } from 'src/utils/swal'
 
 type pageProps = {
   post: PostsTypes
-}
-
-type inputObj = {
-  content: string
 }
 
 type inputParams = {
@@ -40,7 +35,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const [downloadAttachment, { isLoading, isError, error, data }] = useDownloadAttachmentMutation()
+  const [downloadAttachment, { isLoading, isError, data }] = useDownloadAttachmentMutation()
 
   const handleClickOpen = () => setOpen(true)
 
@@ -77,8 +72,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
   }
 
   const FilePreview = ({ content, postId }: inputParams) => {
-    let splitArray = content.split('.')
-    const fileType = splitArray[splitArray.length - 1]
+    const fileType = content.split('.').slice(-1)[0]
 
     const renderPreview = () => {
       if (fileType) {

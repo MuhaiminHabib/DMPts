@@ -9,7 +9,7 @@ import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import InputLabel from '@mui/material/InputLabel'
-import Typography, { TypographyProps } from '@mui/material/Typography'
+import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -31,11 +31,8 @@ import Icon from 'src/@core/components/icon'
 import { useCreatePostMutation } from 'src/store/query/postApi'
 import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
-import FileUploaderSingle from 'src/views/forms/form-elements/file-uploader/FileUploaderSingle'
-import { useEffect, useState } from 'react'
-import { useTheme } from '@mui/material'
-import { useDropzone } from 'react-dropzone'
-import Link from 'next/link'
+
+import { useEffect } from 'react'
 
 interface SidebarAddPostType {
   open: boolean
@@ -52,18 +49,14 @@ interface PostData {
   postingEndDate: string
   title: string
   url: string
-  file: File
+  file: File[]
 }
 
-// const showErrors = (field: string, valueLen: number, min: number) => {
-//   if (valueLen === 0) {
-//     return `${field} field is required`
-//   } else if (valueLen > 0 && valueLen < min) {
-//     return `${field} must be at least ${min} characters`
-//   } else {
-//     return ''
-//   }
-// }
+interface File {
+  name: string
+  size: number
+  type: string
+}
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
@@ -74,16 +67,16 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  // client: yup.string().required(),
-  // title: yup.string().required(),
-  // description: yup.string().required(),
-  // platform: yup.string().required(),
-  // postingDate: yup.string().required(),
-  // postingEndDate: yup.string().required(),
-  // permissionLevel: yup.string().required(),
-  // boost: yup.string().required(),
-  // url: yup.string().required(),
-  file: yup.mixed().required()
+  client: yup.string().required(),
+  title: yup.string().required(),
+  description: yup.string().required(),
+  platform: yup.string().required(),
+  postingDate: yup.string().required(),
+  postingEndDate: yup.string().required(),
+  permissionLevel: yup.string().required(),
+  boost: yup.string().required(),
+  url: yup.string().required(),
+  file: yup.mixed()
 })
 
 const defaultValues = {
@@ -99,54 +92,10 @@ const defaultValues = {
   file: ''
 }
 
-interface FileProp {
-  name: string
-  type: string
-  size: number
-}
-
-// Styled component for the upload image inside the dropzone area
-const Img = styled('img')(({ theme }) => ({
-  width: 300,
-  [theme.breakpoints.up('md')]: {
-    marginRight: theme.spacing(15.75)
-  },
-  [theme.breakpoints.down('md')]: {
-    width: 250,
-    marginBottom: theme.spacing(4)
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: 200
-  }
-}))
-
-// Styled component for the heading inside the dropzone area
-const HeadingTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
-  marginBottom: theme.spacing(5),
-  [theme.breakpoints.down('sm')]: {
-    marginBottom: theme.spacing(4)
-  }
-}))
-
 const SidebarAddPost = (props: SidebarAddPostType) => {
   // ** State
-  const [files, setFiles] = useState<File[]>([])
 
   // ** Hook
-  const theme = useTheme()
-  const { getRootProps, getInputProps } = useDropzone({
-    multiple: false,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif']
-    },
-    onDrop: (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles.map((file: File) => Object.assign(file)))
-    }
-  })
-
-  const img = files.map((file: FileProp) => (
-    <img key={file.name} alt={file.name} className='single-file-image' src={URL.createObjectURL(file as any)} />
-  ))
 
   // ** Props
   const { open, toggle } = props
@@ -187,7 +136,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       }
     })
 
-    // createPost(formData as any)
+    createPost(formData as any)
   }
 
   const handleClose = () => {
@@ -467,14 +416,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             control={control}
             rules={{ required: true }}
             render={({ field: { onChange } }) => (
-              // <input type='file' value={value} placeholder='insert file' onChange={onChange} />
-              // <input
-              //   type='file'
-              //   accept='image/jpg, image/png, image/jpeg'
-              //   onChange={e => {
-              //     onChange(e.target.files)
-              //   }}
-              // />
               <div>
                 <input
                   accept='image/*'
@@ -483,7 +424,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   multiple
                   type='file'
                   onChange={e => {
-                    onChange(e.target.files)
+                    console.log(e.target.files)
                   }}
                 />
 
