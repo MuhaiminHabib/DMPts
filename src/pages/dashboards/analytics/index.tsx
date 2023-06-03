@@ -1,19 +1,20 @@
+import { useContext } from 'react'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 
 // ** Demo Component Imports
-import AnalyticsSales from 'src/views/dashboards/analytics/AnalyticsSales'
-import AnalyticsCongratulations from 'src/views/dashboards/analytics/AnalyticsCongratulations'
-import { AbilityContext } from 'src/layouts/components/acl/Can'
 
-// ** Styled Component Import
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import AnalyticsBACount from 'src/views/dashboards/analytics/dmp/AnalyticsBACount'
 import AnalyticsDMCount from 'src/views/dashboards/analytics/dmp/AnalyticsDMCount'
 import AnalyticsCCount from 'src/views/dashboards/analytics/dmp/AnalyticsCCount'
 import AnalyticsCMCount from 'src/views/dashboards/analytics/dmp/AnalyticsCMCount'
 import AnalyticsPostCount from 'src/views/dashboards/analytics/dmp/AnalyticsPostCount'
-import { useContext } from 'react'
+
+import AnalyticsSales from 'src/views/dashboards/analytics/dmp/AnalyticsSales'
+import AnalyticsCongratulations from 'src/views/dashboards/analytics/dmp/AnalyticsCongratulations'
 
 const AnalyticsDashboard = () => {
   const ability = useContext(AbilityContext)
@@ -22,7 +23,7 @@ const AnalyticsDashboard = () => {
     <ApexChartWrapper>
       <Grid container spacing={6}>
         {ability?.can('read', 'welcome-card') ? (
-          <Grid item xs={12} lg={8} sx={{ order: -1 }}>
+          <Grid item xs={12} sx={{ order: -1 }}>
             <AnalyticsCongratulations />
           </Grid>
         ) : null}

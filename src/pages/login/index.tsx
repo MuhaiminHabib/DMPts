@@ -96,8 +96,8 @@ const LoginPage = () => {
     formState: { errors }
   } = useForm({
     defaultValues: {
-      username: 'root',
-      password: 'Root@2023'
+      username: 'habib123',
+      password: 'Habib@1234'
     },
     mode: 'onBlur',
     resolver: yupResolver(schema)
