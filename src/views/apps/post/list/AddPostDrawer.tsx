@@ -49,13 +49,7 @@ interface PostData {
   postingEndDate: string
   title: string
   url: string
-  file: File[]
-}
-
-interface File {
-  name: string
-  size: number
-  type: string
+  file: FileList | null
 }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
@@ -83,13 +77,13 @@ const defaultValues = {
   client: '',
   title: '',
   description: '',
-  platform: '',
+  platform: [],
   postingDate: '',
   postingEndDate: '',
   permissionLevel: '',
   boost: '',
   url: '',
-  file: ''
+  file: null
 }
 
 const SidebarAddPost = (props: SidebarAddPostType) => {
@@ -112,7 +106,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     handleSubmit,
     getValues,
     formState: { errors }
-  } = useForm({
+  } = useForm<PostData>({
     defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
@@ -424,7 +418,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   multiple
                   type='file'
                   onChange={e => {
-                    console.log(e.target.files)
+                    onChange(e.target.files)
                   }}
                 />
 
@@ -433,9 +427,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                     Select File
                   </Button>
                 </label>
-                {getValues().file ? (
+                {getValues().file && getValues().file![0] ? (
                   <Box sx={{ py: '10' }}>
-                    <Typography>{getValues().file[0].name}</Typography>
+                    <Typography>{getValues().file![0].name}</Typography>
                   </Box>
                 ) : (
                   'No file selected'
