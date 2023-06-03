@@ -7,7 +7,6 @@ import CardContent from '@mui/material/CardContent'
 // ** Types Imports
 import { CardStatsVerticalProps } from 'src/@core/components/card-statistics/types'
 
-
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
@@ -15,19 +14,11 @@ import Loader from 'src/shared-components/Loader'
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
   // ** Props
-  const {
-    title,
-    stats,
-    avatarSrc,
-    avatarIcon,
-
-    avatarColor = 'primary',
-    isLoading
-  } = props
+  const { title, stats, avatarSrc, avatarIcon, avatarColor = 'primary', isLoading } = props
 
   return (
-    <Card>
-       <CardContent sx={{ p: theme => `${theme.spacing(5, 5, 4)} !important` }}>
+    <Card sx={{ minWidth: 145 }}>
+      <CardContent sx={{ p: theme => `${theme.spacing(5, 5, 4)} !important` }}>
         <Box sx={{ display: 'flex', mb: 4, alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <CustomAvatar
             skin='light'
@@ -39,10 +30,12 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
             {avatarIcon && !avatarSrc ? avatarIcon : null}
           </CustomAvatar>
         </Box>
-        <Typography sx={{ mb: 0.5, fontWeight: 600, color: 'text.secondary' }}>{title}</Typography>
-        {<Typography variant='h5' sx={{ mb: 2 }}>
-        {isLoading ? <Loader /> : stats}
-        </Typography>}
+        <Typography sx={{ mb: 0.5, fontWeight: 600, color: 'text.secondary', height: 50 }}>{title}</Typography>
+        {
+          <Typography variant='h5' sx={{ mb: 2 }}>
+            {isLoading ? <Loader /> : stats}
+          </Typography>
+        }
       </CardContent>
     </Card>
   )
