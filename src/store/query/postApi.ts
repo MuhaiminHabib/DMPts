@@ -63,7 +63,7 @@ const postApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Post']
     }),
-    downloadAttachment: build.mutation<void, string>({
+    downloadAttachment: build.mutation<Blob, string>({
       query(postId) {
         return {
           url: `/API/posting/download/${postId}`

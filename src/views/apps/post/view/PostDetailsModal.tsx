@@ -14,6 +14,7 @@ import { PostsTypes } from 'src/types/apps/postTypes'
 import { Box, Tooltip, Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { useDownloadAttachmentMutation } from 'src/store/query/postApi'
+import { showErrorAlert } from 'src/utils/swal'
 
 type pageProps = {
   post: PostsTypes
@@ -39,7 +40,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const [downloadAttachment] = useDownloadAttachmentMutation()
+  const [downloadAttachment, { isLoading, isError, error, data }] = useDownloadAttachmentMutation()
 
   const handleClickOpen = () => setOpen(true)
 
@@ -47,19 +48,37 @@ const PostDetailsModal = ({ post }: pageProps) => {
 
   const DownloadButton = ({ postId }: downloadParams) => (
     <Box>
-      <Button variant='outlined' size='small' color='secondary' onClick={() => downloadAttachment(postId)}>
+      <Button variant='outlined' size='small' color='secondary' onClick={() => downloadFile(postId)}>
         Download
       </Button>
     </Box>
   )
 
-  const FilePreview = ({ content, postId }: inputParams) => {
-    console.log(content)
-    let splitArray = content.split('.')
-    console.log(splitArray)
-    const fileType = splitArray[splitArray.length - 1]
+  const downloadFile = (postId: string) => {
+    downloadAttachment(postId)
 
-    console.log(fileType)
+    if (!isLoading && !isError && data) {
+      alert('here')
+      const url = window.URL.createObjectURL(new Blob([data]))
+      const link = document.createElement('a')
+      link.href = url
+
+      // Extract the filename from the URL or use a default filename
+      const filename = link.href.split('/').pop() || 'download'
+
+      link.setAttribute('download', filename)
+
+      document.body.appendChild(link)
+      link.click()
+
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
+    }
+  }
+
+  const FilePreview = ({ content, postId }: inputParams) => {
+    let splitArray = content.split('.')
+    const fileType = splitArray[splitArray.length - 1]
 
     const renderPreview = () => {
       if (fileType) {
