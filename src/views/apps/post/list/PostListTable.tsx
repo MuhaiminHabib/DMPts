@@ -35,11 +35,11 @@ const PostListTable = ({ isLoading, posts, handlePostDelete }: inputProps) => {
         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell>Index</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell align='right'>Client</TableCell>
-              <TableCell align='right'>Actions</TableCell>
+              <TableCell align='left'>Index</TableCell>
+              <TableCell align='center'>Title</TableCell>
+              <TableCell align='center'>Description</TableCell>
+              <TableCell align='center'>Client</TableCell>
+              <TableCell align='center'>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -52,14 +52,14 @@ const PostListTable = ({ isLoading, posts, handlePostDelete }: inputProps) => {
                     }}
                   >
                     <TableCell>{i + 1}</TableCell>
-                    <TableCell component='th' scope='row'>
+                    <TableCell align='center' component='th' scope='row'>
                       {post.title}
                     </TableCell>
-                    <TableCell component='th' scope='row'>
+                    <TableCell align='center' component='th' scope='row'>
                       {post.description}
                     </TableCell>
 
-                    <TableCell align='right'>{post.creator.username}</TableCell>
+                    <TableCell align='center'>{post.creator.username}</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post} />
