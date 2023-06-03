@@ -11,11 +11,25 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import { PostsTypes } from 'src/types/apps/postTypes'
-import { Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import { useDownloadAttachmentMutation } from 'src/store/query/postApi'
 
 type pageProps = {
   post: PostsTypes
+}
+
+type inputObj = {
+  content: string
+}
+
+type inputParams = {
+  content: string
+  postId: string
+}
+
+type downloadParams = {
+  postId: string
 }
 
 const PostDetailsModal = ({ post }: pageProps) => {
@@ -25,42 +39,73 @@ const PostDetailsModal = ({ post }: pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const [downloadAttachment] = useDownloadAttachmentMutation()
 
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
 
-  const FilePreview = file => {
-    const splitArray = file.split('.')
-    const fileType = splitArray[length - 1]
+  const DownloadButton = ({ postId }: downloadParams) => (
+    <Box>
+      <Button variant='outlined' size='small' color='secondary' onClick={() => downloadAttachment(postId)}>
+        Download
+      </Button>
+    </Box>
+  )
+
+  const FilePreview = ({ content, postId }: inputParams) => {
+    console.log(content)
+    let splitArray = content.split('.')
+    console.log(splitArray)
+    const fileType = splitArray[splitArray.length - 1]
+
+    console.log(fileType)
 
     const renderPreview = () => {
-      if (
-        fileType === 'jpg' ||
-        'jpeg' ||
-        'png' ||
-        'gif' ||
-        'bmp' ||
-        'tif' ||
-        'tiff' ||
-        'svg' ||
-        'webp' ||
-        'heic' ||
-        'heif' ||
-        'ico'
-      ) {
-        return <img src={file.createObjectURL(file)} alt='Preview' />
+      if (fileType) {
+        if (
+          fileType === 'jpg' ||
+          'jpeg' ||
+          'png' ||
+          'gif' ||
+          'bmp' ||
+          'tif' ||
+          'tiff' ||
+          'svg' ||
+          'webp' ||
+          'heic' ||
+          'heif' ||
+          'ico'
+        ) {
+          return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <img src='/dmp-images/picture_logo.png' alt={'picture'} width={100} height={100} />
+              <DownloadButton postId={postId} />
+            </Box>
+          )
+        } else if (fileType === 'txt' || 'csv' || 'doc' || 'pdf') {
+          return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <img src='/dmp-images/file_logo.png' alt={'picture'} width={100} height={100} />
+              <DownloadButton postId={postId} />
+            </Box>
+          )
+        } else if (fileType === 'zip' || 'rar' || 'tar.gz' || 'tgz') {
+          return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <img src='/dmp-images/zip_logo.png' alt={'picture'} width={100} height={100} />
+              <DownloadButton postId={postId} />
+            </Box>
+          )
+        } else {
+          return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <img src='/dmp-images/random_file_logo.png' alt={'picture'} width={100} height={100} />
+              <DownloadButton postId={postId} />
+            </Box>
+          )
+        }
       }
-
-      if (fileType === 'video') {
-        return <video src={URL.createObjectURL(file)} controls />
-      }
-
-      if (fileType === 'audio') {
-        return <audio src={URL.createObjectURL(file)} controls />
-      }
-
-      return <p>Preview not available</p>
     }
 
     return (
@@ -112,7 +157,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
               File:{' '}
             </Typography>
             <Typography component={'span'}>
-              {post.content ? <a href='#'>{post.content}</a> : 'No Files Attached'}
+              {post.content ? <FilePreview content={post.content} postId={post._id} /> : 'No Files Attached'}
             </Typography>
           </DialogContentText>
         </DialogContent>

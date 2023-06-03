@@ -62,6 +62,14 @@ const postApi = baseApi.injectEndpoints({
         }
       },
       invalidatesTags: ['Post']
+    }),
+    downloadAttachment: build.mutation<void, string>({
+      query(postId) {
+        return {
+          url: `/API/posting/download/${postId}`
+        }
+      },
+      invalidatesTags: ['Post']
     })
   }),
   overrideExisting: false
@@ -74,5 +82,6 @@ export const {
   useFetchPostsforCmQuery,
   useCreatePostMutation,
   useEditPostMutation,
-  useDeletePostMutation
+  useDeletePostMutation,
+  useDownloadAttachmentMutation
 } = postApi

@@ -155,28 +155,13 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
   // ** Hooks
   const [createPost, { isLoading, isError, error, data }] = useCreatePostMutation()
-  const {
-    // isLoading: isLoadingFetchCListForBA,
-    // isError: isErrorFetchCListForBA,
-    // error: fetchCListForBAError,
-
-    data: FetchCListForBaData
-  } = useFetchCListForBAQuery()
-  const {
-    // isLoading: isLoadingFetchCListForDm,
-    // isError: isErrorFetchCListForDm,
-    // error: fetchCListForDmError,
-
-    data: FetchCListForDmData
-  } = useFetchCListForDMQuery()
+  const { data: FetchCListForBaData } = useFetchCListForBAQuery()
+  const { data: FetchCListForDmData } = useFetchCListForDMQuery()
   const {
     reset,
     control,
-
-    // setValue,
-    // setError,
-
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm({
     defaultValues,
@@ -202,8 +187,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       }
     })
 
-    // createPost(formData as PostData)
-    createPost(formData as any)
+    // createPost(formData as any)
   }
 
   const handleClose = () => {
@@ -478,61 +462,48 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
           {/* file */}
 
-          {/* <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='file'
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  value={value}
-                  label='Link to Attached Files'
-                  onChange={onChange}
-                  error={Boolean(errors.fileName)}
-                />
-                )}
-            /> 
-             {errors.file && <FormHelperText sx={{ color: 'error.main' }}>{errors.file.message}</FormHelperText>}
-          </FormControl> */}
-
-          {/* <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 450 } : {}}>
-            <input {...getInputProps()} />
-            {files.length ? (
-              img
-            ) : (
-              <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
-                <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />
-                <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
-                  <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
-                  <Typography color='textSecondary' sx={{ '& a': { color: 'primary.main', textDecoration: 'none' } }}>
-                    Drop files here or click{' '}
-                    <Link href='/' onClick={e => e.preventDefault()}>
-                      browse
-                    </Link>{' '}
-                    thorough your machine
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-          </Box> */}
-
           <Controller
             name='file'
             control={control}
             rules={{ required: true }}
             render={({ field: { onChange } }) => (
               // <input type='file' value={value} placeholder='insert file' onChange={onChange} />
-              <input
-                type='file'
-                accept='image/jpg, image/png, image/jpeg'
-                onChange={e => {
-                  onChange(e.target.files)
-                }}
-              />
+              // <input
+              //   type='file'
+              //   accept='image/jpg, image/png, image/jpeg'
+              //   onChange={e => {
+              //     onChange(e.target.files)
+              //   }}
+              // />
+              <div>
+                <input
+                  accept='image/*'
+                  style={{ display: 'none' }}
+                  id='contained-button-file'
+                  multiple
+                  type='file'
+                  onChange={e => {
+                    onChange(e.target.files)
+                  }}
+                />
+
+                <label htmlFor='contained-button-file' style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Button variant='contained' component='span' style={{ marginBottom: '10px' }}>
+                    Select File
+                  </Button>
+                </label>
+                {getValues().file ? (
+                  <Box sx={{ py: '10' }}>
+                    <Typography>{getValues().file[0].name}</Typography>
+                  </Box>
+                ) : (
+                  'No file selected'
+                )}
+              </div>
             )}
           />
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
             <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
               Cancel
             </Button>
