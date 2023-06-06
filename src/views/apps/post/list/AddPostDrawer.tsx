@@ -49,6 +49,10 @@ interface PostData {
   postingDate: string
   title: string
   url: string | null
+  scheduledDate: string
+  boostingStartDate: string
+  boostingEndDate: string
+  boostingBudget: string
   file: FileList | null
 }
 
@@ -69,6 +73,10 @@ const schema = yup.object().shape({
   postingDate: yup.string().required(),
   title: yup.string().required(),
   url: yup.string().notRequired(),
+  scheduledDate: yup.string(),
+  boostingStartDate: yup.string().notRequired(),
+  boostingEndDate: yup.string().notRequired(),
+  boostingBudget: yup.string().notRequired(),
   file: yup.mixed().notRequired()
 })
 
@@ -80,7 +88,11 @@ const defaultValues = {
   platform: [],
   postingDate: '',
   title: '',
-  url: null,
+  url: '',
+  scheduledDate: '',
+  boostingStartDate: '',
+  boostingEndDate: '',
+  boostingBudget: '',
   file: null
 }
 
@@ -126,15 +138,15 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     const formData = new FormData()
     console.log(data)
 
-    if (data.file) {
-      Object.keys(data).forEach(key => {
-        if (key === 'file') {
-          formData.append('file', data.file[0])
-        } else {
-          formData.append(key, data[key])
-        }
-      })
-    }
+    // if (data.file) {
+    Object.keys(data).forEach(key => {
+      if (data.file && key === 'file') {
+        formData.append('file', data.file[0])
+      } else {
+        formData.append(key, data[key])
+      }
+    })
+    // }
 
     createPost(formData as any)
   }
@@ -316,30 +328,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
           {/* Posting Start Date */}
           <FormControl fullWidth sx={{ mb: 6 }}>
-            {/* <Controller
-              name='postingDate'
-              control={control}
-              rules={{ required: true, pattern: /^\d{4}-\d{2}-\d{2},\s\d{1,2}:\d{2}$/ }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  type={'datetime-local'}
-                  value={value}
-                  label='Posting Date'
-                  onChange={onChange}
-                  error={Boolean(errors.postingDate)}
-                  InputLabelProps={{
-                    shrink: true,
-                    style: { whiteSpace: 'nowrap' }
-                  }}
-                  InputProps={{
-                    inputProps: { step: 300 } // Set step value to 300 for 5-minute intervals
-                  }}
-                />
-              )}
-
-              
-            /> */}
-
             <Controller
               name='postingDate'
               control={control}
@@ -360,29 +348,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               <FormHelperText sx={{ color: 'error.main' }}>{errors.postingDate.message}</FormHelperText>
             )}
           </FormControl>
-
-          {/* Posting End Date */}
-          {/* <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='postingEndDate'
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  type={'date'}
-                  value={value}
-                  label='Posting End Date'
-                  onChange={onChange}
-                  error={Boolean(errors.postingEndDate)}
-                  InputLabelProps={{ shrink: true }}
-                  inputProps={{ min: getFormattedDate() }}
-                />
-              )}
-            />
-            {errors.postingEndDate && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.postingEndDate.message}</FormHelperText>
-            )}
-          </FormControl> */}
 
           {/* Permission Level */}
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -412,6 +377,28 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               <FormHelperText sx={{ color: 'error.main' }} id='permissionLevel'>
                 This field is required
               </FormHelperText>
+            )}
+          </FormControl>
+
+          {/* Schedule Date */}
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <Controller
+              name='scheduledDate'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  type='datetime-local'
+                  value={value}
+                  label='Schedule Date'
+                  onChange={onChange}
+                  error={Boolean(errors.scheduledDate)}
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+            />
+
+            {errors.scheduledDate && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.scheduledDate.message}</FormHelperText>
             )}
           </FormControl>
 
@@ -445,6 +432,71 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             )}
           </FormControl>
 
+          {/* boost Budget */}
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <Controller
+              name='boostingBudget'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  value={value}
+                  label='Enter Boost Budget'
+                  onChange={onChange}
+                  placeholder=''
+                  error={Boolean(errors.boostingBudget)}
+                />
+              )}
+            />
+            {errors.boostingBudget && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingBudget.message}</FormHelperText>
+            )}
+          </FormControl>
+
+          {/* Boost Start Date */}
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <Controller
+              name='boostingStartDate'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  type='datetime-local'
+                  value={value}
+                  label='Boost Start Date'
+                  onChange={onChange}
+                  error={Boolean(errors.boostingStartDate)}
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+            />
+
+            {errors.boostingStartDate && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingStartDate.message}</FormHelperText>
+            )}
+          </FormControl>
+
+          {/* Boost End Date */}
+          <FormControl fullWidth sx={{ mb: 6 }}>
+            <Controller
+              name='boostingEndDate'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  type='datetime-local'
+                  value={value}
+                  label='Boost End Date'
+                  onChange={onChange}
+                  error={Boolean(errors.boostingEndDate)}
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+            />
+
+            {errors.boostingEndDate && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingEndDate.message}</FormHelperText>
+            )}
+          </FormControl>
           {/* url */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
