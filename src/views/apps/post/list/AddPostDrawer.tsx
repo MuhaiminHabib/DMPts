@@ -133,12 +133,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       console.log(errors)
     }
 
-    // data.postingDate = data.postingDate.replace('T', ',').toString()
-
     const formData = new FormData()
     console.log(data)
 
-    // if (data.file) {
     Object.keys(data).forEach(key => {
       if (data.file && key === 'file') {
         formData.append('file', data.file[0])
@@ -146,7 +143,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
         formData.append(key, data[key])
       }
     })
-    // }
 
     createPost(formData as any)
   }
