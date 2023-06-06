@@ -33,6 +33,7 @@ import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/quer
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 interface SidebarAddPostType {
   open: boolean
@@ -40,15 +41,14 @@ interface SidebarAddPostType {
 }
 
 interface PostData {
-  boost: string
   client: string
+  boost: string
   description: string
   permissionLevel: string
   platform: string[]
   postingDate: string
-  postingEndDate: string
   title: string
-  url: string
+  url: string | null
   file: FileList | null
 }
 
@@ -62,27 +62,25 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 
 const schema = yup.object().shape({
   client: yup.string().required(),
-  title: yup.string().required(),
+  boost: yup.string().required(),
   description: yup.string().required(),
+  permissionLevel: yup.string().required(),
   platform: yup.string().required(),
   postingDate: yup.string().required(),
-  postingEndDate: yup.string().required(),
-  permissionLevel: yup.string().required(),
-  boost: yup.string().required(),
-  url: yup.string().required(),
-  file: yup.mixed()
+  title: yup.string().required(),
+  url: yup.string().notRequired(),
+  file: yup.mixed().notRequired()
 })
 
 const defaultValues = {
   client: '',
-  title: '',
+  boost: '',
   description: '',
+  permissionLevel: '',
   platform: [],
   postingDate: '',
-  postingEndDate: '',
-  permissionLevel: '',
-  boost: '',
-  url: '',
+  title: '',
+  url: null,
   file: null
 }
 
@@ -118,25 +116,44 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       handleClose()
     }
   }, [data])
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: any, errors: any) => {
+    if (errors) {
+      console.log(errors)
+    }
+
+    // data.postingDate = data.postingDate.replace('T', ',').toString()
+
     const formData = new FormData()
     console.log(data)
 
-    Object.keys(data).forEach(key => {
-      if (key === 'file') {
-        formData.append('file', data.file[0])
-      } else {
-        formData.append(key, data[key])
-      }
-    })
+    if (data.file) {
+      Object.keys(data).forEach(key => {
+        if (key === 'file') {
+          formData.append('file', data.file[0])
+        } else {
+          formData.append(key, data[key])
+        }
+      })
+    }
 
     createPost(formData as any)
   }
 
   const handleClose = () => {
     toggle()
+  }
+  const handleCancel = () => {
+    toggle()
     reset()
   }
+
+  // const getFormattedDate = () => {
+  //   const today = new Date()
+  //   const year = today.getFullYear()
+  //   const month = String(today.getMonth() + 1).padStart(2, '0')
+  //   const day = String(today.getDate()).padStart(2, '0')
+  //   return `${year}-${month}-${day}`
+  // }
 
   if (isLoading) {
     console.log('Loading')
@@ -165,6 +182,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Client */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel
               id='validation-billing-select'
@@ -186,7 +204,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   labelId='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 >
-                  <MenuItem value=''>none</MenuItem>
+                  <Link href='/apps/user/c-list/' style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <MenuItem value=''>Go to Client Page</MenuItem>
+                  </Link>
                   {FetchCListForBaData &&
                     FetchCListForBaData.map(item => (
                       <MenuItem key={item._id} value={item._id}>
@@ -209,6 +229,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             )}
           </FormControl>
 
+          {/* title */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='title'
@@ -229,6 +250,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             {errors.title && <FormHelperText sx={{ color: 'error.main' }}>{errors.title.message}</FormHelperText>}
           </FormControl>
 
+          {/* description */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='description'
@@ -251,11 +273,12 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             )}
           </FormControl>
 
+          {/* platform */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel
-              id='validation-billing-select'
+              id='validation-platform-select'
               error={Boolean(errors.platform)}
-              htmlFor='validation-billing-select'
+              htmlFor='validation-platform-select'
             >
               Select platform
             </InputLabel>
@@ -269,17 +292,23 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   label='Select Platform'
                   onChange={onChange}
                   error={Boolean(errors.platform)}
-                  labelId='validation-billing-select'
-                  aria-describedby='validation-billing-select'
+                  labelId='validation-platform-select'
+                  aria-describedby='validation-platform-select'
                 >
                   <MenuItem value=''>none</MenuItem>
+                  <MenuItem value='fb'>Facebook</MenuItem>
+                  <MenuItem value='instagram'>Instagram</MenuItem>
+                  <MenuItem value='linkedin'>Linkedin</MenuItem>
+                  <MenuItem value='behance'>Behance</MenuItem>
+                  <MenuItem value='pinterest'>Pinterest</MenuItem>
                   <MenuItem value='google'>Google</MenuItem>
-                  <MenuItem value='fb'>FaceBook</MenuItem>
+                  <MenuItem value='shutterstock'>Shutterstock</MenuItem>
+                  <MenuItem value='youtube'>Youtube</MenuItem>
                 </Select>
               )}
             />
             {errors.platform && (
-              <FormHelperText sx={{ color: 'error.main' }} id='validation-billing-select'>
+              <FormHelperText sx={{ color: 'error.main' }} id='validation-platform-select'>
                 This field is required
               </FormHelperText>
             )}
@@ -287,13 +316,37 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
           {/* Posting Start Date */}
           <FormControl fullWidth sx={{ mb: 6 }}>
+            {/* <Controller
+              name='postingDate'
+              control={control}
+              rules={{ required: true, pattern: /^\d{4}-\d{2}-\d{2},\s\d{1,2}:\d{2}$/ }}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  type={'datetime-local'}
+                  value={value}
+                  label='Posting Date'
+                  onChange={onChange}
+                  error={Boolean(errors.postingDate)}
+                  InputLabelProps={{
+                    shrink: true,
+                    style: { whiteSpace: 'nowrap' }
+                  }}
+                  InputProps={{
+                    inputProps: { step: 300 } // Set step value to 300 for 5-minute intervals
+                  }}
+                />
+              )}
+
+              
+            /> */}
+
             <Controller
               name='postingDate'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
-                  type={'date'}
+                  type='datetime-local'
                   value={value}
                   label='Posting Date'
                   onChange={onChange}
@@ -302,13 +355,14 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                 />
               )}
             />
+
             {errors.postingDate && (
               <FormHelperText sx={{ color: 'error.main' }}>{errors.postingDate.message}</FormHelperText>
             )}
           </FormControl>
 
           {/* Posting End Date */}
-          <FormControl fullWidth sx={{ mb: 6 }}>
+          {/* <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='postingEndDate'
               control={control}
@@ -321,13 +375,14 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   onChange={onChange}
                   error={Boolean(errors.postingEndDate)}
                   InputLabelProps={{ shrink: true }}
+                  inputProps={{ min: getFormattedDate() }}
                 />
               )}
             />
             {errors.postingEndDate && (
               <FormHelperText sx={{ color: 'error.main' }}>{errors.postingEndDate.message}</FormHelperText>
             )}
-          </FormControl>
+          </FormControl> */}
 
           {/* Permission Level */}
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -362,7 +417,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
           {/* boost */}
           <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id='boost' error={Boolean(errors.boost)} htmlFor='validation-billing-select'>
+            <InputLabel id='boost' error={Boolean(errors.boost)} htmlFor='validation-boost-select'>
               Boosted
             </InputLabel>
             <Controller
@@ -375,8 +430,8 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   label='Boosted'
                   onChange={onChange}
                   error={Boolean(errors.boost)}
-                  labelId='validation-billing-select'
-                  aria-describedby='validation-billing-select'
+                  labelId='validation-boost-select'
+                  aria-describedby='validation-boost-select'
                 >
                   <MenuItem value='false'>No</MenuItem>
                   <MenuItem value='true'>Yes</MenuItem>
@@ -384,7 +439,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               )}
             />
             {errors.boost && (
-              <FormHelperText sx={{ color: 'error.main' }} id='validation-billing-select'>
+              <FormHelperText sx={{ color: 'error.main' }} id='validation-boost-select'>
                 This field is required
               </FormHelperText>
             )}
@@ -395,7 +450,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
             <Controller
               name='url'
               control={control}
-              rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField value={value} label='Post URL' onChange={onChange} error={Boolean(errors.url)} />
               )}
@@ -404,11 +458,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
           </FormControl>
 
           {/* file */}
-
           <Controller
             name='file'
             control={control}
-            rules={{ required: true }}
             render={({ field: { onChange } }) => (
               <div>
                 <input
@@ -439,7 +491,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
           />
 
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
-            <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
+            <Button size='large' variant='outlined' color='secondary' onClick={handleCancel}>
               Cancel
             </Button>
             <Button size='large' type='submit' variant='contained' sx={{ ml: 3 }}>
