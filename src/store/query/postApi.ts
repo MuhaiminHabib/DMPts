@@ -11,7 +11,6 @@ interface EditPostParams {
   permissionLevel: string
   platform: platform[]
   postingDate: string
-  postingEndDate: string
   title: string
   url: string
 }
