@@ -49,27 +49,42 @@ const PostDetailsModal = ({ post }: pageProps) => {
     </Box>
   )
 
-  const downloadFile = (postId: string) => {
-    downloadAttachment(postId)
+  const downloadFile = async postID => {
+    const response = await fetch(url)
+    const blob = await response.blob()
 
-    if (!isLoading && !isError && data) {
-      alert('here')
-      const url = window.URL.createObjectURL(new Blob([data]))
-      const link = document.createElement('a')
-      link.href = url
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    link.download = 'file_name.ext' // set downloaded file name here
 
-      // Extract the filename from the URL or use a default filename
-      const filename = link.href.split('/').pop() || 'download'
+    document.body.appendChild(link)
 
-      link.setAttribute('download', filename)
+    link.click()
 
-      document.body.appendChild(link)
-      link.click()
-
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(link)
-    }
+    document.body.removeChild(link)
   }
+
+  // const downloadFile = (postId: string) => {
+  //   downloadAttachment(postId)
+
+  //   if (!isLoading && !isError && data) {
+  //     alert('here')
+  //     const url = window.URL.createObjectURL(new Blob([data]))
+  //     const link = document.createElement('a')
+  //     link.href = url
+
+  //     // Extract the filename from the URL or use a default filename
+  //     const filename = link.href.split('/').pop() || 'download'
+
+  //     link.setAttribute('download', filename)
+
+  //     document.body.appendChild(link)
+  //     link.click()
+
+  //     window.URL.revokeObjectURL(url)
+  //     document.body.removeChild(link)
+  //   }
+  // }
 
   const FilePreview = ({ content, postId }: inputParams) => {
     const fileType = content.split('.').slice(-1)[0]
