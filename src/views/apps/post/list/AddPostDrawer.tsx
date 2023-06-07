@@ -66,7 +66,6 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 
 const schema = yup.object().shape({
   client: yup.string().required(),
-  boost: yup.string().required(),
   description: yup.string().required(),
   permissionLevel: yup.string().required(),
   platform: yup.string().required(),
@@ -74,7 +73,24 @@ const schema = yup.object().shape({
   title: yup.string().required(),
   url: yup.string().notRequired(),
   scheduledDate: yup.string(),
-  boostingStartDate: yup.string().notRequired(),
+  boost: yup.string().required(),
+  boostingStartDate: yup.string().test({
+    name: 'conditionalRequired',
+    test: function (value) {
+      const boostValue = this.resolve(yup.ref('boost')) // Get the value of boost
+      if (boostValue === 'true') {
+        if (!value) {
+          throw new yup.ValidationError('Boosting start date is required')
+        }
+      }
+      // else {
+      //   if (value) {
+      //     throw new yup.ValidationError('Boosting start date is not required')
+      //   }
+      // }
+      return true // Return true for other cases
+    }
+  }),
   boostingEndDate: yup.string().notRequired(),
   boostingBudget: yup.string().notRequired(),
   file: yup.mixed().notRequired()
@@ -429,6 +445,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
           </FormControl>
 
           {/* boost Budget */}
+
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='boostingBudget'
@@ -450,49 +467,54 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
           </FormControl>
 
           {/* Boost Start Date */}
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='boostingStartDate'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  type='datetime-local'
-                  value={value}
-                  label='Boost Start Date'
-                  onChange={onChange}
-                  error={Boolean(errors.boostingStartDate)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+          {
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='boostingStartDate'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    type='datetime-local'
+                    value={value}
+                    label='Boost Start Date'
+                    onChange={onChange}
+                    error={Boolean(errors.boostingStartDate)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                )}
+              />
 
-            {errors.boostingStartDate && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingStartDate.message}</FormHelperText>
-            )}
-          </FormControl>
+              {errors.boostingStartDate && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingStartDate.message}</FormHelperText>
+              )}
+            </FormControl>
+          }
 
           {/* Boost End Date */}
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='boostingEndDate'
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  type='datetime-local'
-                  value={value}
-                  label='Boost End Date'
-                  onChange={onChange}
-                  error={Boolean(errors.boostingEndDate)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+          {
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='boostingEndDate'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    type='datetime-local'
+                    value={value}
+                    label='Boost End Date'
+                    onChange={onChange}
+                    error={Boolean(errors.boostingEndDate)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                )}
+              />
 
-            {errors.boostingEndDate && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingEndDate.message}</FormHelperText>
-            )}
-          </FormControl>
+              {errors.boostingEndDate && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingEndDate.message}</FormHelperText>
+              )}
+            </FormControl>
+          }
+
           {/* url */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller

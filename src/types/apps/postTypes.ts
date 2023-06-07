@@ -59,6 +59,10 @@ export type PostsTypes = {
   permissionLevel: string
   platform: string[]
   postingDate: string
+  scheduledDate: string
+  boostingStartDate: string
+  boostingEndDate: string
+  boostingBudget: string
   title: string
   updatedAt: string
   url: string

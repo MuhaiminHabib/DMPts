@@ -129,6 +129,22 @@ const PostDetailsModal = ({ post }: pageProps) => {
     )
   }
 
+  type SplitDateTime = {
+    date: string
+    time: string
+  }
+
+  function splitDateTime(dateTimeString: string): SplitDateTime {
+    let dateTime = new Date(dateTimeString)
+    let date = dateTime.toISOString().substring(0, 10)
+    let time = dateTime.toISOString().substring(11, 16)
+
+    return {
+      date: date,
+      time: time
+    }
+  }
+
   return (
     <Fragment>
       <Tooltip title='Post Details' placement='top-start'>
@@ -143,7 +159,9 @@ const PostDetailsModal = ({ post }: pageProps) => {
             <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
               Posted On:{' '}
             </Typography>
-            <Typography component={'span'}>{post.postingDate.substring(0, 10)}</Typography>
+            <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+              {`${splitDateTime(post.postingDate).date} at ${splitDateTime(post.postingDate).time}`}
+            </Typography>
           </DialogContentText>
         </DialogTitle>
         <DialogContent>
@@ -159,12 +177,49 @@ const PostDetailsModal = ({ post }: pageProps) => {
             </Typography>
             <Typography component={'span'}>habib </Typography>
           </DialogContentText>
+          {post.scheduledDate ? (
+            <DialogContentText>
+              <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+                Scheduled Date:{' '}
+              </Typography>
+              <Typography component={'span'}>
+                {`${splitDateTime(post.scheduledDate).time} ${splitDateTime(post.scheduledDate).date}`}
+              </Typography>
+            </DialogContentText>
+          ) : null}
           <DialogContentText>
             <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
               Boosted:{' '}
             </Typography>
             <Typography component={'span'}>{post.boost ? 'Yes' : 'No'}</Typography>
           </DialogContentText>
+
+          {post.boost ? (
+            <>
+              <DialogContentText>
+                <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+                  Boost Budget:{' '}
+                </Typography>
+                <Typography component={'span'}>{post.boostingBudget}</Typography>
+              </DialogContentText>
+              <DialogContentText>
+                <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+                  Boost Start Date:{' '}
+                </Typography>
+                <Typography component={'span'}>
+                  {`${splitDateTime(post.scheduledDate).time} ${splitDateTime(post.scheduledDate).date}`}
+                </Typography>
+              </DialogContentText>
+              <DialogContentText>
+                <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+                  Boost End Date:{' '}
+                </Typography>
+                <Typography component={'span'}>
+                  {`${splitDateTime(post.boostingEndDate).time} ${splitDateTime(post.boostingEndDate).date}`}
+                </Typography>
+              </DialogContentText>
+            </>
+          ) : null}
           <DialogContentText>
             <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
               File:{' '}
