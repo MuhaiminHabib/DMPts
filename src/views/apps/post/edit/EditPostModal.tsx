@@ -44,6 +44,10 @@ interface PostData {
   platform: platform[]
   postingDate: string
   title: string
+  scheduledDate: string
+  boostingStartDate: string
+  boostingEndDate: string
+  boostingBudget: string
   url: string
 }
 
@@ -55,6 +59,10 @@ const schema = yup.object().shape({
   postingDate: yup.string().required(),
   permissionLevel: yup.string().required(),
   boost: yup.string().required(),
+  scheduledDate: yup.string().notRequired(),
+  boostingStartDate: yup.string().notRequired(),
+  boostingEndDate: yup.string().notRequired(),
+  boostingBudget: yup.string().notRequired(),
   url: yup.string().required()
 })
 
@@ -75,6 +83,11 @@ const EditPostModal = ({ post }: pageProps) => {
     postingDate: new Date(post.postingDate).toISOString().split('T')[0],
     permissionLevel: post.permissionLevel,
     boost: post.boost.toString(),
+    scheduledDate: new Date(post.scheduledDate).toISOString().split('T')[0],
+
+    // boostingStartDate: new Date(post.boostingStartDate).toISOString().split('T')[0],
+    // boostingEndDate: new Date(post.boostingEndDate).toISOString().split('T')[0],
+    boostingBudget: post.boostingBudget,
     url: post.url
   }
 
@@ -138,6 +151,7 @@ const EditPostModal = ({ post }: pageProps) => {
 
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmit, onError)}>
+            {/* PostId */}
             <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
                 name='id'
@@ -219,9 +233,15 @@ const EditPostModal = ({ post }: pageProps) => {
                     labelId='platform'
                     aria-describedby='platform'
                   >
-                    <MenuItem value=''>None</MenuItem>
+                    <MenuItem value=''>none</MenuItem>
+                    <MenuItem value='fb'>Facebook</MenuItem>
+                    <MenuItem value='instagram'>Instagram</MenuItem>
+                    <MenuItem value='linkedin'>Linkedin</MenuItem>
+                    <MenuItem value='behance'>Behance</MenuItem>
+                    <MenuItem value='pinterest'>Pinterest</MenuItem>
                     <MenuItem value='google'>Google</MenuItem>
-                    <MenuItem value='fb'>FaceBook</MenuItem>
+                    <MenuItem value='shutterstock'>Shutterstock</MenuItem>
+                    <MenuItem value='youtube'>Youtube</MenuItem>
                   </Select>
                 )}
               />
@@ -253,28 +273,6 @@ const EditPostModal = ({ post }: pageProps) => {
               )}
             </FormControl>
 
-            {/* Posting End Date */}
-            {/* <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='postingEndDate'
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  type={'date'}
-                  value={value}
-                  label='Posting End Date'
-                  onChange={onChange}
-                  error={Boolean(errors.postingEndDate)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
-            {errors.postingEndDate && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.postingEndDate.message}</FormHelperText>
-            )}
-          </FormControl> */}
-
             {/* Permission Level */}
             <FormControl fullWidth sx={{ mb: 6 }}>
               <InputLabel id='permissionLevel' error={Boolean(errors.permissionLevel)} htmlFor='permissionLevel'>
@@ -301,6 +299,29 @@ const EditPostModal = ({ post }: pageProps) => {
               />
               {errors.permissionLevel && (
                 <FormHelperText sx={{ color: 'error.main' }}>{errors.permissionLevel.message}</FormHelperText>
+              )}
+            </FormControl>
+
+            {/* Schedule Date */}
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='scheduledDate'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    name='scheduledDate'
+                    type='datetime-local'
+                    value={value}
+                    label='Schedule Date'
+                    onChange={onChange}
+                    error={Boolean(errors.scheduledDate)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                )}
+              />
+
+              {errors.scheduledDate && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.scheduledDate.message}</FormHelperText>
               )}
             </FormControl>
 
@@ -331,6 +352,75 @@ const EditPostModal = ({ post }: pageProps) => {
               {errors.boost && <FormHelperText sx={{ color: 'error.main' }}>{errors.boost.message}</FormHelperText>}
             </FormControl>
 
+            {/* boost Budget */}
+
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='boostingBudget'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    value={value}
+                    label='Enter Boost Budget'
+                    onChange={onChange}
+                    placeholder=''
+                    error={Boolean(errors.boostingBudget)}
+                  />
+                )}
+              />
+              {errors.boostingBudget && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingBudget.message}</FormHelperText>
+              )}
+            </FormControl>
+
+            {/* Boost Start Date */}
+            {/*             
+              <FormControl fullWidth sx={{ mb: 6 }}>
+                <Controller
+                  name='boostingStartDate'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      type='datetime-local'
+                      value={value}
+                      label='Boost Start Date'
+                      onChange={onChange}
+                      error={Boolean(errors.boostingStartDate)}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
+
+                {errors.boostingStartDate && (
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingStartDate.message}</FormHelperText>
+                )}
+              </FormControl> */}
+
+            {/* Boost End Date */}
+
+            {/* <FormControl fullWidth sx={{ mb: 6 }}>
+                <Controller
+                  name='boostingEndDate'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      type='datetime-local'
+                      value={value}
+                      label='Boost End Date'
+                      onChange={onChange}
+                      error={Boolean(errors.boostingEndDate)}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
+
+                {errors.boostingEndDate && (
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingEndDate.message}</FormHelperText>
+                )}
+              </FormControl> */}
+
             {/* url */}
             <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
@@ -343,6 +433,7 @@ const EditPostModal = ({ post }: pageProps) => {
               />
               {errors.url && <FormHelperText sx={{ color: 'error.main' }}>{errors.url.message}</FormHelperText>}
             </FormControl>
+
             <Button variant='outlined' color='secondary' onClick={handleClose}>
               Close
             </Button>
