@@ -72,25 +72,9 @@ const schema = yup.object().shape({
   postingDate: yup.string().required(),
   title: yup.string().required(),
   url: yup.string().notRequired(),
-  scheduledDate: yup.string(),
   boost: yup.string().required(),
-  boostingStartDate: yup.string().test({
-    name: 'conditionalRequired',
-    test: function (value) {
-      const boostValue = this.resolve(yup.ref('boost')) // Get the value of boost
-      if (boostValue === 'true') {
-        if (!value) {
-          throw new yup.ValidationError('Boosting start date is required')
-        }
-      }
-      // else {
-      //   if (value) {
-      //     throw new yup.ValidationError('Boosting start date is not required')
-      //   }
-      // }
-      return true // Return true for other cases
-    }
-  }),
+  scheduledDate: yup.string().notRequired(),
+  boostingStartDate: yup.string().notRequired(),
   boostingEndDate: yup.string().notRequired(),
   boostingBudget: yup.string().notRequired(),
   file: yup.mixed().notRequired()

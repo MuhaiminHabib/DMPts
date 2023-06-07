@@ -13,7 +13,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import { PostsTypes } from 'src/types/apps/postTypes'
 import { Box, Tooltip, Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
-import { useDownloadAttachmentMutation } from 'src/store/query/postApi'
+import { baseURL } from 'src/utils/constants'
 
 type pageProps = {
   post: PostsTypes
@@ -26,6 +26,7 @@ type inputParams = {
 
 type downloadParams = {
   postId: string
+  content: string
 }
 
 const PostDetailsModal = ({ post }: pageProps) => {
@@ -35,27 +36,26 @@ const PostDetailsModal = ({ post }: pageProps) => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const [downloadAttachment, { isLoading, isError, data }] = useDownloadAttachmentMutation()
 
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
 
-  const DownloadButton = ({ postId }: downloadParams) => (
+  const DownloadButton = ({ postId, content }: downloadParams) => (
     <Box>
-      <Button variant='outlined' size='small' color='secondary' onClick={() => downloadFile(postId)}>
+      <Button variant='outlined' size='small' color='secondary' onClick={() => downloadFile({ postId, content })}>
         Download
       </Button>
     </Box>
   )
 
-  const downloadFile = async postID => {
-    const response = await fetch(url)
+  const downloadFile = async ({ postId, content }: downloadParams) => {
+    const response = await fetch(`${baseURL}/API/posting/download/${postId}`)
     const blob = await response.blob()
 
     const link = document.createElement('a')
     link.href = window.URL.createObjectURL(blob)
-    link.download = 'file_name.ext' // set downloaded file name here
+    link.download = content // set downloaded file name here
 
     document.body.appendChild(link)
 
@@ -63,28 +63,6 @@ const PostDetailsModal = ({ post }: pageProps) => {
 
     document.body.removeChild(link)
   }
-
-  // const downloadFile = (postId: string) => {
-  //   downloadAttachment(postId)
-
-  //   if (!isLoading && !isError && data) {
-  //     alert('here')
-  //     const url = window.URL.createObjectURL(new Blob([data]))
-  //     const link = document.createElement('a')
-  //     link.href = url
-
-  //     // Extract the filename from the URL or use a default filename
-  //     const filename = link.href.split('/').pop() || 'download'
-
-  //     link.setAttribute('download', filename)
-
-  //     document.body.appendChild(link)
-  //     link.click()
-
-  //     window.URL.revokeObjectURL(url)
-  //     document.body.removeChild(link)
-  //   }
-  // }
 
   const FilePreview = ({ content, postId }: inputParams) => {
     const fileType = content.split('.').slice(-1)[0]
@@ -108,28 +86,40 @@ const PostDetailsModal = ({ post }: pageProps) => {
           return (
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <img src='/dmp-images/picture_logo.png' alt={'picture'} width={100} height={100} />
-              <DownloadButton postId={postId} />
+              <Box sx={{ pb: 7 }}>
+                <Typography>{content.substring(5)}</Typography>
+              </Box>
+              <DownloadButton postId={postId} content={content} />
             </Box>
           )
         } else if (fileType === 'txt' || 'csv' || 'doc' || 'pdf') {
           return (
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <img src='/dmp-images/file_logo.png' alt={'picture'} width={100} height={100} />
-              <DownloadButton postId={postId} />
+              <Box sx={{ pb: 7 }}>
+                <Typography>{content.substring(5)}</Typography>
+              </Box>
+              <DownloadButton postId={postId} content={content} />
             </Box>
           )
         } else if (fileType === 'zip' || 'rar' || 'tar.gz' || 'tgz') {
           return (
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <img src='/dmp-images/zip_logo.png' alt={'picture'} width={100} height={100} />
-              <DownloadButton postId={postId} />
+              <Box sx={{ pb: 7 }}>
+                <Typography>{content.substring(5)}</Typography>
+              </Box>
+              <DownloadButton postId={postId} content={content} />
             </Box>
           )
         } else {
           return (
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <img src='/dmp-images/random_file_logo.png' alt={'picture'} width={100} height={100} />
-              <DownloadButton postId={postId} />
+              <Box sx={{ pb: 7 }}>
+                <Typography>{content.substring(5)}</Typography>
+              </Box>
+              <DownloadButton postId={postId} content={content} />
             </Box>
           )
         }
@@ -150,9 +140,9 @@ const PostDetailsModal = ({ post }: pageProps) => {
   }
 
   function splitDateTime(dateTimeString: string): SplitDateTime {
-    let dateTime = new Date(dateTimeString)
-    let date = dateTime.toISOString().substring(0, 10)
-    let time = dateTime.toISOString().substring(11, 16)
+    const dateTime = new Date(dateTimeString)
+    const date = dateTime.toISOString().substring(0, 10)
+    const time = dateTime.toISOString().substring(11, 16)
 
     return {
       date: date,
@@ -198,7 +188,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
                 Scheduled Date:{' '}
               </Typography>
               <Typography component={'span'}>
-                {`${splitDateTime(post.scheduledDate).time} ${splitDateTime(post.scheduledDate).date}`}
+                {`${splitDateTime(post.scheduledDate).date} at ${splitDateTime(post.scheduledDate).time}`}
               </Typography>
             </DialogContentText>
           ) : null}
@@ -222,7 +212,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
                   Boost Start Date:{' '}
                 </Typography>
                 <Typography component={'span'}>
-                  {`${splitDateTime(post.scheduledDate).time} ${splitDateTime(post.scheduledDate).date}`}
+                  {`${splitDateTime(post.scheduledDate).date} at ${splitDateTime(post.scheduledDate).time}`}
                 </Typography>
               </DialogContentText>
               <DialogContentText>
@@ -230,7 +220,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
                   Boost End Date:{' '}
                 </Typography>
                 <Typography component={'span'}>
-                  {`${splitDateTime(post.boostingEndDate).time} ${splitDateTime(post.boostingEndDate).date}`}
+                  {`${splitDateTime(post.boostingEndDate).date} at ${splitDateTime(post.boostingEndDate).time}`}
                 </Typography>
               </DialogContentText>
             </>
