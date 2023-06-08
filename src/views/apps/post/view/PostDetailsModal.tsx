@@ -1,6 +1,9 @@
 // ** React Imports
 import { Fragment, useState } from 'react'
 
+// ** Config
+import authConfig from 'src/configs/auth'
+
 // ** MUI Imports
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -50,18 +53,26 @@ const PostDetailsModal = ({ post }: pageProps) => {
   )
 
   const downloadFile = async ({ postId, content: fileName }: downloadParams) => {
-    const response = await fetch(`${baseURL}/API/posting/download/${postId}`)
-    const blob = await response.blob()
+    var myHeaders = new Headers()
+    myHeaders.append('accessToken', localStorage.getItem(authConfig.storageTokenKeyName)!)
 
-    const link = document.createElement('a')
-    link.href = window.URL.createObjectURL(blob)
-    link.download = fileName // set downloaded file name here
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders
+    }
 
-    document.body.appendChild(link)
-
-    link.click()
-
-    document.body.removeChild(link)
+    fetch(`${baseURL}/API/posting/download/${postId}`, requestOptions)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', fileName) // Set the desired file name and extension here
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+      .catch(error => console.log('error', error))
   }
 
   const FilePreview = ({ content, postId }: inputParams) => {
