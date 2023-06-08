@@ -68,7 +68,7 @@ const AuthProvider = ({ children }: Props) => {
     } else if (meEndpointData) {
       onSuccessfulMeEndpoint(meEndpointData)
     }
-  }, [loginData, meEndpointData])
+  }, [loginData, meEndpointData, loginIsError, meEndpointIsError])
 
   const onSuccessfulMeEndpoint = (meEndpointData: any) => {
     setUser(meEndpointData)
@@ -107,12 +107,12 @@ const AuthProvider = ({ children }: Props) => {
   }
 
   const handleLogout = () => {
-    logout()
     setUser(null)
     hasLoginBeenCalled.current = false
     localStorage.removeItem('userData')
     localStorage.removeItem(authConfig.storageTokenKeyName)
     localStorage.removeItem(authConfig.onTokenExpiration)
+    logout()
     setLoading(false)
     router.push('/login')
   }
