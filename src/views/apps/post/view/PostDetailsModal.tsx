@@ -49,13 +49,13 @@ const PostDetailsModal = ({ post }: pageProps) => {
     </Box>
   )
 
-  const downloadFile = async ({ postId, content }: downloadParams) => {
+  const downloadFile = async ({ postId, content: fileName }: downloadParams) => {
     const response = await fetch(`${baseURL}/API/posting/download/${postId}`)
     const blob = await response.blob()
 
     const link = document.createElement('a')
     link.href = window.URL.createObjectURL(blob)
-    link.download = content // set downloaded file name here
+    link.download = fileName // set downloaded file name here
 
     document.body.appendChild(link)
 
