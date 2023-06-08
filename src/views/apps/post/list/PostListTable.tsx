@@ -9,12 +9,12 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 type inputProps = {
-  isLoading: boolean
+  isFetching: boolean
   posts: Posts[]
   handlePostDelete: (postId: string, title: string) => void
 }
 
-const PostListTable = ({ isLoading, posts, handlePostDelete }: inputProps) => {
+const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
   // **States
 
   // **Hooks
@@ -29,7 +29,7 @@ const PostListTable = ({ isLoading, posts, handlePostDelete }: inputProps) => {
 
   return (
     <TableContainer component={Paper}>
-      {isLoading ? (
+      {isFetching ? (
         <Loader />
       ) : (
         <Table sx={{ minWidth: 650 }} aria-label='simple table'>

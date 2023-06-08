@@ -30,14 +30,14 @@ const InvoiceList = () => {
   const { user } = useContext(AuthContext)
   const ability = useContext(AbilityContext)
   const {
-    isLoading,
+    isFetching,
 
     // isError, error,
     data: posts
   } = useFetchPostsQuery(postPage)
 
   const {
-    isLoading: isLoadingFetchPostsforDm,
+    isFetching: isFetchingFetchPostsforDm,
 
     //  isError: isErrorFetchPostsforDm,
     //  error: FetchPostsforDmError,
@@ -45,14 +45,14 @@ const InvoiceList = () => {
   } = useFetchPostsforDMQuery()
 
   const {
-    isLoading: isLoadingFetchPostsforC,
+    isFetching: isFetchingFetchPostsforC,
 
     //  isError: isErrorFetchPostsforC,
     //  error: FetchPostsforCError,
     data: FetchPostsforCData
   } = useFetchPostsforCQuery()
   const {
-    isLoading: isLoadingFetchPostsforCm,
+    isFetching: isFetchingFetchPostsforCm,
 
     //  isError: isErrorFetchPostsforCm,
     //  error: FetchPostsforCmError,
@@ -61,7 +61,7 @@ const InvoiceList = () => {
 
   const [
     deletePost,
-    { isLoading: isDeletePostLoading, isError: isDeletePostError, error: deletePostError, data: deletePostData }
+    { isFetching: isDeletePostLoading, isError: isDeletePostError, error: deletePostError, data: deletePostData }
   ] = useDeletePostMutation()
 
   // ** Functions
@@ -111,11 +111,11 @@ const InvoiceList = () => {
             <CardHeader title='Posts' />
           )}
           <PostListTable
-            isLoading={
-              ((user!.role === 'A' || user!.role === 'BA') && isLoading) ||
-              (user!.role === 'DM' && isLoadingFetchPostsforDm) ||
-              (user!.role === 'C' && isLoadingFetchPostsforC) ||
-              (user!.role === 'CM' && isLoadingFetchPostsforCm)
+            isFetching={
+              ((user!.role === 'A' || user!.role === 'BA') && isFetching) ||
+              (user!.role === 'DM' && isFetchingFetchPostsforDm) ||
+              (user!.role === 'C' && isFetchingFetchPostsforC) ||
+              (user!.role === 'CM' && isFetchingFetchPostsforCm)
             }
             posts={
               posts && posts?.length > 0
