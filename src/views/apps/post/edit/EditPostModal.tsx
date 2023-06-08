@@ -80,13 +80,12 @@ const EditPostModal = ({ post }: pageProps) => {
     title: post.title,
     description: post.description,
     platform: post.platform[0],
-    postingDate: new Date(post.postingDate).toISOString().split('T')[0],
+    postingDate: post.postingDate ? new Date(post.postingDate).toISOString().slice(0, -5) : null,
     permissionLevel: post.permissionLevel,
     boost: post.boost.toString(),
-    scheduledDate: new Date(post.scheduledDate).toISOString().split('T')[0],
-
-    // boostingStartDate: new Date(post.boostingStartDate).toISOString().split('T')[0],
-    // boostingEndDate: new Date(post.boostingEndDate).toISOString().split('T')[0],
+    scheduledDate: post.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, -5) : null,
+    boostingStartDate: post.boostingStartDate ? new Date(post.boostingStartDate).toISOString().slice(0, -5) : null,
+    boostingEndDate: post.boostingEndDate ? new Date(post.boostingEndDate).toISOString().slice(0, -5) : null,
     boostingBudget: post.boostingBudget,
     url: post.url
   }
@@ -259,7 +258,7 @@ const EditPostModal = ({ post }: pageProps) => {
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     name='postingDate'
-                    type={'date'}
+                    type={'datetime-local'}
                     value={value}
                     label='Posting Date'
                     onChange={onChange}
@@ -310,7 +309,7 @@ const EditPostModal = ({ post }: pageProps) => {
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     name='scheduledDate'
-                    type='datetime-local'
+                    type={'datetime-local'}
                     value={value}
                     label='Schedule Date'
                     onChange={onChange}
@@ -375,51 +374,51 @@ const EditPostModal = ({ post }: pageProps) => {
             </FormControl>
 
             {/* Boost Start Date */}
-            {/*             
-              <FormControl fullWidth sx={{ mb: 6 }}>
-                <Controller
-                  name='boostingStartDate'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      type='datetime-local'
-                      value={value}
-                      label='Boost Start Date'
-                      onChange={onChange}
-                      error={Boolean(errors.boostingStartDate)}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
 
-                {errors.boostingStartDate && (
-                  <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingStartDate.message}</FormHelperText>
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='boostingStartDate'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    type='datetime-local'
+                    value={value}
+                    label='Boost Start Date'
+                    onChange={onChange}
+                    error={Boolean(errors.boostingStartDate)}
+                    InputLabelProps={{ shrink: true }}
+                  />
                 )}
-              </FormControl> */}
+              />
+
+              {errors.boostingStartDate && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingStartDate.message}</FormHelperText>
+              )}
+            </FormControl>
 
             {/* Boost End Date */}
 
-            {/* <FormControl fullWidth sx={{ mb: 6 }}>
-                <Controller
-                  name='boostingEndDate'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      type='datetime-local'
-                      value={value}
-                      label='Boost End Date'
-                      onChange={onChange}
-                      error={Boolean(errors.boostingEndDate)}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-
-                {errors.boostingEndDate && (
-                  <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingEndDate.message}</FormHelperText>
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='boostingEndDate'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    type='datetime-local'
+                    value={value}
+                    label='Boost End Date'
+                    onChange={onChange}
+                    error={Boolean(errors.boostingEndDate)}
+                    InputLabelProps={{ shrink: true }}
+                  />
                 )}
-              </FormControl> */}
+              />
+
+              {errors.boostingEndDate && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.boostingEndDate.message}</FormHelperText>
+              )}
+            </FormControl>
 
             {/* url */}
             <FormControl fullWidth sx={{ mb: 6 }}>
