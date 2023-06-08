@@ -53,10 +53,10 @@ const PostDetailsModal = ({ post }: pageProps) => {
   )
 
   const downloadFile = async ({ postId, content: fileName }: downloadParams) => {
-    var myHeaders = new Headers()
+    const myHeaders = new Headers()
     myHeaders.append('accessToken', localStorage.getItem(authConfig.storageTokenKeyName)!)
 
-    var requestOptions = {
+    const requestOptions = {
       method: 'GET',
       headers: myHeaders
     }

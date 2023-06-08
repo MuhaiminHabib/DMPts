@@ -61,7 +61,7 @@ const InvoiceList = () => {
 
   const [
     deletePost,
-    { isFetching: isDeletePostLoading, isError: isDeletePostError, error: deletePostError, data: deletePostData }
+    { isLoading: isLoadingDeletePost, isError: isDeletePostError, error: deletePostError, data: deletePostData }
   ] = useDeletePostMutation()
 
   // ** Functions
@@ -86,7 +86,7 @@ const InvoiceList = () => {
     showDeleteConfirmationPopup(postId, title)
   }
 
-  if (isDeletePostLoading) {
+  if (isLoadingDeletePost) {
     showLoadingAlert()
   } else if (isDeletePostError) {
     showErrorAlert({ error: deletePostError })
