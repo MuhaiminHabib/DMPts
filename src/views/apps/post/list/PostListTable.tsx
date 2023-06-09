@@ -43,7 +43,7 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {posts && posts.length > -1
+            {posts && posts.length > 0
               ? posts.map((post, i) => (
                   <TableRow
                     key={post._id}
@@ -59,7 +59,7 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
                       {post.description}
                     </TableCell>
 
-                    <TableCell align='center'>{post.creator.username}</TableCell>
+                    <TableCell align='center'>{post.creator!._id}</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post} />
