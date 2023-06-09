@@ -36,20 +36,61 @@ type platform = {
   platform: string
 }
 
-interface PostData {
-  id: string
-  boost: string
-  description: string
-  permissionLevel: string
-  platform: platform[]
-  postingDate: string
-  title: string
-  scheduledDate: string
-  boostingStartDate: string
-  boostingEndDate: string
-  boostingBudget: string
-  url: string
+type permissionLevel = {
+  permissionLevelName: string
 }
+
+// interface PostData {
+//   id: string
+//   boost: string
+//   description: string
+//   permissionLevel: string
+//   platform: platform[]
+//   postingDate: string
+//   title: string
+//   scheduledDate: string
+//   boostingStartDate: string
+//   boostingEndDate: string
+//   boostingBudget: string
+//   url: string
+// }
+
+// interface PostData {
+//   _id?: string
+//   __v?: number
+//   active?: boolean
+//   createdAt?: string
+//   boost: boolean
+//   boostingEndDate?: string | null
+//   boostingStartDate?: string | null
+//   boostingBudget?: number | null
+//   client?: {
+//     _id: string
+//     customerID: string
+//     username: string
+//     firstName: string
+//     // Add other properties if available
+//   }
+//   content?: string
+//   creator?: {
+//     _id: string
+//     active: boolean
+//     createdAt: string
+//     // Add other properties if available
+//   }
+//   description: string
+//   groupID?: string
+//   permissionLevel: {
+//     permissionLevelName: string
+//     // Add other properties if available
+//   }
+//   platform: Array<{ platform: string }> | string
+//   postingDate: string
+//   scheduledDate?: string
+//   title: string
+//   updatedAt?: string
+//   url?: string
+// }
 
 const schema = yup.object().shape({
   id: yup.string().required(),
@@ -63,7 +104,7 @@ const schema = yup.object().shape({
   boostingStartDate: yup.string().notRequired(),
   boostingEndDate: yup.string().notRequired(),
   boostingBudget: yup.string().notRequired(),
-  url: yup.string().required()
+  url: yup.string().notRequired()
 })
 
 const EditPostModal = ({ post }: pageProps) => {
@@ -79,9 +120,9 @@ const EditPostModal = ({ post }: pageProps) => {
     id: post._id,
     title: post.title,
     description: post.description,
-    platform: post.platform[0],
+    platform: post.platform[0]['platform'],
     postingDate: post.postingDate ? new Date(post.postingDate).toISOString().slice(0, -5) : null,
-    permissionLevel: post.permissionLevel,
+    permissionLevel: post.permissionLevel.permissionLevelName,
     boost: post.boost.toString(),
     scheduledDate: post.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, -5) : null,
     boostingStartDate: post.boostingStartDate ? new Date(post.boostingStartDate).toISOString().slice(0, -5) : null,
@@ -107,7 +148,7 @@ const EditPostModal = ({ post }: pageProps) => {
 
   const onSubmit = async (data: any) => {
     data.platform = [data.platform]
-    editPost(data as PostData)
+    editPost(data as PostsTypes)
     handleClose()
   }
 

@@ -1,20 +1,6 @@
 import type { PostsTypes as Post } from 'src/types/apps/postTypes'
 import { baseApi } from './baseApi'
 
-type platform = {
-  platform: string
-}
-interface EditPostParams {
-  id: string
-  boost: string
-  description: string
-  permissionLevel: string
-  platform: platform[]
-  postingDate: string
-  title: string
-  url: string
-}
-
 const postApi = baseApi.injectEndpoints({
   endpoints: build => ({
     fetchPosts: build.query<Post[], string>({
@@ -43,10 +29,10 @@ const postApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Post']
     }),
-    editPost: build.mutation<Post, EditPostParams & Pick<EditPostParams, 'id'>>({
+    editPost: build.mutation<Post, Post & Pick<Post, '_id'>>({
       query(data) {
         return {
-          url: `/API/posting/${data.id}`,
+          url: `/API/posting/${data._id}`,
           method: 'PUT',
           body: data
         }
