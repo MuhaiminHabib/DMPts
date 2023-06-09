@@ -32,66 +32,6 @@ type pageProps = {
   post: PostsTypes
 }
 
-type platform = {
-  platform: string
-}
-
-type permissionLevel = {
-  permissionLevelName: string
-}
-
-// interface PostData {
-//   id: string
-//   boost: string
-//   description: string
-//   permissionLevel: string
-//   platform: platform[]
-//   postingDate: string
-//   title: string
-//   scheduledDate: string
-//   boostingStartDate: string
-//   boostingEndDate: string
-//   boostingBudget: string
-//   url: string
-// }
-
-// interface PostData {
-//   _id?: string
-//   __v?: number
-//   active?: boolean
-//   createdAt?: string
-//   boost: boolean
-//   boostingEndDate?: string | null
-//   boostingStartDate?: string | null
-//   boostingBudget?: number | null
-//   client?: {
-//     _id: string
-//     customerID: string
-//     username: string
-//     firstName: string
-//     // Add other properties if available
-//   }
-//   content?: string
-//   creator?: {
-//     _id: string
-//     active: boolean
-//     createdAt: string
-//     // Add other properties if available
-//   }
-//   description: string
-//   groupID?: string
-//   permissionLevel: {
-//     permissionLevelName: string
-//     // Add other properties if available
-//   }
-//   platform: Array<{ platform: string }> | string
-//   postingDate: string
-//   scheduledDate?: string
-//   title: string
-//   updatedAt?: string
-//   url?: string
-// }
-
 const schema = yup.object().shape({
   id: yup.string().required(),
   title: yup.string().required(),

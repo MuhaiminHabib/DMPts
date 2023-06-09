@@ -218,22 +218,26 @@ const PostDetailsModal = ({ post }: pageProps) => {
                 </Typography>
                 <Typography component={'span'}>{post.boostingBudget}</Typography>
               </DialogContentText>
-              <DialogContentText>
-                <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
-                  Boost Start Date:{' '}
-                </Typography>
-                <Typography component={'span'}>
-                  {`${splitDateTime(post.scheduledDate).date} at ${splitDateTime(post.scheduledDate).time}`}
-                </Typography>
-              </DialogContentText>
-              <DialogContentText>
-                <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
-                  Boost End Date:{' '}
-                </Typography>
-                <Typography component={'span'}>
-                  {`${splitDateTime(post.boostingEndDate).date} at ${splitDateTime(post.boostingEndDate).time}`}
-                </Typography>
-              </DialogContentText>
+              {post.scheduledDate ? (
+                <DialogContentText>
+                  <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+                    Boost Start Date:{' '}
+                  </Typography>
+                  <Typography component={'span'}>
+                    {`${splitDateTime(post.scheduledDate).date} at ${splitDateTime(post.scheduledDate).time}`}
+                  </Typography>
+                </DialogContentText>
+              ) : null}
+              {post.boostingEndDate ? (
+                <DialogContentText>
+                  <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
+                    Boost End Date:{' '}
+                  </Typography>
+                  <Typography component={'span'}>
+                    {`${splitDateTime(post.boostingEndDate).date} at ${splitDateTime(post.boostingEndDate).time}`}
+                  </Typography>
+                </DialogContentText>
+              ) : null}
             </>
           ) : null}
           <DialogContentText>
