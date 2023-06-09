@@ -120,7 +120,7 @@ const EditPostModal = ({ post }: pageProps) => {
     id: post._id,
     title: post.title,
     description: post.description,
-    platform: post.platform[0]['platform'],
+    platform: Array.isArray(post.platform) ? post.platform[0]['platform'] : post.platform,
     postingDate: post.postingDate ? new Date(post.postingDate).toISOString().slice(0, -5) : null,
     permissionLevel: post.permissionLevel.permissionLevelName,
     boost: post.boost.toString(),
