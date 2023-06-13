@@ -7,13 +7,13 @@ export type PostsTypes = {
   boostingEndDate?: string | null
   boostingStartDate?: string | null
   boostingBudget?: number | null
+  content?: FileList | null
   client?: {
     _id: string
     customerID: string
     username: string
     firstName: string
   }
-  content?: string
   creator?: {
     _id: string
     active: boolean
@@ -21,9 +21,11 @@ export type PostsTypes = {
   }
   description: string
   groupID?: string
-  permissionLevel: {
-    permissionLevelName: string
-  }
+  permissionLevel:
+    | {
+        permissionLevelName: string
+      }
+    | string
   platform: Array<{ platform: string }> | string
   postingDate: string
   scheduledDate?: string

@@ -1,5 +1,3 @@
-// ** React Imports
-
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
 import Select from '@mui/material/Select'
@@ -25,11 +23,11 @@ import Icon from 'src/@core/components/icon'
 // ** Store Imports
 
 // ** Actions Imports
-// import { createBAUser, fetchCList } from 'src/store/apps/user'
 
 // ** Types Imports
+
 import { useCreatePostMutation } from 'src/store/query/postApi'
-import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/query/userApi'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 import { useEffect } from 'react'
@@ -41,6 +39,7 @@ interface SidebarAddPostType {
 }
 
 interface PostData {
+  ba: string
   client: string
   boost: string
   description: string
@@ -65,6 +64,7 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
+  ba: yup.string().required(),
   client: yup.string().required(),
   description: yup.string().required(),
   permissionLevel: yup.string().required(),
@@ -81,6 +81,7 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
+  ba: '',
   client: '',
   boost: '',
   description: '',
@@ -108,6 +109,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
   // ** Hooks
   const [createPost, { isLoading, isError, error, data }] = useCreatePostMutation()
+  const { data: FetchCListData } = useFetchCListQuery()
   const { data: FetchCListForBaData } = useFetchCListForBAQuery()
   const { data: FetchCListForDmData } = useFetchCListForDMQuery()
   const {
@@ -115,6 +117,8 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     control,
     handleSubmit,
     getValues,
+    setValue,
+    watch,
     formState: { errors }
   } = useForm<PostData>({
     defaultValues,
@@ -122,12 +126,26 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     resolver: yupResolver(schema)
   })
 
+  const clientValue = watch('client')
+
+  useEffect(() => {
+    if (FetchCListData && FetchCListData.length > 0) {
+      console.log('client changed')
+      console.log('ba', FetchCListData.filter(client => client._id === clientValue)[0]._id)
+    }
+  }, [clientValue, FetchCListData])
+
   useEffect(() => {
     if (data) {
       showSuccessAlert({ text: 'Post Created' })
       handleClose()
     }
   }, [data])
+
+  useEffect(() => {
+    console.log('client changed')
+  }, [getValues().client])
+
   const onSubmit = async (data: any, errors: any) => {
     if (errors) {
       console.log(errors)
@@ -155,21 +173,12 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     reset()
   }
 
-  // const getFormattedDate = () => {
-  //   const today = new Date()
-  //   const year = today.getFullYear()
-  //   const month = String(today.getMonth() + 1).padStart(2, '0')
-  //   const day = String(today.getDate()).padStart(2, '0')
-  //   return `${year}-${month}-${day}`
-  // }
-
   if (isLoading) {
     console.log('Loading')
     showLoadingAlert()
   } else if (isError) {
     console.log(error)
     showErrorAlert({ error: error })
-  } else if (data) {
   }
 
   return (
@@ -190,7 +199,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Client */}
+          {/* Client Id */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel
               id='validation-billing-select'
@@ -215,6 +224,12 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   <Link href='/apps/user/c-list/' style={{ textDecoration: 'none', color: 'inherit' }}>
                     <MenuItem value=''>Go to Client Page</MenuItem>
                   </Link>
+                  {FetchCListData &&
+                    FetchCListData.map(item => (
+                      <MenuItem key={item._id} value={item._id}>
+                        {item.username}
+                      </MenuItem>
+                    ))}
                   {FetchCListForBaData &&
                     FetchCListForBaData.map(item => (
                       <MenuItem key={item._id} value={item._id}>

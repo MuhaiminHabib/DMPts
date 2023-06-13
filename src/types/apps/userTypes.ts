@@ -32,6 +32,7 @@ export type UsersType = {
   dm: []
   role: string
   avatarColor?: ThemeColor
+  ba?: string
 }
 
 export type ProjectListDataType = {
