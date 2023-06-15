@@ -26,7 +26,7 @@
     "@fullcalendar/list": "^6.1.4",
     "@fullcalendar/react": "^6.1.4",
     "@fullcalendar/timegrid": "^6.1.4",
-    "@hookform/resolvers": "^2.9.11",
+    "@hookform/resolvers": "^3.1.1",
     "@iconify/react": "^4.1.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/joy": "^5.0.0-alpha.77",
@@ -76,7 +76,8 @@
     "stylis-plugin-rtl": "^2.1.1",
     "sweetalert2": "^11.7.5",
     "swr": "^2.1.4",
-    "yup": "^1.0.2"
+    "yup": "^1.0.2",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@iconify/iconify": "^3.1.0",

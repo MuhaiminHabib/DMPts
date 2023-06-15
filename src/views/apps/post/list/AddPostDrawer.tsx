@@ -1,5 +1,3 @@
-// ** React Imports
-
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
 import Select from '@mui/material/Select'
@@ -15,8 +13,8 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 
 // ** Third Party Imports
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, Controller } from 'react-hook-form'
 
 // ** Icon Imports
@@ -25,35 +23,23 @@ import Icon from 'src/@core/components/icon'
 // ** Store Imports
 
 // ** Actions Imports
-// import { createBAUser, fetchCList } from 'src/store/apps/user'
 
 // ** Types Imports
+import { zPostForPostCreate } from 'src/types/apps/postSchema'
+import z from 'zod'
+
 import { useCreatePostMutation } from 'src/store/query/postApi'
-import { useFetchCListForBAQuery, useFetchCListForDMQuery } from 'src/store/query/userApi'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 import { useEffect } from 'react'
 import Link from 'next/link'
 
+type Post = z.infer<typeof zPostForPostCreate>
+
 interface SidebarAddPostType {
   open: boolean
   toggle: () => void
-}
-
-interface PostData {
-  client: string
-  boost: string
-  description: string
-  permissionLevel: string
-  platform: string[]
-  postingDate: string
-  title: string
-  url: string | null
-  scheduledDate: string
-  boostingStartDate: string
-  boostingEndDate: string
-  boostingBudget: string
-  file: FileList | null
 }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
@@ -64,37 +50,49 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
   backgroundColor: theme.palette.background.default
 }))
 
-const schema = yup.object().shape({
-  client: yup.string().required(),
-  description: yup.string().required(),
-  permissionLevel: yup.string().required(),
-  platform: yup.string().required(),
-  postingDate: yup.string().required(),
-  title: yup.string().required(),
-  url: yup.string().notRequired(),
-  boost: yup.string().required(),
-  scheduledDate: yup.string().notRequired(),
-  boostingStartDate: yup.string().notRequired(),
-  boostingEndDate: yup.string().notRequired(),
-  boostingBudget: yup.string().notRequired(),
-  file: yup.mixed().notRequired()
-})
+const SidebarAddPostSchema = zPostForPostCreate
+  .refine(data => (data.boost === 'true' ? data.boostingStartDate !== '' : true), {
+    message: "boostingStartDate is required when boost is 'true'",
+    path: ['boostingStartDate']
+  })
+  .refine(data => (data.boost === 'true' ? data.boostingEndDate !== '' : true), {
+    message: "boostingEndDate is required when boost is 'true'",
+    path: ['boostingEndDate']
+  })
+  .refine(data => (data.boost === 'true' ? data.boostingBudget !== null : true), {
+    message: "boostingBudget is required when boost is 'true'",
+    path: ['boostingBudget']
+  })
 
 const defaultValues = {
+  ba: '',
   client: '',
   boost: '',
   description: '',
   permissionLevel: '',
-  platform: [],
+  platform: '',
   postingDate: '',
   title: '',
   url: '',
   scheduledDate: '',
   boostingStartDate: '',
   boostingEndDate: '',
-  boostingBudget: '',
-  file: null
+  boostingBudget: 0,
+  content: null
 }
+
+// _id: post._id,
+//     title: post.title,
+//     description: post.description,
+//     platform: Array.isArray(post.platform) ? post.platform[0]['platform'] : post.platform,
+//     postingDate: post.postingDate ? new Date(post.postingDate).toISOString().slice(0, -5) : null,
+//     permissionLevel: post.permissionLevel ? post.permissionLevel.permissionLevelName : '',
+//     boost: post.boost,
+//     scheduledDate: post.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, -5) : null,
+//     boostingStartDate: post.boostingStartDate ? new Date(post.boostingStartDate).toISOString().slice(0, -5) : null,
+//     boostingEndDate: post.boostingEndDate ? new Date(post.boostingEndDate).toISOString().slice(0, -5) : null,
+//     boostingBudget: post.boostingBudget,
+//     url: post.url
 
 const SidebarAddPost = (props: SidebarAddPostType) => {
   // ** State
@@ -108,6 +106,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
   // ** Hooks
   const [createPost, { isLoading, isError, error, data }] = useCreatePostMutation()
+  const { data: FetchCListData } = useFetchCListQuery()
   const { data: FetchCListForBaData } = useFetchCListForBAQuery()
   const { data: FetchCListForDmData } = useFetchCListForDMQuery()
   const {
@@ -115,12 +114,24 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     control,
     handleSubmit,
     getValues,
+    setValue,
+    watch,
     formState: { errors }
-  } = useForm<PostData>({
+  } = useForm<Post>({
     defaultValues,
     mode: 'onChange',
-    resolver: yupResolver(schema)
+    resolver: zodResolver(SidebarAddPostSchema)
   })
+
+  const clientValue = watch('client')
+
+  useEffect(() => {
+    if (clientValue && FetchCListData && FetchCListData.length > 0) {
+      console.log('client changed')
+      setValue('ba', FetchCListData.filter(client => client._id === clientValue)[0].ba)
+      console.log('ba id is:', getValues().ba)
+    }
+  }, [clientValue, FetchCListData])
 
   useEffect(() => {
     if (data) {
@@ -128,22 +139,43 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
       handleClose()
     }
   }, [data])
-  const onSubmit = async (data: any, errors: any) => {
+
+  useEffect(() => {
+    console.log(errors)
+    zPostForPostCreate.safeParse(defaultValues)
+  }, [errors, defaultValues])
+
+  const onSubmit = async (data: Post, errors: any) => {
     if (errors) {
       console.log(errors)
     }
-
+    zPostForPostCreate.safeParse(data)
     const formData = new FormData()
-    console.log(data)
 
-    Object.keys(data).forEach(key => {
-      if (data.file && key === 'file') {
-        formData.append('file', data.file[0])
+    Object.keys(data).forEach((key: any) => {
+      const value = data[key as keyof Post]
+
+      if (value === undefined) return // Skip undefined values
+
+      if (key === 'content' && value instanceof FileList) {
+        // If value is a FileList, append the first file
+        formData.append('content', value[0])
+      } else if (typeof value === 'string' || value instanceof Blob) {
+        // If value is a string or a Blob, append it directly
+        formData.append(key, value)
+      } else if (value instanceof Array) {
+        // If value is an array, convert it to a JSON string
+        formData.append(key, JSON.stringify(value))
+      } else if (typeof value === 'object') {
+        // If value is an object, convert it to a JSON string
+        formData.append(key, JSON.stringify(value))
       } else {
-        formData.append(key, data[key])
+        // If value is a number or boolean, convert it to a string
+        formData.append(key, String(value))
       }
     })
 
+    console.log(formData)
     createPost(formData as any)
   }
 
@@ -155,21 +187,12 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
     reset()
   }
 
-  // const getFormattedDate = () => {
-  //   const today = new Date()
-  //   const year = today.getFullYear()
-  //   const month = String(today.getMonth() + 1).padStart(2, '0')
-  //   const day = String(today.getDate()).padStart(2, '0')
-  //   return `${year}-${month}-${day}`
-  // }
-
   if (isLoading) {
     console.log('Loading')
     showLoadingAlert()
   } else if (isError) {
     console.log(error)
     showErrorAlert({ error: error })
-  } else if (data) {
   }
 
   return (
@@ -190,7 +213,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
       <Box sx={{ p: 5 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Client */}
+          {/* Client Id */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <InputLabel
               id='validation-billing-select'
@@ -215,6 +238,12 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   <Link href='/apps/user/c-list/' style={{ textDecoration: 'none', color: 'inherit' }}>
                     <MenuItem value=''>Go to Client Page</MenuItem>
                   </Link>
+                  {FetchCListData &&
+                    FetchCListData.map(item => (
+                      <MenuItem key={item._id} value={item._id}>
+                        {item.username}
+                      </MenuItem>
+                    ))}
                   {FetchCListForBaData &&
                     FetchCListForBaData.map(item => (
                       <MenuItem key={item._id} value={item._id}>
@@ -363,7 +392,6 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                   labelId='permissionLevel'
                   aria-describedby='permission Level'
                 >
-                  <MenuItem value=''>Permission Level</MenuItem>
                   <MenuItem value='D'>Digital Manager</MenuItem>
                   <MenuItem value='C'>Client</MenuItem>
                 </Select>
@@ -438,8 +466,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
               render={({ field: { value, onChange } }) => (
                 <TextField
                   value={value}
+                  type='number'
                   label='Enter Boost Budget'
-                  onChange={onChange}
+                  onChange={event => onChange(parseFloat(event.target.value))}
                   placeholder=''
                   error={Boolean(errors.boostingBudget)}
                 />
@@ -513,7 +542,7 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
 
           {/* file */}
           <Controller
-            name='file'
+            name='content'
             control={control}
             render={({ field: { onChange } }) => (
               <div>
@@ -533,9 +562,9 @@ const SidebarAddPost = (props: SidebarAddPostType) => {
                     Select File
                   </Button>
                 </label>
-                {getValues().file && getValues().file![0] ? (
+                {getValues().content && getValues().content![0] ? (
                   <Box sx={{ py: '10' }}>
-                    <Typography>{getValues().file![0].name}</Typography>
+                    <Typography>{getValues().content![0].name}</Typography>
                   </Box>
                 ) : (
                   'No file selected'

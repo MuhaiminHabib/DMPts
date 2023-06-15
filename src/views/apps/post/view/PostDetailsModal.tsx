@@ -13,13 +13,13 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
-import { PostsTypes } from 'src/types/apps/postTypes'
+import { Post } from 'src/types/apps/postSchema'
 import { Box, Tooltip, Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { baseURL } from 'src/utils/constants'
 
 type pageProps = {
-  post: PostsTypes
+  post: Post
 }
 
 type inputParams = {
@@ -76,6 +76,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
   }
 
   const FilePreview = ({ content, postId }: inputParams) => {
+    console.log('content is', content)
     const fileType = content.split('.').slice(-1)[0]
 
     const renderPreview = () => {
@@ -245,7 +246,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
               File:{' '}
             </Typography>
             <Typography component={'span'}>
-              {post.content ? <FilePreview content={post.content} postId={post._id} /> : 'No Files Attached'}
+              {post.content ? <FilePreview content={post.content[0].name} postId={post._id!} /> : 'No Files Attached'}
             </Typography>
           </DialogContentText>
         </DialogContent>
@@ -253,9 +254,6 @@ const PostDetailsModal = ({ post }: pageProps) => {
           <Button variant='outlined' color='secondary' onClick={handleClose}>
             Close
           </Button>
-          {/* <Button variant='contained' onClick={handleClose}>
-            Edit
-          </Button> */}
         </DialogActions>
       </Dialog>
     </Fragment>

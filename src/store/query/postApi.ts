@@ -1,4 +1,4 @@
-import type { PostsTypes as Post } from 'src/types/apps/postTypes'
+import type { Post } from 'src/types/apps/postSchema'
 import { baseApi } from './baseApi'
 
 const postApi = baseApi.injectEndpoints({
