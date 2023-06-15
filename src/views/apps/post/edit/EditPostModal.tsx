@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
-import { PostsTypes } from 'src/types/apps/postTypes'
+import { zPost, Post } from 'src/types/apps/postSchema'
 import {
   FormControl,
   FormHelperText,
@@ -22,32 +22,30 @@ import {
 } from '@mui/material'
 
 import { Controller, useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import EditIcon from '@mui/icons-material/Edit'
 import { useEditPostMutation } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
-type pageProps = {
-  post: PostsTypes
+const schema = zPost
+  .refine(data => (data.boost === 'true' ? data.boostingStartDate !== '' : true), {
+    message: "boostingStartDate is required when boost is 'true'",
+    path: ['boostingStartDate']
+  })
+  .refine(data => (data.boost === 'true' ? data.boostingEndDate !== '' : true), {
+    message: "boostingEndDate is required when boost is 'true'",
+    path: ['boostingEndDate']
+  })
+  .refine(data => (data.boost === 'true' ? data.boostingBudget !== null : true), {
+    message: "boostingBudget is required when boost is 'true'",
+    path: ['boostingBudget']
+  })
+
+type inputProps = {
+  post: Post
 }
 
-const schema = yup.object().shape({
-  id: yup.string().required(),
-  title: yup.string().required(),
-  description: yup.string().required(),
-  platform: yup.string().required(),
-  postingDate: yup.string().required(),
-  permissionLevel: yup.string().required(),
-  boost: yup.string().required(),
-  scheduledDate: yup.string().notRequired(),
-  boostingStartDate: yup.string().notRequired(),
-  boostingEndDate: yup.string().notRequired(),
-  boostingBudget: yup.string().notRequired(),
-  url: yup.string().notRequired()
-})
-
-const EditPostModal = ({ post }: pageProps) => {
+const EditPostModal = ({ post }: inputProps) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
@@ -57,13 +55,13 @@ const EditPostModal = ({ post }: pageProps) => {
   const [editPost, { isLoading, isError, error, data }] = useEditPostMutation()
 
   const defaultValues = {
-    id: post._id,
+    _id: post._id,
     title: post.title,
     description: post.description,
     platform: Array.isArray(post.platform) ? post.platform[0]['platform'] : post.platform,
     postingDate: post.postingDate ? new Date(post.postingDate).toISOString().slice(0, -5) : null,
-    permissionLevel: post.permissionLevel.permissionLevelName,
-    boost: post.boost.toString(),
+    permissionLevel: post.permissionLevel ? post.permissionLevel.permissionLevelName : '',
+    boost: post.boost,
     scheduledDate: post.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, -5) : null,
     boostingStartDate: post.boostingStartDate ? new Date(post.boostingStartDate).toISOString().slice(0, -5) : null,
     boostingEndDate: post.boostingEndDate ? new Date(post.boostingEndDate).toISOString().slice(0, -5) : null,
@@ -73,22 +71,18 @@ const EditPostModal = ({ post }: pageProps) => {
 
   const {
     control,
-
-    // reset,
-    // setValue,
-    // setError,
-
+    reset,
     handleSubmit,
     formState: { errors }
   } = useForm({
     defaultValues,
     mode: 'onChange',
-    resolver: yupResolver(schema)
+    resolver: zodResolver(schema)
   })
 
   const onSubmit = async (data: any) => {
     data.platform = [data.platform]
-    editPost(data as PostsTypes)
+    editPost(data as Post)
     handleClose()
   }
 
@@ -99,7 +93,10 @@ const EditPostModal = ({ post }: pageProps) => {
 
   const handleClickOpen = () => setOpen(true)
 
-  const handleClose = () => setOpen(false)
+  const handleClose = () => {
+    setOpen(false)
+    reset()
+  }
 
   if (isLoading) {
     console.log('Loading')
@@ -125,7 +122,7 @@ const EditPostModal = ({ post }: pageProps) => {
             <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
               Posted On:{' '}
             </Typography>
-            <Typography component={'span'}>{post.postingDate.substring(0, 10)}</Typography>
+            <Typography component={'span'}>{post.postingDate}</Typography>
           </DialogContentText>
         </DialogTitle>
 
@@ -134,7 +131,7 @@ const EditPostModal = ({ post }: pageProps) => {
             {/* PostId */}
             <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
-                name='id'
+                name='_id'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
@@ -144,11 +141,11 @@ const EditPostModal = ({ post }: pageProps) => {
                     label='Post Id'
                     onChange={onChange}
                     placeholder=''
-                    error={Boolean(errors.id)}
+                    error={Boolean(errors._id)}
                   />
                 )}
               />
-              {errors.id && <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>}
+              {errors._id && <FormHelperText sx={{ color: 'error.main' }}>{errors._id.message}</FormHelperText>}
             </FormControl>
 
             {/* title */}
@@ -323,7 +320,6 @@ const EditPostModal = ({ post }: pageProps) => {
                     labelId='validation-billing-select'
                     aria-describedby='validation-billing-select'
                   >
-                    <MenuItem value=''>None</MenuItem>
                     <MenuItem value='false'>No</MenuItem>
                     <MenuItem value='true'>Yes</MenuItem>
                   </Select>
@@ -342,8 +338,9 @@ const EditPostModal = ({ post }: pageProps) => {
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     value={value}
+                    type='number'
                     label='Enter Boost Budget'
-                    onChange={onChange}
+                    onChange={event => onChange(parseFloat(event.target.value))}
                     placeholder=''
                     error={Boolean(errors.boostingBudget)}
                   />

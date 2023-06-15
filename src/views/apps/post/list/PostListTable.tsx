@@ -2,7 +2,7 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import React, { useContext } from 'react'
 import PostDetailsModal from '../view/PostDetailsModal'
 import EditPostModal from '../edit/EditPostModal'
-import { PostsTypes as Posts } from 'src/types/apps/postTypes'
+import { Post } from 'src/types/apps/postSchema'
 import Loader from 'src/shared-components/Loader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 
@@ -10,7 +10,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 type inputProps = {
   isFetching: boolean
-  posts: Posts[]
+  posts: Post[]
   handlePostDelete: (postId: string, title: string) => void
 }
 
@@ -75,7 +75,7 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
                         <Tooltip title='Post Delete' placement='top-start'>
                           <Button
                             startIcon={<DeleteForeverIcon />}
-                            onClick={() => handlePostDelete(post._id, post.title)}
+                            onClick={() => handlePostDelete(post._id!, post.title)}
                           ></Button>
                         </Tooltip>
                       ) : null}
