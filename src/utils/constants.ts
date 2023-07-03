@@ -1,1 +1,2 @@
-export const baseURL = 'https://saicoshop.com/API'
+export const baseURL = 'https://saicoshop.com'
+
