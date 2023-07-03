@@ -4546,6 +4546,13 @@ react-dropzone@^14.2.3:
     file-selector "^0.6.0"
     prop-types "^15.8.1"
 
+react-facebook@^9.0.12:
+  version "9.0.12"
+  resolved "https://registry.yarnpkg.com/react-facebook/-/react-facebook-9.0.12.tgz#a8ce7ce29c1980a8cdf45a3f34967b6f8b31728b"
+  integrity sha512-u7L9wWEG8/UR1kj3JRvHR5SR/cBvZkC4ZCnIt4ZmXMpg4LGVJkihcYIb2/L3FOHUsNt6p9k6jpA+7Cz3zD34iA==
+  dependencies:
+    "@babel/runtime" "^7.20.6"
+
 react-fast-compare@^3.0.1:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
