@@ -2,7 +2,7 @@
 import { useContext, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Card, CardHeader, Grid } from '@mui/material'
+import { Box, Button, Card, CardHeader, Grid, TextField, Typography } from '@mui/material'
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import {
   useDeletePostMutation,
@@ -104,12 +104,30 @@ const InvoiceList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <Box bgcolor={'red'} justifyItems={'center'} alignItems={'center'}></Box>
-          {ability?.can('read', 'add-post') ? (
-            <CardHeader title='Posts' action={<TableHeader toggle={toggleAddPostDrawer} />} />
-          ) : (
-            <CardHeader title='Posts' />
-          )}
+          <CardHeader title='Published Posts' />
+          <Box
+            justifyItems={'center'}
+            alignItems={'center'}
+            sx={{
+              px: 4,
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 4
+            }}
+          >
+            <TextField
+              size={'medium'}
+              id='outlined-basic'
+              label='Search by post title or client name'
+              variant='outlined'
+              sx={{ width: 400 }}
+            />
+
+            <Button variant='outlined' sx={{ width: 200 }} size={'large'}>
+              Filter
+            </Button>
+          </Box>
+
           <PostListTable
             isFetching={
               ((user!.role === 'A' || user!.role === 'BA') && isFetching) ||
@@ -132,8 +150,6 @@ const InvoiceList = () => {
           />
         </Card>
       </Grid>
-
-      <AddPostDrawer open={addPostOpen} toggle={toggleAddPostDrawer} />
     </Grid>
   )
 }
