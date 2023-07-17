@@ -1,11 +1,12 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 // ** Next Imports
 import Head from 'next/head'
 import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import Script from 'next/script'
 
 // ** Store Imports
 import { store } from 'src/store'
@@ -22,7 +23,6 @@ import type { EmotionCache } from '@emotion/cache'
 import 'src/configs/i18n'
 import { defaultACLObj } from 'src/configs/acl'
 import themeConfig from 'src/configs/themeConfig'
-
 
 // ** Third Party Import
 import { Toaster } from 'react-hot-toast'
@@ -60,6 +60,7 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import { APP_ID } from './api/hello'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -115,6 +116,17 @@ const App = (props: ExtendedAppProps) => {
 
   const aclAbilities = Component.acl ?? defaultACLObj
 
+  useEffect(() => {
+    window.fbAsyncInit = function () {
+      window.FB.init({
+        appId: APP_ID,
+        autoLogAppEvents: true,
+        xfbml: true,
+        version: 'v17.0'
+      })
+    }
+  }, [])
+
   return (
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
@@ -136,7 +148,11 @@ const App = (props: ExtendedAppProps) => {
                   <ThemeComponent settings={settings}>
                     <Guard authGuard={authGuard} guestGuard={guestGuard}>
                       <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
-                        {getLayout(<Component {...pageProps} />)}
+                        {getLayout(
+                          <>
+                            <Component {...pageProps} />
+                          </>
+                        )}
                       </AclGuard>
                     </Guard>
                     <ReactHotToast>
