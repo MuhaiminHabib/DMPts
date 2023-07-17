@@ -13,179 +13,158 @@ import CardContent from '@mui/material/CardContent'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import { maxWidth } from '@mui/system'
+import { Divider } from '@mui/material'
+import { useState } from 'react'
+import { baseURL } from 'src/utils/constants'
 
 interface ConnectedAccountsType {
   title: string
   logo: string
-  checked: boolean
   subtitle: string
 }
 
 interface SocialAccountsType {
   title: string
   logo: string
-  username?: string
-  isConnected: boolean
 }
-
-const connectedAccountsArr: ConnectedAccountsType[] = [
-  {
-    checked: true,
-    title: 'Google',
-    logo: '/images/logos/google.png',
-    subtitle: 'Calendar and Contacts'
-  },
-  {
-    checked: false,
-    title: 'Slack',
-    logo: '/images/logos/slack.png',
-    subtitle: 'Communications'
-  },
-  {
-    checked: true,
-    title: 'Github',
-    logo: '/images/logos/github.png',
-    subtitle: 'Manage your Git repositories'
-  },
-  {
-    checked: true,
-    title: 'Mailchimp',
-    subtitle: 'Email marketing service',
-    logo: '/images/logos/mail-chimp.png'
-  },
-  {
-    title: 'Asana',
-    checked: false,
-    subtitle: 'Communication',
-    logo: '/images/logos/asana.png'
-  }
-]
 
 const socialAccountsArr: SocialAccountsType[] = [
   {
     title: 'Facebook',
-    isConnected: false,
     logo: '/images/logos/facebook.png'
+  }
+  // {
+  //   title: 'Instagram',
+  //   logo: '/images/logos/instagram.png'
+  // }
+]
+
+const connectedAccountsArr: ConnectedAccountsType[] = [
+  {
+    title: 'Test Facebook Page Name',
+    logo: '/images/logos/google.png',
+    subtitle: 'Facebook Page'
   },
   {
-    title: 'Twitter',
-    isConnected: true,
-    username: '@ThemeSelection',
-    logo: '/images/logos/twitter.png'
+    title: 'Test2 Facebook Page Name',
+    logo: '/images/logos/slack.png',
+    subtitle: 'Facebook Page'
   },
   {
-    title: 'Instagram',
-    isConnected: true,
-    username: '@ThemeSelection',
-    logo: '/images/logos/instagram.png'
+    title: 'Test3 Facebook Page Name',
+    logo: '/images/logos/github.png',
+    subtitle: 'Facebook Page'
   },
   {
-    title: 'Dribbble',
-    isConnected: false,
-    logo: '/images/logos/dribbble.png'
+    title: 'Test4 Facebook Page Name',
+    subtitle: 'Facebook Page',
+    logo: '/images/logos/mail-chimp.png'
   },
   {
-    title: 'Behance',
-    isConnected: false,
-    logo: '/images/logos/behance.png'
+    title: 'Test5 Facebook Page Name',
+    subtitle: 'Facebook Page',
+    logo: '/images/logos/asana.png'
   }
 ]
 
 const TabConnections = () => {
+  const getTokenFromBe = async (token: string) => {
+    const response = await fetch(`${baseURL}/API/fb-api/get-fb-info?token=${token}`)
+
+    const data = await response.json()
+    console.log('data is:', data)
+  }
+
+  const login = async () => {
+    try {
+      await window.FB.login(
+        res => {
+          if (res.status === 'connected') {
+            console.log('UAT is:', res.authResponse.accessToken)
+
+            getTokenFromBe(res.authResponse.accessToken)
+          }
+        },
+        {
+          scope: 'public_profile'
+        }
+      )
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <Grid container spacing={6}>
-      {/* Connected Accounts Cards */}
-      <Grid item xs={12} md={6}>
+      {/* Social Accounts Cards */}
+      <Grid item xs={12}>
         <Card>
-          <CardHeader title='Connected Accounts' />
+          <CardHeader title='Social Accounts' />
+          <CardContent>
+            <Typography sx={{ mb: 4, color: 'text.secondary' }}>Choose a social network to add an account</Typography>
+
+            {socialAccountsArr.map(account => (
+              <Button
+                onClick={login}
+                key={account.title}
+                variant='outlined'
+                sx={{
+                  marginRight: 5,
+                  marginBottom: 5
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', width: 200 }}>
+                  <Box sx={{ mr: 4, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
+                    <img src={account.logo} alt={account.title} height='30' />
+                  </Box>
+                  <div>
+                    <Typography sx={{ fontWeight: 500 }}>{account.title}</Typography>
+                  </div>
+                </Box>
+              </Button>
+            ))}
+          </CardContent>
+
+          <Divider sx={{ my: theme => `${theme.spacing(1)} !important` }} />
+
+          {/* Connected Accounts Cards */}
           <CardContent>
             <Typography sx={{ mb: 4, color: 'text.secondary' }}>
               Display content from your connected accounts on your site
             </Typography>
 
-            {connectedAccountsArr.map(account => {
-              return (
+            {connectedAccountsArr.map(account => (
+              <Button
+                key={account.title}
+                variant='outlined'
+                sx={{
+                  px: 2,
+                  marginRight: 5,
+                  marginBottom: 5
+                }}
+              >
                 <Box
-                  key={account.title}
                   sx={{
-                    gap: 2,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    '&:not(:last-of-type)': { mb: 4 }
+                    width: 360
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ mr: 4, display: 'flex', justifyContent: 'center' }}>
-                      <img src={account.logo} alt={account.title} height='30' width='30' />
-                    </Box>
-                    <div>
-                      <Typography sx={{ fontWeight: 500 }}>{account.title}</Typography>
-                      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                        {account.subtitle}
-                      </Typography>
-                    </div>
+                  <Box sx={{ mr: 4, display: 'flex', justifyContent: 'center' }}>
+                    <img src={account.logo} alt={account.title} height='30' width='30' />
                   </Box>
-                  <Switch defaultChecked={account.checked} />
-                </Box>
-              )
-            })}
-          </CardContent>
-        </Card>
-      </Grid>
-      {/* Social Accounts Cards */}
-      <Grid item xs={12} md={6}>
-        <Card>
-          <CardHeader title='Social Accounts' />
-          <CardContent>
-            <Typography sx={{ mb: 4, color: 'text.secondary' }}>
-              Display content from social accounts on your site
-            </Typography>
-
-            {socialAccountsArr.map(account => {
-              return (
-                <Box
-                  key={account.title}
-                  sx={{
-                    gap: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    '&:not(:last-of-type)': { mb: 4 }
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ mr: 4, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
-                      <img src={account.logo} alt={account.title} height='30' />
-                    </Box>
-                    <div>
-                      <Typography sx={{ fontWeight: 500 }}>{account.title}</Typography>
-                      {account.isConnected ? (
-                        <Typography
-                          href='/'
-                          component={Link}
-                          onClick={e => e.preventDefault()}
-                          sx={{ color: 'primary.main', textDecoration: 'none' }}
-                        >
-                          {account.username}
-                        </Typography>
-                      ) : (
-                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                          Not Connected
-                        </Typography>
-                      )}
-                    </div>
+                  <Box sx={{ display: 'flex', alignItems: 'start', flexDirection: 'column' }}>
+                    <Typography>{account.title}</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                      {account.subtitle}
+                    </Typography>
                   </Box>
-                  <Button
-                    variant='outlined'
-                    sx={{ p: 1.5, minWidth: 38 }}
-                    color={account.isConnected ? 'error' : 'secondary'}
-                  >
-                    <Icon icon={account.isConnected ? 'bx:trash-alt' : 'bx:link-alt'} />
-                  </Button>
+                  <Button>X</Button>
                 </Box>
-              )
-            })}
+              </Button>
+            ))}
           </CardContent>
         </Card>
       </Grid>
