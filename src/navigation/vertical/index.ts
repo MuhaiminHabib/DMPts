@@ -43,7 +43,33 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Posts',
       icon: 'bx:food-menu',
-      path: '/apps/post/list'
+      // path: '/apps/post/list',
+      children: [
+        {
+          title: 'Create',
+          path: '/apps/post/new',
+          action: 'read',
+          subject: 'create-navItem'
+        },
+        {
+          title: 'Published',
+          path: '/apps/post/list',
+          action: 'read',
+          subject: 'published-navItem'
+        },
+        {
+          title: 'Scheduled',
+          path: '/apps/post/scheduled',
+          action: 'read',
+          subject: 'scheduled-navItem'
+        },
+        {
+          title: 'Draft',
+          path: '/apps/post/draft',
+          action: 'read',
+          subject: 'draft-navItem'
+        }
+      ]
     }
   ]
 }
