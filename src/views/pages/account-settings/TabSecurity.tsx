@@ -1,22 +1,7 @@
-
-
 // ** MUI Imports
-
 import Grid from '@mui/material/Grid'
 
-
-
-
-// ** Custom Components Imports
-
-
-// ** Demo Components
-
 import ChangePasswordCard from 'src/views/pages/account-settings/security/ChangePasswordCard'
-
-
-
-
 
 const TabSecurity = () => {
   return (
