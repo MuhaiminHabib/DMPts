@@ -116,13 +116,15 @@ const App = (props: ExtendedAppProps) => {
   const aclAbilities = Component.acl ?? defaultACLObj
 
   useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: APP_ID,
-        autoLogAppEvents: true,
-        xfbml: true,
-        version: 'v17.0'
-      })
+    if (typeof window !== 'undefined') {
+      window.fbAsyncInit = function () {
+        window.FB.init({
+          appId: APP_ID,
+          autoLogAppEvents: true,
+          xfbml: true,
+          version: 'v17.0'
+        })
+      }
     }
   }, [])
 
