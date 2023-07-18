@@ -98,6 +98,10 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   }
 }
 
+interface Window {
+  fbAsyncInit: () => void
+}
+
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
