@@ -123,7 +123,7 @@ const App = (props: ExtendedAppProps) => {
   const aclAbilities = Component.acl ?? defaultACLObj
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' || typeof window !== undefined) {
       window.fbAsyncInit = function () {
         window.FB.init({
           appId: APP_ID,
