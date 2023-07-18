@@ -1,3 +1,3 @@
-interface window {
-  fbAsyncInit: () => void
-}
+// interface window {
+//   fbAsyncInit: () => void
+// }
