@@ -44,16 +44,25 @@ const AuthProvider = ({ children }: Props) => {
   const [logout] = useLogoutMutation()
 
   useEffect(() => {
+    console.log('I am the first useEffect')
     const userData = localStorage.getItem('userData')
     if (userData !== 'undefined') {
       setUser(JSON.parse(userData))
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
+  const isFirstRender = useRef(true)
   const hasLoginBeenCalled = useRef(false)
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      console.log('i am isFirstRender being true')
+      isFirstRender.current = false
+      setLoading(false)
+      return
+    }
+    console.log('i am the second useEffect')
     if (loginIsError) {
       // Handle login error
       onErrorLogin(loginError)
@@ -63,14 +72,15 @@ const AuthProvider = ({ children }: Props) => {
     }
 
     if (meEndpointIsError) {
-      // Handle meEndpoint error
       onErrorMeEndpoint(meEndpointError)
-    } else if (meEndpointData !== null) {
+    } else if (meEndpointData) {
       onSuccessfulMeEndpoint(meEndpointData)
     }
   }, [loginData, meEndpointData, loginIsError, meEndpointIsError])
 
   const onSuccessfulMeEndpoint = (meEndpointData: any) => {
+    console.log('I am onSuccessfulMeEndpoint')
+    console.log('meEndpointData', meEndpointData)
     setUser(meEndpointData)
     localStorage.setItem('userData', JSON.stringify(meEndpointData))
     setLoading(false)
