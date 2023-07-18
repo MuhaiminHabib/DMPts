@@ -1,7 +1,6 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material'
 import React, { useContext } from 'react'
 import PostDetailsModal from '../view/PostDetailsModal'
-import EditPostModal from '../edit/EditPostModal'
 import { Post } from 'src/types/apps/postSchema'
 import Loader from 'src/shared-components/Loader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
@@ -36,8 +35,10 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
           <TableHead>
             <TableRow>
               <TableCell align='left'>Index</TableCell>
+              <TableCell align='left'>Date</TableCell>
+              <TableCell align='left'>Time</TableCell>
               <TableCell align='center'>Title</TableCell>
-              <TableCell align='center'>Description</TableCell>
+              <TableCell align='center'>Platform</TableCell>
               <TableCell align='center'>Client</TableCell>
               <TableCell align='center'>Actions</TableCell>
             </TableRow>
@@ -52,24 +53,20 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
                     }}
                   >
                     <TableCell>{i + 1}</TableCell>
+                    <TableCell>June 1 2023</TableCell>
+                    <TableCell>4pm EST</TableCell>
                     <TableCell align='center' component='th' scope='row'>
                       {post.title}
                     </TableCell>
                     <TableCell align='center' component='th' scope='row'>
-                      {post.description}
+                      Facebook
                     </TableCell>
 
-                    <TableCell align='center'>{post.creator!._id}</TableCell>
+                    <TableCell align='center'>Test Client Name</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
                         <PostDetailsModal post={post} />
                       </Tooltip>
-
-                      {ability?.can('read', 'edit-post') ? (
-                        <Tooltip title='Post Edit' placement='top-start'>
-                          <EditPostModal post={post} />
-                        </Tooltip>
-                      ) : null}
 
                       {ability?.can('read', 'delete-post') ? (
                         <Tooltip title='Post Delete' placement='top-start'>

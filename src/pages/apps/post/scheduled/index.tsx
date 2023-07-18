@@ -1,9 +1,9 @@
 // ** React Imports
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Button, Card, CardHeader, Grid, TextField } from '@mui/material'
-
+import { Box, Card, CardHeader, Grid, TextField } from '@mui/material'
+import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import {
   useDeletePostMutation,
   useFetchPostsQuery,
@@ -17,16 +17,19 @@ import PostListTable from 'src/views/apps/post/list/PostListTable'
 
 import { AuthContext } from 'src/context/AuthContext'
 
-const InvoiceList = () => {
+// import { AbilityContext } from 'src/layouts/components/acl/Can'
+const ScheduledList = () => {
   // ** State
 
   // const [postPage, setPostPage] = useState<string>('1')
 
   const postPage = '1'
+  const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
   const { user } = useContext(AuthContext)
 
+  // const ability = useContext(AbilityContext)
   const {
     isFetching,
 
@@ -64,6 +67,8 @@ const InvoiceList = () => {
 
   // ** Functions
 
+  const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
+
   const showDeleteConfirmationPopup = (postId: string, title: string) => {
     Swal.fire({
       title: `Do you want to delete ${title}?`,
@@ -100,15 +105,12 @@ const InvoiceList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Published Posts' />
+          <CardHeader title='Scheduled Posts' />
           <Box
             justifyItems={'center'}
             alignItems={'center'}
             sx={{
-              px: 4,
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 4
+              px: 4
             }}
           >
             <TextField
@@ -118,10 +120,6 @@ const InvoiceList = () => {
               variant='outlined'
               sx={{ width: 400 }}
             />
-
-            <Button variant='outlined' sx={{ width: 200 }} size={'large'}>
-              Filter
-            </Button>
           </Box>
 
           <PostListTable
@@ -146,8 +144,10 @@ const InvoiceList = () => {
           />
         </Card>
       </Grid>
+
+      <AddPostDrawer open={addPostOpen} toggle={toggleAddPostDrawer} />
     </Grid>
   )
 }
 
-export default InvoiceList
+export default ScheduledList

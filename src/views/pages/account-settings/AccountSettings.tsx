@@ -24,7 +24,7 @@ import Icon from 'src/@core/components/icon'
 // ** Demo Tabs Imports
 import TabAccount from 'src/views/pages/account-settings/TabAccount'
 import TabSecurity from 'src/views/pages/account-settings/TabSecurity'
-
+import TabConnections from './TabConnections'
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   '& .MuiTabs-indicator': {
@@ -67,6 +67,7 @@ const AccountSettings = ({ tab }: { tab: string }) => {
   const tabContentList: { [key: string]: ReactElement } = {
     account: <TabAccount />,
     security: <TabSecurity />,
+    msa: <TabConnections />
   }
 
   return (
@@ -96,6 +97,15 @@ const AccountSettings = ({ tab }: { tab: string }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
                       <Icon icon='bx:lock-alt' />
                       {!hideText && 'Security'}
+                    </Box>
+                  }
+                />
+                <Tab
+                  value='msa'
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
+                      <Icon icon='bx:link' />
+                      {!hideText && 'Manage Social Accounts'}
                     </Box>
                   }
                 />

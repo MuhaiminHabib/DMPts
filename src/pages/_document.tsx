@@ -23,7 +23,12 @@ class CustomDocument extends Document {
           />
           <link rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png' />
           <link rel='shortcut icon' href='/images/favicon.ico' />
-          <script async defer crossOrigin='anonymous' src='https://connect.facebook.net/en_US/sdk.js'></script>
+          <script
+            async
+            defer
+            crossOrigin='anonymous'
+            src='https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v17.0&appId=618435810352216&autoLogAppEvents=1'
+          ></script>
         </Head>
         <body>
           <Main />
