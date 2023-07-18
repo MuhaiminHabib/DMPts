@@ -101,6 +101,7 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
 declare global {
   interface Window {
     fbAsyncInit: () => void
+    FB: any
   }
 }
 
