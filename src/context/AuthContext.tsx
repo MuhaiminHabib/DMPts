@@ -60,6 +60,7 @@ const AuthProvider = ({ children }: Props) => {
       console.log('i am isFirstRender being true')
       isFirstRender.current = false
       setLoading(false)
+
       return
     }
     console.log('i am the second useEffect')
