@@ -1,56 +1,56 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
-import Drawer from '@mui/material/Drawer'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
+
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
+
 import InputLabel from '@mui/material/InputLabel'
 import Typography from '@mui/material/Typography'
-import Box, { BoxProps } from '@mui/material/Box'
+import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 
 // ** MUI Imports
 import { Card, CardHeader, Grid } from '@mui/material'
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
-import { AbilityContext } from 'src/layouts/components/acl/Can'
-import { AuthContext } from 'src/context/AuthContext'
 import { Controller, useForm } from 'react-hook-form'
 import { Post } from 'src/types/apps/postSchema'
 import Link from 'next/link'
+
+// import { AbilityContext } from 'src/layouts/components/acl/Can'
+// import { AuthContext } from 'src/context/AuthContext'
 
 const NewPost = () => {
   // ** State
 
   // const [postPage, setPostPage] = useState<string>('1')
 
-  const postPage = '1'
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
-  const { user } = useContext(AuthContext)
-  const ability = useContext(AbilityContext)
+  // const { user } = useContext(AuthContext)
+  // const ability = useContext(AbilityContext)
 
   const {
-    reset,
+    // reset,
     control,
     handleSubmit,
     getValues,
-    setValue,
-    watch,
     formState: { errors }
   } = useForm<Post>({
     // defaultValues,
     mode: 'onChange'
+
     // resolver: zodResolver(SidebarAddPostSchema)
   })
 
   // ** Functions
   const onSubmit = async (data: Post, errors: any) => {
+    console.log(data, errors)
+
     // if (errors) {
     //   console.log(errors)
     // }
@@ -78,10 +78,6 @@ const NewPost = () => {
     // })
     // console.log(formData)
     // createPost(formData as any)
-  }
-
-  const handleCancel = () => {
-    reset()
   }
 
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)

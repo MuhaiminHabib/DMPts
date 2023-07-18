@@ -2,7 +2,7 @@
 import { useContext, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Card, CardHeader, Grid, TextField, Typography } from '@mui/material'
+import { Box, Card, CardHeader, Grid, TextField } from '@mui/material'
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import {
   useDeletePostMutation,
@@ -14,10 +14,10 @@ import {
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
-import TableHeader from 'src/views/apps/post/list/TableHeader'
-import { AbilityContext } from 'src/layouts/components/acl/Can'
+
 import { AuthContext } from 'src/context/AuthContext'
 
+// import { AbilityContext } from 'src/layouts/components/acl/Can'
 const ScheduledList = () => {
   // ** State
 
@@ -28,7 +28,8 @@ const ScheduledList = () => {
 
   // ** Hooks
   const { user } = useContext(AuthContext)
-  const ability = useContext(AbilityContext)
+
+  // const ability = useContext(AbilityContext)
   const {
     isFetching,
 
@@ -106,7 +107,6 @@ const ScheduledList = () => {
         <Card>
           <CardHeader title='Scheduled Posts' />
           <Box
-            // bgcolor={'red'}
             justifyItems={'center'}
             alignItems={'center'}
             sx={{

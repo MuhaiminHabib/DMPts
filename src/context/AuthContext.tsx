@@ -65,7 +65,7 @@ const AuthProvider = ({ children }: Props) => {
     if (meEndpointIsError) {
       // Handle meEndpoint error
       onErrorMeEndpoint(meEndpointError)
-    } else if (meEndpointData) {
+    } else if (meEndpointData !== null) {
       onSuccessfulMeEndpoint(meEndpointData)
     }
   }, [loginData, meEndpointData, loginIsError, meEndpointIsError])

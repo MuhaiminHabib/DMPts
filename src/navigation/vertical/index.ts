@@ -43,7 +43,6 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Posts',
       icon: 'bx:food-menu',
-      // path: '/apps/post/list',
       children: [
         {
           title: 'Create',

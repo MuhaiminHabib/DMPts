@@ -9,7 +9,6 @@ import createEmotionServer from '@emotion/server/create-instance'
 
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
-import Script from 'next/script'
 
 class CustomDocument extends Document {
   render() {

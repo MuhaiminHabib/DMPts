@@ -6,7 +6,6 @@ import Head from 'next/head'
 import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import Script from 'next/script'
 
 // ** Store Imports
 import { store } from 'src/store'

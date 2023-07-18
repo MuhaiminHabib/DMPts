@@ -1,9 +1,9 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 // ** MUI Imports
-import { Box, Button, Card, CardHeader, Grid, TextField, Typography } from '@mui/material'
-import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
+import { Box, Button, Card, CardHeader, Grid, TextField } from '@mui/material'
+
 import {
   useDeletePostMutation,
   useFetchPostsQuery,
@@ -14,8 +14,7 @@ import {
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
-import TableHeader from 'src/views/apps/post/list/TableHeader'
-import { AbilityContext } from 'src/layouts/components/acl/Can'
+
 import { AuthContext } from 'src/context/AuthContext'
 
 const InvoiceList = () => {
@@ -24,11 +23,10 @@ const InvoiceList = () => {
   // const [postPage, setPostPage] = useState<string>('1')
 
   const postPage = '1'
-  const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
   const { user } = useContext(AuthContext)
-  const ability = useContext(AbilityContext)
+
   const {
     isFetching,
 
@@ -65,8 +63,6 @@ const InvoiceList = () => {
   ] = useDeletePostMutation()
 
   // ** Functions
-
-  const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
   const showDeleteConfirmationPopup = (postId: string, title: string) => {
     Swal.fire({

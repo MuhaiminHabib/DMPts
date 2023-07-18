@@ -1,7 +1,6 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material'
 import React, { useContext } from 'react'
 import PostDetailsModal from '../view/PostDetailsModal'
-import EditPostModal from '../edit/EditPostModal'
 import { Post } from 'src/types/apps/postSchema'
 import Loader from 'src/shared-components/Loader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
