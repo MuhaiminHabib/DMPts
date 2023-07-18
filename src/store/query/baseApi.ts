@@ -45,32 +45,6 @@ const baseQueryForAccessToken = fetchBaseQuery({
   }
 })
 
-// const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-//   args,
-//   api,
-//   extraOptions
-// ) => {
-//   let result = await baseQuery(args, api, extraOptions)
-//   if (result.error && result.error.status === 401) {
-//     try {
-//       const refreshResult: any = await baseQueryForAccessToken('/API/auth/get-access-token', api, extraOptions)
-//       localStorage.setItem(authConfig.storageTokenKeyName, refreshResult.data.accesstoken)
-//       localStorage.setItem(authConfig.onTokenExpiration, refreshResult.data.refreshtoken)
-//       result = await baseQuery(args, api, extraOptions)
-//     } catch (e) {
-//       alert('I am poor')
-//       const error = e as FetchBaseQueryError
-//       showErrorAlert({ error: error })
-//       await baseQuery('/API/auth/logout', api, extraOptions)
-//       window.localStorage.removeItem('userData')
-//       window.localStorage.removeItem(authConfig.storageTokenKeyName)
-//       window.location.replace('/login')
-//     }
-//   }
-
-//   return result
-// }
-
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
