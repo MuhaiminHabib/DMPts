@@ -44,11 +44,11 @@ const AuthProvider = ({ children }: Props) => {
   const [logout] = useLogoutMutation()
 
   useEffect(() => {
-    const userData = localStorage.getItem('userData')!
-    if (userData) {
+    const userData = localStorage.getItem('userData')
+    if (userData !== 'undefined') {
       setUser(JSON.parse(userData))
-      setLoading(false)
     }
+    setLoading(false)
   }, [])
 
   const hasLoginBeenCalled = useRef(false)
