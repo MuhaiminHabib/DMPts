@@ -86,7 +86,7 @@ const TabConnections = () => {
           }
         },
         {
-          scope: 'public_profile'
+          scope: 'public_profile, pages_read_engagement'
         }
       )
     } catch (err) {
