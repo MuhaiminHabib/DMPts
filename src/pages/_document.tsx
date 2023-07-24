@@ -10,6 +10,8 @@ import createEmotionServer from '@emotion/server/create-instance'
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
 
+export const APP_ID = '6539098496146149'
+
 class CustomDocument extends Document {
   render() {
     return (
@@ -27,7 +29,7 @@ class CustomDocument extends Document {
             async
             defer
             crossOrigin='anonymous'
-            src='https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v17.0&appId=618435810352216&autoLogAppEvents=1'
+            src={`https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v17.0&appId=${APP_ID}`}
           ></script>
         </Head>
         <body>
