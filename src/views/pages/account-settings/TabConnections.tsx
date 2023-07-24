@@ -86,7 +86,7 @@ const TabConnections = () => {
           }
         },
         {
-          scope: 'public_profile,pages_read_engagement,pages_show_list'
+          scope: 'public_profile,pages_read_engagement,pages_show_list,pages_manage_posts'
         }
       )
     } catch (err) {
