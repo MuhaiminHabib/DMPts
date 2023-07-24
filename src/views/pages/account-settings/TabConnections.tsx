@@ -86,13 +86,32 @@ const TabConnections = () => {
           }
         },
         {
-          scope: 'public_profile, pages_read_engagement'
+          scope: 'public_profile,pages_read_engagement,pages_show_list'
         }
       )
     } catch (err) {
       console.log(err)
     }
   }
+
+  // const getPagesPermission = async () => {
+  //   try {
+  //     await window.FB.login(
+  //       res => {
+  //         if (res.status === 'connected') {
+  //           console.log('UAT is:', res.authResponse.accessToken)
+
+  //           getTokenFromBe(res.authResponse.accessToken)
+  //         }
+  //       },
+  //       {
+  //         scope: 'pages_read_engagement'
+  //       }
+  //     )
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
 
   return (
     <Grid container spacing={6}>
@@ -123,6 +142,23 @@ const TabConnections = () => {
                 </Box>
               </Button>
             ))}
+            {/* <Button
+              onClick={getPagesPermission}
+              variant='outlined'
+              sx={{
+                marginRight: 5,
+                marginBottom: 5
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', width: 200 }}>
+                <Box sx={{ mr: 4, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
+                    <img src={account.logo} alt={account.title} height='30' />
+                  </Box>
+                <div>
+                  <Typography sx={{ fontWeight: 500 }}>Hit pages_read_engagement</Typography>
+                </div>
+              </Box>
+            </Button> */}
           </CardContent>
 
           <Divider sx={{ my: theme => `${theme.spacing(1)} !important` }} />

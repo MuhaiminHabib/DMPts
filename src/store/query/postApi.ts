@@ -55,6 +55,14 @@ const postApi = baseApi.injectEndpoints({
         }
       },
       invalidatesTags: ['Post']
+    }),
+    searchPosts: build.mutation<Post, string>({
+      query(searchStr) {
+        return {
+          url: `/API/posting/search?criteria=${searchStr}`
+        }
+      },
+      invalidatesTags: ['Post']
     })
   }),
   overrideExisting: false
@@ -68,5 +76,6 @@ export const {
   useCreatePostMutation,
   useEditPostMutation,
   useDeletePostMutation,
-  useDownloadAttachmentMutation
+  useDownloadAttachmentMutation,
+  useSearchPostsMutation
 } = postApi

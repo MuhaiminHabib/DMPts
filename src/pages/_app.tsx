@@ -59,7 +59,7 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
-import { APP_ID } from './api/hello'
+import { APP_ID } from './_document'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
