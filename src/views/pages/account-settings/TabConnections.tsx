@@ -13,8 +13,7 @@ import CardContent from '@mui/material/CardContent'
 // ** Icon Imports
 
 import { Divider } from '@mui/material'
-
-import { baseURL } from 'src/utils/constants'
+import { useGetFbInfoMutation } from 'src/store/query/authApi'
 
 interface ConnectedAccountsType {
   title: string
@@ -27,6 +26,7 @@ interface SocialAccountsType {
   logo: string
 }
 
+//States
 const socialAccountsArr: SocialAccountsType[] = [
   {
     title: 'Facebook',
@@ -68,13 +68,8 @@ const connectedAccountsArr: ConnectedAccountsType[] = [
 ]
 
 const TabConnections = () => {
-  const getTokenFromBe = async (token: string) => {
-    const response = await fetch(`${baseURL}/API/fb-api/get-fb-info?token=${token}`)
-
-    const data = await response.json()
-    console.log('data is:', data)
-  }
-
+  //Hooks
+  const [getFbInfo] = useGetFbInfoMutation()
   const login = async () => {
     try {
       await window.FB.login(
@@ -82,7 +77,9 @@ const TabConnections = () => {
           if (res.status === 'connected') {
             console.log('UAT is:', res.authResponse.accessToken)
 
-            getTokenFromBe(res.authResponse.accessToken)
+            // getTokenFromBe(res.authResponse.accessToken)
+            const response = getFbInfo(res.authResponse.accessToken)
+            console.log(response)
           }
         },
         {
