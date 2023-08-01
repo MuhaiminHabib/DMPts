@@ -186,7 +186,7 @@ const PostDetailsModal = ({ post }: pageProps) => {
             <Typography component={'span'} sx={{ fontWeight: 'bold' }}>
               Description:{' '}
             </Typography>
-            <Typography component={'span'}>{post.description}</Typography>
+            <Typography component={'span'}>{post.body}</Typography>
           </DialogContentText>
           <DialogContentText>
             <Typography component={'span'} sx={{ fontWeight: 'bold' }}>

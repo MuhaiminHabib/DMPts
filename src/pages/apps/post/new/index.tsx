@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
@@ -8,7 +8,6 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
 import InputLabel from '@mui/material/InputLabel'
-import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -19,9 +18,20 @@ import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import { Controller, useForm } from 'react-hook-form'
 import { Post } from 'src/types/apps/postSchema'
 import Link from 'next/link'
+import { useFetchFbPageListByClientIdMutation, usePublishToFbMutation } from 'src/store/query/fbApi'
+import { AuthContext } from 'src/context/AuthContext'
+import { UsersType } from 'src/types/apps/userTypes'
+import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 // import { AbilityContext } from 'src/layouts/components/acl/Can'
 // import { AuthContext } from 'src/context/AuthContext'
+
+const defaultValues = {
+  client: '',
+  platform: '',
+  body: ''
+}
 
 const NewPost = () => {
   // ** State
@@ -34,14 +44,20 @@ const NewPost = () => {
   // const { user } = useContext(AuthContext)
   // const ability = useContext(AbilityContext)
 
+  const [fetchFbPageListByClientId, { data: fbPageListOfClient }] = useFetchFbPageListByClientIdMutation()
+  const [
+    publishToFb,
+    { isLoading: publishedPostIsLoading, isError: publishedPostIsError, error: publishedPostError, data: publishedPost }
+  ] = usePublishToFbMutation()
+
   const {
-    // reset,
+    reset,
     control,
     handleSubmit,
-    getValues,
+    watch,
     formState: { errors }
   } = useForm<Post>({
-    // defaultValues,
+    defaultValues,
     mode: 'onChange'
 
     // resolver: zodResolver(SidebarAddPostSchema)
@@ -50,6 +66,7 @@ const NewPost = () => {
   // ** Functions
   const onSubmit = async (data: Post, errors: any) => {
     console.log(data, errors)
+    publishToFb(data)
 
     // if (errors) {
     //   console.log(errors)
@@ -82,6 +99,44 @@ const NewPost = () => {
 
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
 
+  const auth = useContext(AuthContext)
+  const [cList, setCList] = useState<UsersType[]>([])
+  const { data: cListData } = useFetchCListQuery()
+  const { data: cListForBaData } = useFetchCListForBAQuery()
+  const { data: cListForDmData } = useFetchCListForDMQuery()
+
+  useEffect(() => {
+    console.log(auth.user?.role)
+    if (auth.user?.role === 'A' && cListData) {
+      setCList(cListData)
+    } else if (auth.user?.role === 'BA' && cListForBaData) {
+      setCList(cListForBaData)
+    } else if (auth.user?.role === 'DM' && cListForDmData) {
+      setCList(cListForDmData)
+    }
+  }, [cListData, cListForBaData, cListForDmData, auth])
+
+  const clientValue = watch('client')
+
+  useEffect(() => {
+    console.log('clientValue is:', clientValue)
+    fetchFbPageListByClientId(clientValue as string)
+  }, [clientValue])
+
+  useEffect(() => {
+    if (publishedPost) {
+      reset()
+    }
+  }, [publishedPost])
+
+  if (publishedPostIsLoading) {
+    showLoadingAlert()
+  } else if (publishedPostIsError) {
+    showErrorAlert({ error: publishedPostError })
+  } else if (publishedPost) {
+    showSuccessAlert({ text: 'Post Created' })
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -89,46 +144,9 @@ const NewPost = () => {
           <CardHeader title='Create Post' />
           <Box sx={{ p: 5, paddingTop: -5 }}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              {/* platform */}
-              <FormControl fullWidth sx={{ mb: 6 }}>
-                <InputLabel
-                  id='validation-platform-select'
-                  error={Boolean(errors.platform)}
-                  htmlFor='validation-platform-select'
-                >
-                  Select platform
-                </InputLabel>
-                <Controller
-                  name='platform'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      value={value}
-                      label='Select Platform'
-                      onChange={onChange}
-                      error={Boolean(errors.platform)}
-                      labelId='validation-platform-select'
-                      aria-describedby='validation-platform-select'
-                    >
-                      <MenuItem value=''>none</MenuItem>
-                      <MenuItem value='fb'>Facebook</MenuItem>
-                    </Select>
-                  )}
-                />
-                {errors.platform && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-platform-select'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
               {/* Client Id */}
               <FormControl fullWidth sx={{ mb: 6 }}>
-                <InputLabel
-                  id='validation-billing-select'
-                  error={Boolean(errors.client)}
-                  htmlFor='validation-billing-select'
-                >
+                <InputLabel id='client-select' error={Boolean(errors.client)} htmlFor='client-select'>
                   Select Client
                 </InputLabel>
                 <Controller
@@ -141,18 +159,61 @@ const NewPost = () => {
                       label='Select Client'
                       onChange={onChange}
                       error={Boolean(errors.client)}
-                      labelId='validation-billing-select'
-                      aria-describedby='validation-billing-select'
+                      labelId='client-select'
+                      aria-describedby='client-select'
                     >
                       <Link href='/apps/user/c-list/' style={{ textDecoration: 'none', color: 'inherit' }}>
                         <MenuItem value=''>Go to Client Page</MenuItem>
                       </Link>
-                      <MenuItem>Habib</MenuItem>
+
+                      {cList
+                        ? cList.map(client => (
+                            <MenuItem key={client._id} value={client._id}>
+                              {client.username}
+                            </MenuItem>
+                          ))
+                        : null}
                     </Select>
                   )}
                 />
                 {errors.client && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-billing-select'>
+                  <FormHelperText sx={{ color: 'error.main' }} id='client-select'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              {/* platform */}
+              <FormControl fullWidth sx={{ mb: 6 }}>
+                <InputLabel id='platform-select' error={Boolean(errors.pageId)} htmlFor='platform-select'>
+                  Select platform
+                </InputLabel>
+                <Controller
+                  name='pageId'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      value={value}
+                      label='Select Platform'
+                      onChange={onChange}
+                      error={Boolean(errors.pageId)}
+                      labelId='platform-select'
+                      aria-describedby='platform-select'
+                    >
+                      <MenuItem value=''>none</MenuItem>
+                      {fbPageListOfClient
+                        ? fbPageListOfClient.map(pages => (
+                            <MenuItem key={pages._id} value={pages._id}>
+                              {pages.name}
+                            </MenuItem>
+                          ))
+                        : null}
+                    </Select>
+                  )}
+                />
+                {errors.pageId && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='platform-select'>
                     This field is required
                   </FormHelperText>
                 )}
@@ -161,28 +222,25 @@ const NewPost = () => {
               {/* description */}
               <FormControl fullWidth sx={{ mb: 6 }}>
                 <Controller
-                  name='description'
+                  name='body'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value}
-                      label='Description'
+                      label='Body'
                       onChange={onChange}
-                      placeholder=''
-                      error={Boolean(errors.description)}
+                      error={Boolean(errors.body)}
                       multiline
                       rows={6}
                     />
                   )}
                 />
-                {errors.description && (
-                  <FormHelperText sx={{ color: 'error.main' }}>{errors.description.message}</FormHelperText>
-                )}
+                {errors.body && <FormHelperText sx={{ color: 'error.main' }}>{errors.body.message}</FormHelperText>}
               </FormControl>
 
               {/* file */}
-              <Controller
+              {/* <Controller
                 name='content'
                 control={control}
                 render={({ field: { onChange } }) => (
@@ -212,7 +270,7 @@ const NewPost = () => {
                     )}
                   </div>
                 )}
-              />
+              /> */}
 
               <Box
                 sx={{
@@ -222,13 +280,13 @@ const NewPost = () => {
                   marginTop: '20px'
                 }}
               >
-                <Button size='large' variant='outlined' color='secondary'>
+                <Button size='large' variant='contained' type='submit'>
                   Publish
                 </Button>
-                <Button size='large' variant='outlined' color='secondary'>
+                <Button size='large' variant='outlined' color='secondary' disabled={true}>
                   Draft
                 </Button>
-                <Button size='large' type='submit' variant='contained' sx={{ ml: 3 }}>
+                <Button size='large' type='submit' variant='contained' sx={{ ml: 3 }} disabled={true}>
                   Schedule
                 </Button>
               </Box>
