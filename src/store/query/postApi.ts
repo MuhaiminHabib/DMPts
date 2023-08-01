@@ -56,7 +56,7 @@ const postApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Post']
     }),
-    searchPosts: build.mutation<Post, string>({
+    searchPosts: build.mutation<Post[], string>({
       query(searchStr) {
         return {
           url: `/API/posting/search?criteria=${searchStr}`

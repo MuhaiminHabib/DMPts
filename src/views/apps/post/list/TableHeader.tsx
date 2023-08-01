@@ -1,39 +1,51 @@
 // ** MUI Imports
+import { TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-
 
 // ** Icon Imports
 // import Icon from 'src/@core/components/icon'
 
-interface TableHeaderProps {
-  value?: string
-  toggle: () => void
-  handleFilter?: (val: string) => void
-}
+// interface TableHeaderProps {
+//   value?: string
+//   toggle: () => void
+//   handleFilter?: (val: string) => void
+// }
 
-const TableHeader = (props: TableHeaderProps) => {
+const TableHeader = () => {
+  // props: TableHeaderProps
   // ** Props
-  const { toggle } = props
+  // const { toggle } = props
+
+  //States
+
+  //Hooks
+
+  //Functions
 
   return (
     <Box
-      sx={{ p: 6, gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}
+      justifyItems={'center'}
+      alignItems={'center'}
+      sx={{
+        px: 4,
+        display: 'flex',
+        gap: 4,
+        justifyContent: 'space-between'
+      }}
     >
+      <TextField
+        size={'medium'}
+        id='outlined-basic'
+        label='Search by post title or client name'
+        variant='outlined'
+        sx={{ width: 400 }}
+      />
 
-      {/* <Box sx={{ gap: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center', background: 'yellow'}}>
-        <TextField size='small' 
-        placeholder='Search Post' 
-        value={value} 
-        onChange={e => handleFilter(e.target.value)} 
-        />
-
-      </Box> */}
-
-        <Button onClick={toggle} variant='contained'>
-          Add Post
-        </Button>
-     </Box>
+      <Button variant='outlined' sx={{ width: 200 }} size={'large'}>
+        Filter
+      </Button>
+    </Box>
   )
 }
 

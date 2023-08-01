@@ -14,9 +14,9 @@ const fileSchema = z.object({
 
 export const zPost = z.object({
   _id: z.string().optional(),
-  __v: z.number().optional(),
-  title: z.string().min(5, 'title is required'),
-  description: z.string(),
+  body: z.string(),
+  pageId: z.string(),
+  title: z.string(),
   platform: z.union([
     z.array(
       z.object({
@@ -55,6 +55,8 @@ export const zPost = z.object({
 
 export const zPostForPostCreate = z.object({
   _id: z.string().optional(),
+  body: z.string(),
+  pageId: z.string(),
   __v: z.number().optional(),
   title: z.string(),
   description: z.string(),

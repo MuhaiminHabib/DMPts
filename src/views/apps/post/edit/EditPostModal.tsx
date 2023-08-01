@@ -57,7 +57,7 @@ const EditPostModal = ({ post }: inputProps) => {
   const defaultValues = {
     _id: post._id,
     title: post.title,
-    description: post.description,
+    description: post.body,
     platform: Array.isArray(post.platform) ? post.platform[0]['platform'] : post.platform,
     postingDate: post.postingDate ? new Date(post.postingDate).toISOString().slice(0, -5) : null,
     permissionLevel: post.permissionLevel ? post.permissionLevel.permissionLevelName : '',

@@ -50,12 +50,7 @@ const authApi = baseApi.injectEndpoints({
         method: 'GET'
       })
     }),
-    getFbInfo: build.mutation<void, string>({
-      query: token => ({
-        url: `/API/fb-api/get-fb-info?token=${token}`,
-        method: 'GET'
-      })
-    }),
+
     logout: build.mutation<void, void>({
       query: () => ({
         url: `/API/auth/logout`,
@@ -72,6 +67,5 @@ export const {
   useChangePasswordMutation,
   useForgotPasswordMutation,
   useLogoutMutation,
-  useGetFbInfoMutation,
   useMeEndpointMutation
 } = authApi

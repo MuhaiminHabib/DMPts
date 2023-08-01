@@ -9,7 +9,8 @@ import {
   useFetchPostsQuery,
   useFetchPostsforCQuery,
   useFetchPostsforCmQuery,
-  useFetchPostsforDMQuery
+  useFetchPostsforDMQuery,
+  useSearchPostsMutation
 } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
@@ -26,6 +27,14 @@ const InvoiceList = () => {
 
   // ** Hooks
   const { user } = useContext(AuthContext)
+
+  const [
+    searchPosts,
+    {
+      // isFetching: isFetchingSearchPosts,
+      data: searchPost
+    }
+  ] = useSearchPostsMutation()
 
   const {
     isFetching,
@@ -64,6 +73,10 @@ const InvoiceList = () => {
 
   // ** Functions
 
+  const handleSearchTextChange = (searchStr: string) => {
+    searchPosts(searchStr)
+  }
+
   const showDeleteConfirmationPopup = (postId: string, title: string) => {
     Swal.fire({
       title: `Do you want to delete ${title}?`,
@@ -96,11 +109,16 @@ const InvoiceList = () => {
     console.log('FetchPostsforDmData is:', FetchPostsforDmData)
   }
 
+  if (searchPost) {
+    console.log('search results are', searchPost)
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Published Posts' />
+          {/* <TableHeader /> */}
           <Box
             justifyItems={'center'}
             alignItems={'center'}
@@ -108,7 +126,8 @@ const InvoiceList = () => {
               px: 4,
               display: 'flex',
               flexDirection: 'row',
-              gap: 4
+              gap: 4,
+              justifyContent: 'space-between'
             }}
           >
             <TextField
@@ -117,6 +136,7 @@ const InvoiceList = () => {
               label='Search by post title or client name'
               variant='outlined'
               sx={{ width: 400 }}
+              onChange={e => handleSearchTextChange(e.target.value)}
             />
 
             <Button variant='outlined' sx={{ width: 200 }} size={'large'}>
@@ -132,7 +152,9 @@ const InvoiceList = () => {
               (user!.role === 'CM' && isFetchingFetchPostsforCm)
             }
             posts={
-              posts && posts?.length > 0
+              searchPost
+                ? searchPost
+                : posts && posts?.length > 0
                 ? posts
                 : FetchPostsforDmData && FetchPostsforDmData.length > 0
                 ? FetchPostsforDmData
