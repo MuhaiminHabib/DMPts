@@ -3,7 +3,7 @@ import { baseApi } from './baseApi'
 
 const postApi = baseApi.injectEndpoints({
   endpoints: build => ({
-    fetchPosts: build.query<Post[], string>({
+    fetchPosts: build.query<Post[], number>({
       query: page => `/API/posting/page/${page}`,
       providesTags: ['Post']
     }),
