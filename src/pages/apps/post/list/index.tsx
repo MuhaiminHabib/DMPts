@@ -1,8 +1,8 @@
 // ** React Imports
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Button, Card, CardHeader, Grid, TextField } from '@mui/material'
+import { Box, Button, Card, CardContent, CardHeader, Grid, Pagination, TextField, Typography } from '@mui/material'
 
 import {
   useDeletePostMutation,
@@ -21,9 +21,13 @@ import { AuthContext } from 'src/context/AuthContext'
 const InvoiceList = () => {
   // ** State
 
-  // const [postPage, setPostPage] = useState<string>('1')
+  const [page, setPage] = useState<number>(1)
 
-  const postPage = '1'
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value)
+  }
+
+  // const postPage = '1'
 
   // ** Hooks
   const { user } = useContext(AuthContext)
@@ -38,10 +42,10 @@ const InvoiceList = () => {
 
   const {
     isFetching,
-
+    isLoading,
     // isError, error,
     data: posts
-  } = useFetchPostsQuery(postPage)
+  } = useFetchPostsQuery(page)
 
   const {
     isFetching: isFetchingFetchPostsforDm,
@@ -166,6 +170,10 @@ const InvoiceList = () => {
             }
             handlePostDelete={handlePostDelete}
           />
+          <CardContent>
+            <Typography>Page: {page}</Typography>
+            <Pagination count={10} page={page} onChange={handleChange} />
+          </CardContent>
         </Card>
       </Grid>
     </Grid>
