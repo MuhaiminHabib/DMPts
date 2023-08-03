@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import { Box, Button, Card, CardContent, CardHeader, Grid, Pagination, TextField, Typography } from '@mui/material'
@@ -17,6 +17,7 @@ import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
 
 import { AuthContext } from 'src/context/AuthContext'
+import { display } from '@mui/system'
 
 const InvoiceList = () => {
   // ** State
@@ -99,22 +100,19 @@ const InvoiceList = () => {
     showDeleteConfirmationPopup(postId, title)
   }
 
+  useEffect(() => {
+    if (posts) {
+      console.log('posts is ho ho ho:', posts.postings)
+    }
+    console.log('hiii there')
+  }, [posts])
+
   if (isLoadingDeletePost) {
     showLoadingAlert()
   } else if (isDeletePostError) {
     showErrorAlert({ error: deletePostError })
   } else if (deletePostData) {
     showSuccessAlert({ text: 'Post Deleted' })
-  }
-
-  if (FetchPostsforCData) {
-    console.log('FetchPostsforCData is:', FetchPostsforCData)
-    console.log('posts is:', posts)
-    console.log('FetchPostsforDmData is:', FetchPostsforDmData)
-  }
-
-  if (searchPost) {
-    console.log('search results are', searchPost)
   }
 
   return (
@@ -147,7 +145,6 @@ const InvoiceList = () => {
               Filter
             </Button>
           </Box>
-
           <PostListTable
             isFetching={
               ((user!.role === 'A' || user!.role === 'BA') && isFetching) ||
@@ -158,21 +155,26 @@ const InvoiceList = () => {
             posts={
               searchPost
                 ? searchPost
-                : posts && posts?.length > 0
-                ? posts
-                : FetchPostsforDmData && FetchPostsforDmData.length > 0
-                ? FetchPostsforDmData
-                : FetchPostsforCData && FetchPostsforCData?.length > 0
-                ? FetchPostsforCData
-                : FetchPostsforCmData && FetchPostsforCmData?.length > 0
-                ? FetchPostsforCmData
+                : posts && posts.postings?.length > 0
+                ? posts.postings
+                : FetchPostsforDmData && FetchPostsforDmData.postings?.length > 0
+                ? FetchPostsforDmData.postings
+                : FetchPostsforCData && FetchPostsforCData.postings?.length > 0
+                ? FetchPostsforCData.postings
+                : FetchPostsforCmData && FetchPostsforCmData.postings?.length > 0
+                ? FetchPostsforCmData.postings
                 : []
             }
+            // posts={posts ? posts.postings : null}
             handlePostDelete={handlePostDelete}
           />
-          <CardContent>
-            <Typography>Page: {page}</Typography>
-            <Pagination count={10} page={page} onChange={handleChange} />
+
+          <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Pagination
+              count={posts ? Math.ceil(posts.info.totalNumberOfPostings / 10) : 1}
+              page={page}
+              onChange={handleChange}
+            />
           </CardContent>
         </Card>
       </Grid>

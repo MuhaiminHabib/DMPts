@@ -1,22 +1,34 @@
 import type { Post } from 'src/types/apps/postSchema'
 import { baseApi } from './baseApi'
+import { scales } from 'chart.js'
+
+type PostObj = {
+  info: {
+    totalNumberOfPostings: number
+  }
+  postings: Post[]
+}
 
 const postApi = baseApi.injectEndpoints({
   endpoints: build => ({
-    fetchPosts: build.query<Post[], number>({
+    fetchPosts: build.query<PostObj, number>({
       query: page => `/API/posting/page/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforDM: build.query<Post[], void>({
+    fetchPostsforDM: build.query<PostObj, void>({
       query: () => `/API/posting/dm-get-posts`,
       providesTags: ['Post']
     }),
-    fetchPostsforC: build.query<Post[], void>({
+    fetchPostsforC: build.query<PostObj, void>({
       query: () => `/API/posting/c-get-posts`,
       providesTags: ['Post']
     }),
-    fetchPostsforCm: build.query<Post[], void>({
+    fetchPostsforCm: build.query<PostObj, void>({
       query: () => `/API/posting/cm-get-posts`,
+      providesTags: ['Post']
+    }),
+    fetchPostDetails: build.query<Post, string>({
+      query: id => `/API/posting/detail/${id}`,
       providesTags: ['Post']
     }),
     createPost: build.mutation<Post, Partial<Post>>({
@@ -73,6 +85,7 @@ export const {
   useFetchPostsforDMQuery,
   useFetchPostsforCQuery,
   useFetchPostsforCmQuery,
+  useFetchPostDetailsQuery,
   useCreatePostMutation,
   useEditPostMutation,
   useDeletePostMutation,

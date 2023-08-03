@@ -9,8 +9,7 @@ import createEmotionServer from '@emotion/server/create-instance'
 
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
-
-export const APP_ID = '6539098496146149'
+import { APP_ID } from 'src/utils/constants'
 
 class CustomDocument extends Document {
   render() {

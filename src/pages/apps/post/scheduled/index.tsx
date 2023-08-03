@@ -23,7 +23,7 @@ const ScheduledList = () => {
 
   // const [postPage, setPostPage] = useState<string>('1')
 
-  const postPage = '1'
+  const postPage = 1
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
