@@ -11,7 +11,17 @@ import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
-import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import {
+  Box,
+  FormControl,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 
 // import { UsersType } from 'src/types/apps/userTypes'
@@ -36,6 +46,8 @@ const defaultValues = {
   body: '',
   publishOption: 'publish',
   scheduledDate: '',
+  startDate: '',
+  endDate: '',
   visibleToClient: false,
   content: null
 }
@@ -46,6 +58,8 @@ const FilterModal = () => {
   // ** Hooks
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+
+  // const [fetchFbPageListByClientId, { data: fbPageListOfClient }] = useFetchFbPageListByClientIdMutation()
 
   const {
     control,
@@ -86,6 +100,57 @@ const FilterModal = () => {
 
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={2} alignItems='center' sx={{ mb: 6 }}>
+              <Grid item xs={5}>
+                {/* Start Date */}
+                <FormControl fullWidth>
+                  <Controller
+                    name='startDate'
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        type='datetime-local'
+                        value={value}
+                        label='Start Date'
+                        onChange={onChange}
+                        error={Boolean(errors.startDate)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                  />
+                  {errors.startDate && (
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.startDate.message}</FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={2} textAlign='center'>
+                <Typography variant='h6'>-</Typography>
+              </Grid>
+
+              <Grid item xs={5}>
+                {/* End Date */}
+                <FormControl fullWidth>
+                  <Controller
+                    name='endDate'
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        type='datetime-local'
+                        value={value}
+                        label='End Date'
+                        onChange={onChange}
+                        error={Boolean(errors.endDate)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                  />
+                  {errors.endDate && (
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.endDate.message}</FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+            </Grid>
             {/* platform */}
             <FormControl fullWidth sx={{ mb: 6 }}>
               <InputLabel id='platform-select' error={Boolean(errors.pageId)} htmlFor='platform-select'>
