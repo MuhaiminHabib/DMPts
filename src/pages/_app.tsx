@@ -59,7 +59,14 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
-import { APP_ID } from './_document'
+import { APP_ID } from 'src/utils/constants'
+
+declare global {
+  interface Window {
+    fbAsyncInit: () => void
+    FB: any
+  }
+}
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -95,13 +102,6 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
     return <>{children}</>
   } else {
     return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>
-  }
-}
-
-declare global {
-  interface Window {
-    fbAsyncInit: () => void
-    FB: any
   }
 }
 

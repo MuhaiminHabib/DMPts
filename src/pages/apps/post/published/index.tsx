@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 // ** MUI Imports
 import { Box, Card, CardContent, CardHeader, Grid, Pagination, TextField } from '@mui/material'
 
-import { useDeletePostMutation, useFetchDraftPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
+import { useDeletePostMutation, useFetchPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
 import FilterModal from 'src/views/apps/post/list/FilterModal'
 
-const DraftPost = () => {
+const PublishedPost = () => {
   // ** State
 
   const [page, setPage] = useState<number>(1)
@@ -28,7 +28,7 @@ const DraftPost = () => {
     }
   ] = useSearchPostsMutation()
 
-  const { isFetching, isError, error, data: posts } = useFetchDraftPostsQuery(page)
+  const { isFetching, isError, error, data: posts } = useFetchPostsQuery(page)
 
   const [
     deletePost,
@@ -80,7 +80,8 @@ const DraftPost = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Draft Posts' />
+          <CardHeader title='Published Posts' />
+
           {/* <TableHeader /> */}
           <Box
             justifyItems={'center'}
@@ -124,4 +125,4 @@ const DraftPost = () => {
   )
 }
 
-export default DraftPost
+export default PublishedPost

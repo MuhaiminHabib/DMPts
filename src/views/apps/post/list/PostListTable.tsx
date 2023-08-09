@@ -3,17 +3,18 @@ import React, { useContext } from 'react'
 import { Post } from 'src/types/apps/postSchema'
 import Loader from 'src/shared-components/Loader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
-
+import MenuBookIcon from '@mui/icons-material/MenuBook'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import PostDetailsModal from '../view/PostDetailsModal'
+import { getFormattedDate, getFormattedTime } from 'src/utils/helperFunctions'
 
 type inputProps = {
   isFetching: boolean
   posts: Post[]
+  page: number
   handlePostDelete: (postId: string, title: string) => void
 }
 
-const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
+const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps) => {
   // **States
 
   // **Hooks
@@ -23,7 +24,7 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
   // **Functions
 
   if (posts) {
-    console.log('posts are', posts)
+    console.log('posts are la alala', posts)
   }
 
   return (
@@ -37,7 +38,7 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
               <TableCell align='left'>Index</TableCell>
               <TableCell align='left'>Date</TableCell>
               <TableCell align='left'>Time</TableCell>
-              <TableCell align='center'>Title</TableCell>
+              <TableCell align='center'>Post Body</TableCell>
               <TableCell align='center'>Platform</TableCell>
               <TableCell align='center'>Client</TableCell>
               <TableCell align='center'>Actions</TableCell>
@@ -52,20 +53,28 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
                       '&:last-child td, &:last-child th': { border: 0 }
                     }}
                   >
-                    <TableCell>{i + 1}</TableCell>
-                    <TableCell>June 1 2023</TableCell>
-                    <TableCell>4pm EST</TableCell>
+                    <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
+                    <TableCell>{getFormattedDate(post.postingDate)}</TableCell>
+                    <TableCell>{getFormattedTime(post.postingDate)}</TableCell>
                     <TableCell align='center' component='th' scope='row'>
-                      {post.title}
+                      {post.body.length > 50 ? `${post.body.substring(0, 50)}...` : post.body}
                     </TableCell>
-                    <TableCell align='center' component='th' scope='row'>
-                      Facebook
-                    </TableCell>
+                    {typeof post.platform !== 'string'
+                      ? post.platform.map((item, i) => (
+                          <TableCell key={i} align='center' component='th' scope='row'>
+                            {item.platform === 'fb' ? 'Facebook' : 'Unidentifid'}
+                          </TableCell>
+                        ))
+                      : 'Unknown'}
 
-                    <TableCell align='center'>Test Client Name</TableCell>
+                    <TableCell align='center'>
+                      {typeof post.client !== 'string' ? post.client.username : 'Unknown'}
+                    </TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
-                        <PostDetailsModal post={post} />
+                        {/* <PostDetailsModal post={post} /> */}
+                        {/* <DetailsPage /> */}
+                        <Button startIcon={<MenuBookIcon />} href={`/apps/post/details/${post._id}`}></Button>
                       </Tooltip>
 
                       {ability?.can('read', 'delete-post') ? (

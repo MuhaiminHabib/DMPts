@@ -12,19 +12,16 @@ const fileSchema = z.object({
   buffer: z.string() // Depending on your setup, you might have the file's contents as a Buffer, or you might not have them at all.
 })
 
+const platformSchema = z.object({
+  platform: z.string()
+})
+
 export const zPost = z.object({
   _id: z.string().optional(),
   body: z.string(),
   pageId: z.string(),
   title: z.string(),
-  platform: z.union([
-    z.array(
-      z.object({
-        platform: z.string()
-      })
-    ),
-    z.string()
-  ]),
+  platform: z.union([z.array(platformSchema), z.string()]),
   postingDate: z.string(),
   boost: z.string(),
   scheduledDate: z.string().optional(),
@@ -50,7 +47,9 @@ export const zPost = z.object({
   boostingEndDate: z.string().nullable().optional(),
   boostingStartDate: z.string().nullable().optional(),
   boostingBudget: z.number().nullable().optional(),
-  content: z.array(fileSchema).nullable().optional()
+  content: z.array(fileSchema).nullable().optional(),
+  publishOption: z.string(),
+  visibleToClient: z.boolean()
 })
 
 export const zPostForPostCreate = z.object({

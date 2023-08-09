@@ -1,22 +1,29 @@
 import type { Post } from 'src/types/apps/postSchema'
 import { baseApi } from './baseApi'
 
+type PostObj = {
+  info: {
+    totalNumberOfPostings: number
+  }
+  postings: Post[]
+}
+
 const postApi = baseApi.injectEndpoints({
   endpoints: build => ({
-    fetchPosts: build.query<Post[], string>({
+    fetchPosts: build.query<PostObj, number>({
       query: page => `/API/posting/page/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforDM: build.query<Post[], void>({
-      query: () => `/API/posting/dm-get-posts`,
+    fetchScheduledPosts: build.query<PostObj, number>({
+      query: page => `/API/posting/scheduled-posts/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforC: build.query<Post[], void>({
-      query: () => `/API/posting/c-get-posts`,
+    fetchDraftPosts: build.query<PostObj, number>({
+      query: page => `/API/posting/draft-posts/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforCm: build.query<Post[], void>({
-      query: () => `/API/posting/cm-get-posts`,
+    fetchPostDetails: build.query<Post, string>({
+      query: id => `/API/posting/detail/${id}`,
       providesTags: ['Post']
     }),
     createPost: build.mutation<Post, Partial<Post>>({
@@ -70,9 +77,9 @@ const postApi = baseApi.injectEndpoints({
 
 export const {
   useFetchPostsQuery,
-  useFetchPostsforDMQuery,
-  useFetchPostsforCQuery,
-  useFetchPostsforCmQuery,
+  useFetchScheduledPostsQuery,
+  useFetchDraftPostsQuery,
+  useFetchPostDetailsQuery,
   useCreatePostMutation,
   useEditPostMutation,
   useDeletePostMutation,

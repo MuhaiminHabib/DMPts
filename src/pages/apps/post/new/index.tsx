@@ -13,48 +13,69 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 
 // ** MUI Imports
-import { Card, CardHeader, Grid } from '@mui/material'
+import {
+  Card,
+  CardHeader,
+  Checkbox,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  Typography
+} from '@mui/material'
 import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
 import { Controller, useForm } from 'react-hook-form'
 import { Post } from 'src/types/apps/postSchema'
 import Link from 'next/link'
-import { useFetchFbPageListByClientIdMutation, usePublishToFbMutation } from 'src/store/query/fbApi'
+import {
+  useDraftToFbMutation,
+  useFetchFbPageListByClientIdMutation,
+  usePublishToFbMutation,
+  useScheduleToFbMutation
+} from 'src/store/query/fbApi'
 import { AuthContext } from 'src/context/AuthContext'
 import { UsersType } from 'src/types/apps/userTypes'
 import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
-// import { AbilityContext } from 'src/layouts/components/acl/Can'
-// import { AuthContext } from 'src/context/AuthContext'
-
 const defaultValues = {
   client: '',
-  platform: '',
-  body: ''
+  pageId: '',
+  body: '',
+  publishOption: 'publish',
+  scheduledDate: '',
+  visibleToClient: false,
+  content: null
 }
 
 const NewPost = () => {
   // ** State
 
-  // const [postPage, setPostPage] = useState<string>('1')
-
   const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
-  // const { user } = useContext(AuthContext)
-  // const ability = useContext(AbilityContext)
 
   const [fetchFbPageListByClientId, { data: fbPageListOfClient }] = useFetchFbPageListByClientIdMutation()
   const [
     publishToFb,
     { isLoading: publishedPostIsLoading, isError: publishedPostIsError, error: publishedPostError, data: publishedPost }
   ] = usePublishToFbMutation()
+  const [
+    scheduleToFb,
+    { isLoading: scheduleToFbIsLoading, isError: scheduleToFbIsError, error: scheduleToFbError, data: scheduleToFbPost }
+  ] = useScheduleToFbMutation()
+  const [
+    draftToFb,
+    { isLoading: draftToFbIsLoading, isError: draftToFbIsError, error: draftToFbError, data: draftToFbPost }
+  ] = useDraftToFbMutation()
 
   const {
     reset,
     control,
     handleSubmit,
     watch,
+    getValues,
     formState: { errors }
   } = useForm<Post>({
     defaultValues,
@@ -66,7 +87,21 @@ const NewPost = () => {
   // ** Functions
   const onSubmit = async (data: Post, errors: any) => {
     console.log(data, errors)
-    publishToFb(data)
+    const selectedOption = data.publishOption
+
+    if (selectedOption === 'publish') {
+      // Handle publish
+      publishToFb(data)
+      console.log('will handle publish')
+    } else if (selectedOption === 'draft') {
+      // Handle draft
+      console.log('will handle draft')
+      draftToFb(data)
+    } else if (selectedOption === 'schedule') {
+      // Handle schedule
+      console.log('will handle schedule')
+      scheduleToFb(data)
+    }
 
     // if (errors) {
     //   console.log(errors)
@@ -75,7 +110,8 @@ const NewPost = () => {
     // const formData = new FormData()
     // Object.keys(data).forEach((key: any) => {
     //   const value = data[key as keyof Post]
-    //   if (value === undefined) return // Skip undefined values
+    //   if (value === undefined) return
+    //   // Skip undefined values
     //   if (key === 'content' && value instanceof FileList) {
     //     // If value is a FileList, append the first file
     //     formData.append('content', value[0])
@@ -93,8 +129,23 @@ const NewPost = () => {
     //     formData.append(key, String(value))
     //   }
     // })
-    // console.log(formData)
-    // createPost(formData as any)
+    // console.log('formData before sumbitting is: ', formData)
+
+    // for (const pair of formData.entries()) {
+    //   console.log(pair[0], pair[1])
+    // }
+    // publishToFb(formData as any)
+  }
+
+  //Validate schudule date
+  const isScheduledDateValid = value => {
+    const currentDate = new Date()
+    const minDate = new Date(currentDate.getTime() + 10 * 60 * 1000) // 10 minutes from now
+    const maxDate = new Date(currentDate.getTime() + 6 * 30 * 24 * 60 * 60 * 1000) // 6 months from now
+
+    const selectedDate = new Date(value)
+
+    return selectedDate >= minDate && selectedDate <= maxDate
   }
 
   const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
@@ -104,6 +155,8 @@ const NewPost = () => {
   const { data: cListData } = useFetchCListQuery()
   const { data: cListForBaData } = useFetchCListForBAQuery()
   const { data: cListForDmData } = useFetchCListForDMQuery()
+  const clientValue = watch('client')
+  const publishOptionSelected = watch('publishOption')
 
   useEffect(() => {
     console.log(auth.user?.role)
@@ -116,25 +169,28 @@ const NewPost = () => {
     }
   }, [cListData, cListForBaData, cListForDmData, auth])
 
-  const clientValue = watch('client')
-
+  //Fetch Client List
   useEffect(() => {
     console.log('clientValue is:', clientValue)
     fetchFbPageListByClientId(clientValue as string)
   }, [clientValue])
 
+  // Reset if Posting is success
   useEffect(() => {
-    if (publishedPost) {
+    if (publishedPost || scheduleToFbPost || draftToFbPost) {
+      showSuccessAlert({ text: 'Post Created' })
       reset()
     }
-  }, [publishedPost])
+  }, [publishedPost, scheduleToFbPost, draftToFbPost])
 
-  if (publishedPostIsLoading) {
+  if (publishedPostIsLoading || scheduleToFbIsLoading || draftToFbIsLoading) {
     showLoadingAlert()
   } else if (publishedPostIsError) {
     showErrorAlert({ error: publishedPostError })
-  } else if (publishedPost) {
-    showSuccessAlert({ text: 'Post Created' })
+  } else if (scheduleToFbIsError) {
+    showErrorAlert({ error: scheduleToFbError })
+  } else if (draftToFbIsError) {
+    showErrorAlert({ error: draftToFbError })
   }
 
   return (
@@ -240,7 +296,7 @@ const NewPost = () => {
               </FormControl>
 
               {/* file */}
-              {/* <Controller
+              <Controller
                 name='content'
                 control={control}
                 render={({ field: { onChange } }) => (
@@ -270,7 +326,82 @@ const NewPost = () => {
                     )}
                   </div>
                 )}
-              /> */}
+              />
+
+              {/* RadioGroup for selecting publish option */}
+              <FormControl fullWidth sx={{ py: 5 }}>
+                <FormLabel id='publish-option-label'>Publish Option</FormLabel>
+                <Controller
+                  name='publishOption'
+                  control={control}
+                  defaultValue='publish' // Set a default value here if needed
+                  render={({ field: { value, onChange } }) => (
+                    <RadioGroup aria-label='publish-option' name='publishOption' value={value} onChange={onChange}>
+                      <FormControlLabel value='publish' control={<Radio />} label='Publish' />
+                      <FormControlLabel value='draft' control={<Radio />} label='Draft' />
+                      <FormControlLabel value='schedule' control={<Radio />} label='Schedule' />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+
+              {publishOptionSelected === 'schedule' ? (
+                <>
+                  {/* Schedule Date */}
+                  <FormControl fullWidth sx={{ mb: 6 }}>
+                    <Controller
+                      name='scheduledDate'
+                      control={control}
+                      rules={{
+                        required: publishOptionSelected === 'schedule',
+                        validate: {
+                          validScheduledDate: value =>
+                            publishOptionSelected !== 'schedule' || isScheduledDateValid(value)
+                        }
+                      }}
+                      render={({ field: { value, onChange } }) => (
+                        <TextField
+                          type='datetime-local'
+                          value={value}
+                          label='Schedule Date'
+                          onChange={onChange}
+                          error={Boolean(errors.scheduledDate)}
+                          helperText={
+                            publishOptionSelected === 'schedule' && errors.scheduledDate
+                              ? 'Scheduled date is required and should be at least 10 minutes from now and no longer than 6 months'
+                              : ''
+                          }
+                          InputLabelProps={{ shrink: true }}
+                          inputProps={{
+                            min: new Date(Date.now() + 10 * 60 * 1000).toISOString().slice(0, 16), // Minimum 10 minutes from now
+                            max: new Date(new Date().getTime() + 6 * 30 * 24 * 60 * 60 * 1000)
+                              .toISOString()
+                              .slice(0, 16)
+                          }}
+                        />
+                      )}
+                    />
+
+                    {errors.scheduledDate && (
+                      <FormHelperText sx={{ color: 'error.main' }}>{errors.scheduledDate.message}</FormHelperText>
+                    )}
+                  </FormControl>
+                </>
+              ) : publishOptionSelected === 'draft' ? (
+                <Controller
+                  name='visibleToClient'
+                  control={control}
+                  defaultValue={false}
+                  render={({ field: { value, onChange } }) =>
+                    getValues().publishOption === 'draft' && (
+                      <FormControlLabel
+                        control={<Checkbox checked={value} onChange={onChange} />}
+                        label='Visible to client'
+                      />
+                    )
+                  }
+                />
+              ) : null}
 
               <Box
                 sx={{
@@ -281,13 +412,7 @@ const NewPost = () => {
                 }}
               >
                 <Button size='large' variant='contained' type='submit'>
-                  Publish
-                </Button>
-                <Button size='large' variant='outlined' color='secondary' disabled={true}>
-                  Draft
-                </Button>
-                <Button size='large' type='submit' variant='contained' sx={{ ml: 3 }} disabled={true}>
-                  Schedule
+                  Create Post
                 </Button>
               </Box>
             </form>
