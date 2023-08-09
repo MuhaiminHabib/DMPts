@@ -5,17 +5,16 @@ import Loader from 'src/shared-components/Loader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import PostDetailsModal from '../view/PostDetailsModal'
 import { getFormattedDate, getFormattedTime } from 'src/utils/helperFunctions'
-import DetailsPage from 'src/pages/apps/post/details'
 
 type inputProps = {
   isFetching: boolean
   posts: Post[]
+  page: number
   handlePostDelete: (postId: string, title: string) => void
 }
 
-const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
+const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps) => {
   // **States
 
   // **Hooks
@@ -54,15 +53,15 @@ const PostListTable = ({ isFetching, posts, handlePostDelete }: inputProps) => {
                       '&:last-child td, &:last-child th': { border: 0 }
                     }}
                   >
-                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
                     <TableCell>{getFormattedDate(post.postingDate)}</TableCell>
                     <TableCell>{getFormattedTime(post.postingDate)}</TableCell>
                     <TableCell align='center' component='th' scope='row'>
                       {post.body.length > 50 ? `${post.body.substring(0, 50)}...` : post.body}
                     </TableCell>
                     {typeof post.platform !== 'string'
-                      ? post.platform.map(item => (
-                          <TableCell align='center' component='th' scope='row'>
+                      ? post.platform.map((item, i) => (
+                          <TableCell key={i} align='center' component='th' scope='row'>
                             {item.platform === 'fb' ? 'Facebook' : 'Unidentifid'}
                           </TableCell>
                         ))

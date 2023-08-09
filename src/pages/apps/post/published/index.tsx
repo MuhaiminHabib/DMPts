@@ -1,25 +1,16 @@
 // ** React Imports
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Button, Card, CardContent, CardHeader, Grid, Pagination, TextField, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Grid, Pagination, TextField } from '@mui/material'
 
-import {
-  useDeletePostMutation,
-  useFetchPostsQuery,
-  useFetchPostsforCQuery,
-  useFetchPostsforCmQuery,
-  useFetchPostsforDMQuery,
-  useSearchPostsMutation
-} from 'src/store/query/postApi'
+import { useDeletePostMutation, useFetchPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
+import FilterModal from 'src/views/apps/post/list/FilterModal'
 
-import { AuthContext } from 'src/context/AuthContext'
-import { display } from '@mui/system'
-
-const InvoiceList = () => {
+const PublishedPost = () => {
   // ** State
 
   const [page, setPage] = useState<number>(1)
@@ -28,11 +19,7 @@ const InvoiceList = () => {
     setPage(value)
   }
 
-  // const postPage = '1'
-
   // ** Hooks
-  const { user } = useContext(AuthContext)
-
   const [
     searchPosts,
     {
@@ -41,35 +28,7 @@ const InvoiceList = () => {
     }
   ] = useSearchPostsMutation()
 
-  const {
-    isFetching,
-    isLoading,
-    // isError, error,
-    data: posts
-  } = useFetchPostsQuery(page)
-
-  const {
-    isFetching: isFetchingFetchPostsforDm,
-
-    //  isError: isErrorFetchPostsforDm,
-    //  error: FetchPostsforDmError,
-    data: FetchPostsforDmData
-  } = useFetchPostsforDMQuery()
-
-  const {
-    isFetching: isFetchingFetchPostsforC,
-
-    //  isError: isErrorFetchPostsforC,
-    //  error: FetchPostsforCError,
-    data: FetchPostsforCData
-  } = useFetchPostsforCQuery()
-  const {
-    isFetching: isFetchingFetchPostsforCm,
-
-    //  isError: isErrorFetchPostsforCm,
-    //  error: FetchPostsforCmError,
-    data: FetchPostsforCmData
-  } = useFetchPostsforCmQuery()
+  const { isFetching, isError, error, data: posts } = useFetchPostsQuery(page)
 
   const [
     deletePost,
@@ -113,6 +72,8 @@ const InvoiceList = () => {
     showErrorAlert({ error: deletePostError })
   } else if (deletePostData) {
     showSuccessAlert({ text: 'Post Deleted' })
+  } else if (isError) {
+    showErrorAlert({ error: error })
   }
 
   return (
@@ -120,10 +81,11 @@ const InvoiceList = () => {
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Published Posts' />
+
           {/* <TableHeader /> */}
           <Box
             justifyItems={'center'}
-            alignItems={'center'}
+            alignItems={'center'} // Add this line to vertically center-align the items
             sx={{
               px: 4,
               display: 'flex',
@@ -141,31 +103,12 @@ const InvoiceList = () => {
               onChange={e => handleSearchTextChange(e.target.value)}
             />
 
-            <Button variant='outlined' sx={{ width: 200 }} size={'large'}>
-              Filter
-            </Button>
+            <FilterModal />
           </Box>
           <PostListTable
-            isFetching={
-              ((user!.role === 'A' || user!.role === 'BA') && isFetching) ||
-              (user!.role === 'DM' && isFetchingFetchPostsforDm) ||
-              (user!.role === 'C' && isFetchingFetchPostsforC) ||
-              (user!.role === 'CM' && isFetchingFetchPostsforCm)
-            }
-            posts={
-              searchPost
-                ? searchPost
-                : posts && posts.postings?.length > 0
-                ? posts.postings
-                : FetchPostsforDmData && FetchPostsforDmData.postings?.length > 0
-                ? FetchPostsforDmData.postings
-                : FetchPostsforCData && FetchPostsforCData.postings?.length > 0
-                ? FetchPostsforCData.postings
-                : FetchPostsforCmData && FetchPostsforCmData.postings?.length > 0
-                ? FetchPostsforCmData.postings
-                : []
-            }
-            // posts={posts ? posts.postings : null}
+            isFetching={isFetching}
+            posts={searchPost ? searchPost : posts && posts.postings?.length > 0 ? posts.postings : []}
+            page={page}
             handlePostDelete={handlePostDelete}
           />
 
@@ -182,4 +125,4 @@ const InvoiceList = () => {
   )
 }
 
-export default InvoiceList
+export default PublishedPost

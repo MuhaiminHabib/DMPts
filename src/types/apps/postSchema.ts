@@ -47,7 +47,9 @@ export const zPost = z.object({
   boostingEndDate: z.string().nullable().optional(),
   boostingStartDate: z.string().nullable().optional(),
   boostingBudget: z.number().nullable().optional(),
-  content: z.array(fileSchema).nullable().optional()
+  content: z.array(fileSchema).nullable().optional(),
+  publishOption: z.string(),
+  visibleToClient: z.boolean()
 })
 
 export const zPostForPostCreate = z.object({

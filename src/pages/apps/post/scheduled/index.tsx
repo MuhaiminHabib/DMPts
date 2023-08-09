@@ -1,64 +1,28 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Card, CardHeader, Grid, TextField } from '@mui/material'
-import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
-import {
-  useDeletePostMutation,
-  useFetchPostsQuery,
-  useFetchPostsforCQuery,
-  useFetchPostsforCmQuery,
-  useFetchPostsforDMQuery
-} from 'src/store/query/postApi'
+import { Box, Card, CardContent, CardHeader, Grid, Pagination, TextField } from '@mui/material'
+
+import { useDeletePostMutation, useFetchScheduledPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
+import FilterModal from 'src/views/apps/post/list/FilterModal'
 
-import { AuthContext } from 'src/context/AuthContext'
-
-// import { AbilityContext } from 'src/layouts/components/acl/Can'
-const ScheduledList = () => {
+const ScheduledPost = () => {
   // ** State
 
-  // const [postPage, setPostPage] = useState<string>('1')
+  const [page, setPage] = useState<number>(1)
 
-  const postPage = 1
-  const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value)
+  }
 
   // ** Hooks
-  const { user } = useContext(AuthContext)
+  const [searchPosts, { data: searchPost }] = useSearchPostsMutation()
 
-  // const ability = useContext(AbilityContext)
-  const {
-    isFetching,
-
-    // isError, error,
-    data: posts
-  } = useFetchPostsQuery(postPage)
-
-  const {
-    isFetching: isFetchingFetchPostsforDm,
-
-    //  isError: isErrorFetchPostsforDm,
-    //  error: FetchPostsforDmError,
-    data: FetchPostsforDmData
-  } = useFetchPostsforDMQuery()
-
-  const {
-    isFetching: isFetchingFetchPostsforC,
-
-    //  isError: isErrorFetchPostsforC,
-    //  error: FetchPostsforCError,
-    data: FetchPostsforCData
-  } = useFetchPostsforCQuery()
-  const {
-    isFetching: isFetchingFetchPostsforCm,
-
-    //  isError: isErrorFetchPostsforCm,
-    //  error: FetchPostsforCmError,
-    data: FetchPostsforCmData
-  } = useFetchPostsforCmQuery()
+  const { isFetching, isError, error, data: posts } = useFetchScheduledPostsQuery(page)
 
   const [
     deletePost,
@@ -67,7 +31,9 @@ const ScheduledList = () => {
 
   // ** Functions
 
-  const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
+  const handleSearchTextChange = (searchStr: string) => {
+    searchPosts(searchStr)
+  }
 
   const showDeleteConfirmationPopup = (postId: string, title: string) => {
     Swal.fire({
@@ -87,18 +53,21 @@ const ScheduledList = () => {
     showDeleteConfirmationPopup(postId, title)
   }
 
+  useEffect(() => {
+    if (posts) {
+      console.log('posts is ho ho ho:', posts.postings)
+    }
+    console.log('hiii there')
+  }, [posts])
+
   if (isLoadingDeletePost) {
     showLoadingAlert()
   } else if (isDeletePostError) {
     showErrorAlert({ error: deletePostError })
   } else if (deletePostData) {
     showSuccessAlert({ text: 'Post Deleted' })
-  }
-
-  if (FetchPostsforCData) {
-    console.log('FetchPostsforCData is:', FetchPostsforCData)
-    console.log('posts is:', posts)
-    console.log('FetchPostsforDmData is:', FetchPostsforDmData)
+  } else if (isError) {
+    showErrorAlert({ error: error })
   }
 
   return (
@@ -106,11 +75,16 @@ const ScheduledList = () => {
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Scheduled Posts' />
+          {/* <TableHeader /> */}
           <Box
             justifyItems={'center'}
-            alignItems={'center'}
+            alignItems={'center'} // Add this line to vertically center-align the items
             sx={{
-              px: 4
+              px: 4,
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 4,
+              justifyContent: 'space-between'
             }}
           >
             <TextField
@@ -119,35 +93,29 @@ const ScheduledList = () => {
               label='Search by post title or client name'
               variant='outlined'
               sx={{ width: 400 }}
+              onChange={e => handleSearchTextChange(e.target.value)}
             />
-          </Box>
 
+            <FilterModal />
+          </Box>
           <PostListTable
-            isFetching={
-              ((user!.role === 'A' || user!.role === 'BA') && isFetching) ||
-              (user!.role === 'DM' && isFetchingFetchPostsforDm) ||
-              (user!.role === 'C' && isFetchingFetchPostsforC) ||
-              (user!.role === 'CM' && isFetchingFetchPostsforCm)
-            }
-            posts={
-              posts && posts?.length > 0
-                ? posts
-                : FetchPostsforDmData && FetchPostsforDmData.length > 0
-                ? FetchPostsforDmData
-                : FetchPostsforCData && FetchPostsforCData?.length > 0
-                ? FetchPostsforCData
-                : FetchPostsforCmData && FetchPostsforCmData?.length > 0
-                ? FetchPostsforCmData
-                : []
-            }
+            isFetching={isFetching}
+            posts={searchPost ? searchPost : posts && posts.postings?.length > 0 ? posts.postings : []}
+            page={page}
             handlePostDelete={handlePostDelete}
           />
+
+          <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Pagination
+              count={posts ? Math.ceil(posts.info.totalNumberOfPostings / 10) : 1}
+              page={page}
+              onChange={handleChange}
+            />
+          </CardContent>
         </Card>
       </Grid>
-
-      <AddPostDrawer open={addPostOpen} toggle={toggleAddPostDrawer} />
     </Grid>
   )
 }
 
-export default ScheduledList
+export default ScheduledPost

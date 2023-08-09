@@ -23,6 +23,22 @@ const fbApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Post']
     }),
+    scheduleToFb: build.mutation<Post, Partial<Post>>({
+      query: body => ({
+        url: `/API/fb-api/schedule-post-to-fb`,
+        method: 'POST',
+        body: body
+      }),
+      invalidatesTags: ['Post']
+    }),
+    draftToFb: build.mutation<Post, Partial<Post>>({
+      query: body => ({
+        url: `/API/fb-api/draft-to-fb`,
+        method: 'POST',
+        body: body
+      }),
+      invalidatesTags: ['Post']
+    }),
     addFbPage: build.mutation<FbPage[], { token: string; cid: string }>({
       query: ({ token, cid }) => ({
         url: `/API/fb-api/add-new-pages?token=${token}&cid=${cid}`,
@@ -38,5 +54,7 @@ export const {
   useFetchFbPageListQuery,
   useFetchFbPageListByClientIdMutation,
   usePublishToFbMutation,
+  useScheduleToFbMutation,
+  useDraftToFbMutation,
   useAddFbPageMutation
 } = fbApi

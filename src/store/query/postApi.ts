@@ -1,6 +1,5 @@
 import type { Post } from 'src/types/apps/postSchema'
 import { baseApi } from './baseApi'
-import { scales } from 'chart.js'
 
 type PostObj = {
   info: {
@@ -15,16 +14,12 @@ const postApi = baseApi.injectEndpoints({
       query: page => `/API/posting/page/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforDM: build.query<PostObj, void>({
-      query: () => `/API/posting/dm-get-posts`,
+    fetchScheduledPosts: build.query<PostObj, number>({
+      query: page => `/API/posting/scheduled-posts/${page}`,
       providesTags: ['Post']
     }),
-    fetchPostsforC: build.query<PostObj, void>({
-      query: () => `/API/posting/c-get-posts`,
-      providesTags: ['Post']
-    }),
-    fetchPostsforCm: build.query<PostObj, void>({
-      query: () => `/API/posting/cm-get-posts`,
+    fetchDraftPosts: build.query<PostObj, number>({
+      query: page => `/API/posting/draft-posts/${page}`,
       providesTags: ['Post']
     }),
     fetchPostDetails: build.query<Post, string>({
@@ -82,9 +77,8 @@ const postApi = baseApi.injectEndpoints({
 
 export const {
   useFetchPostsQuery,
-  useFetchPostsforDMQuery,
-  useFetchPostsforCQuery,
-  useFetchPostsforCmQuery,
+  useFetchScheduledPostsQuery,
+  useFetchDraftPostsQuery,
   useFetchPostDetailsQuery,
   useCreatePostMutation,
   useEditPostMutation,

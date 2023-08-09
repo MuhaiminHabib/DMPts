@@ -52,7 +52,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: 'Published',
-          path: '/apps/post/list',
+          path: '/apps/post/published',
           action: 'read',
           subject: 'published-navItem'
         },
