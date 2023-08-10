@@ -6,6 +6,10 @@ type StatusResponse = {
 
 const userApi = baseApi.injectEndpoints({
   endpoints: build => ({
+    cCount: build.query<StatusResponse, void>({
+      query: () => '/API/auth/get-total-of-c',
+      providesTags: [{ type: 'User', id: 'C' }]
+    }),
     //Admin
     baCount: build.query<StatusResponse, void>({
       query: () => '/API/auth/total-of-ba',
@@ -14,10 +18,6 @@ const userApi = baseApi.injectEndpoints({
     dmCount: build.query<StatusResponse, void>({
       query: () => '/API/auth/a-gets-total-of-dm',
       providesTags: [{ type: 'User', id: 'DM' }]
-    }),
-    cCount: build.query<StatusResponse, void>({
-      query: () => '/API/auth/a-gets-total-of-c',
-      providesTags: [{ type: 'User', id: 'C' }]
     }),
     cmCount: build.query<StatusResponse, void>({
       query: () => '/API/auth/a-gets-total-of-cm',
@@ -33,10 +33,7 @@ const userApi = baseApi.injectEndpoints({
       query: () => 'API/auth/ba-gets-total-of-dm',
       providesTags: [{ type: 'User', id: 'DM' }]
     }),
-    cCountforBA: build.query<StatusResponse, void>({
-      query: () => '/API/auth/ba-gets-total-of-c',
-      providesTags: [{ type: 'User', id: 'C' }]
-    }),
+
     cmCountforBA: build.query<StatusResponse, void>({
       query: () => '/API/auth/ba-gets-total-of-cm',
       providesTags: [{ type: 'User', id: 'CM' }]
@@ -47,10 +44,6 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //DM
-    cCountforDm: build.query<StatusResponse, void>({
-      query: () => '/API/auth/dm-gets-total-of-c',
-      providesTags: [{ type: 'User', id: 'C' }]
-    }),
     postCountforDm: build.query<StatusResponse, void>({
       query: () => '/API/posting/dm-get-total-of-posts',
       providesTags: ['Post']
@@ -76,16 +69,14 @@ const userApi = baseApi.injectEndpoints({
 })
 
 export const {
+  useCCountQuery,
   useBaCountQuery,
   useDmCountQuery,
-  useCCountQuery,
   useCmCountQuery,
   usePostCountQuery,
   useDmCountforBAQuery,
-  useCCountforBAQuery,
   useCmCountforBAQuery,
   usePostCountforBAQuery,
-  useCCountforDmQuery,
   usePostCountforDmQuery,
   usePostCountforCQuery,
   useCmCountforCQuery,

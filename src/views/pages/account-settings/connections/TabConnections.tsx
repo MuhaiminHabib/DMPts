@@ -4,17 +4,18 @@
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
+import { Divider } from '@mui/material'
 
 // ** Icon Imports
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
-import { Divider } from '@mui/material'
-import { useFetchFbPageListQuery } from 'src/store/query/fbApi'
+import { useDeleteFbPageMutation, useFetchFbPageListQuery } from 'src/store/query/fbApi'
 import ConnectionModal from './ConnectionModal'
+import Loader from 'src/shared-components/Loader'
 
 interface SocialAccountsType {
   id: number
@@ -39,9 +40,14 @@ const socialAccountsArr: SocialAccountsType[] = [
 const TabConnections = () => {
   //Hooks
 
-  const { data: FbPageList } = useFetchFbPageListQuery()
+  const { isLoading, isError, error, data: FbPageList } = useFetchFbPageListQuery()
+  const [deleteFbPage] = useDeleteFbPageMutation()
 
   //Functions
+  const handleDelete = (pageId: string) => {
+    console.log('i will delete', pageId)
+    deleteFbPage(pageId)
+  }
 
   if (FbPageList) {
     console.log('list is:', FbPageList)
@@ -77,39 +83,45 @@ const TabConnections = () => {
               Display content from your connected accounts on your site
             </Typography>
 
-            {FbPageList
-              ? FbPageList.map(fbPage => (
-                  <Button
-                    key={fbPage.id}
-                    variant='outlined'
+            {isLoading ? (
+              <Loader />
+            ) : FbPageList ? (
+              FbPageList.map(fbPage => (
+                <Button
+                  key={fbPage._id}
+                  variant='outlined'
+                  sx={{
+                    px: 2,
+                    marginRight: 5,
+                    marginBottom: 5
+                  }}
+                >
+                  <Box
                     sx={{
-                      px: 2,
-                      marginRight: 5,
-                      marginBottom: 5
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: 360
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: 360
-                      }}
-                    >
-                      <Box sx={{ mr: 4, display: 'flex', justifyContent: 'center' }}>
-                        <img src={'/images/logos/facebook.png'} alt={fbPage.name} height='30' width='30' />
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'start', flexDirection: 'column' }}>
-                        <Typography>{fbPage.name}</Typography>
-                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                          FaceBook Page
-                        </Typography>
-                      </Box>
-                      <Button>X</Button>
+                    <Box sx={{ mr: 4, display: 'flex', justifyContent: 'center' }}>
+                      <img src={'/images/logos/facebook.png'} alt={fbPage.name} height='30' width='30' />
                     </Box>
-                  </Button>
-                ))
-              : null}
+                    <Box sx={{ display: 'flex', alignItems: 'start', flexDirection: 'column' }}>
+                      <Typography>{fbPage.name}</Typography>
+                      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                        FaceBook Page
+                      </Typography>
+                    </Box>
+                    <Button onClick={() => handleDelete(fbPage._id)}>
+                      <DeleteForeverIcon />
+                    </Button>
+                  </Box>
+                </Button>
+              ))
+            ) : (
+              'Please add a Page'
+            )}
           </CardContent>
         </Card>
       </Grid>

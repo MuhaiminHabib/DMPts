@@ -10,8 +10,8 @@ type PostObj = {
 
 const postApi = baseApi.injectEndpoints({
   endpoints: build => ({
-    fetchPosts: build.query<PostObj, number>({
-      query: page => `/API/posting/page/${page}`,
+    fetchPublishedPosts: build.query<PostObj, number>({
+      query: page => `/API/posting/published-posts/${page}`,
       providesTags: ['Post']
     }),
     fetchScheduledPosts: build.query<PostObj, number>({
@@ -76,7 +76,7 @@ const postApi = baseApi.injectEndpoints({
 })
 
 export const {
-  useFetchPostsQuery,
+  useFetchPublishedPostsQuery,
   useFetchScheduledPostsQuery,
   useFetchDraftPostsQuery,
   useFetchPostDetailsQuery,

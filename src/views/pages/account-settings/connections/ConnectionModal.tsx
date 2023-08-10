@@ -13,7 +13,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import { Box, Typography } from '@mui/material'
 import { UsersType } from 'src/types/apps/userTypes'
-import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { useFetchCListQuery } from 'src/store/query/userApi'
 import { AuthContext } from 'src/context/AuthContext'
 import { useAddFbPageMutation } from 'src/store/query/fbApi'
 
@@ -31,27 +31,25 @@ const ConnectionModal = ({ account }: inputProps) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const auth = useContext(AuthContext)
-  const [cList, setCList] = useState<UsersType[]>([])
-  const { data: cListData } = useFetchCListQuery()
-  const { data: cListForBaData } = useFetchCListForBAQuery()
-  const { data: cListForDmData } = useFetchCListForDMQuery()
+  // const [cList, setCList] = useState<UsersType[]>([])
+  const { data: clientList } = useFetchCListQuery()
+
+  // useEffect(() => {
+  //   console.log(auth.user?.role)
+  //   if (auth.user?.role === 'A' && cListData) {
+  //     setCList(cListData)
+  //   } else if (auth.user?.role === 'BA' && cListForBaData) {
+  //     setCList(cListForBaData)
+  //   } else if (auth.user?.role === 'DM' && cListForDmData) {
+  //     setCList(cListForDmData)
+  //   }
+  // }, [cListData, cListForBaData, cListForDmData, auth])
 
   useEffect(() => {
-    console.log(auth.user?.role)
-    if (auth.user?.role === 'A' && cListData) {
-      setCList(cListData)
-    } else if (auth.user?.role === 'BA' && cListForBaData) {
-      setCList(cListForBaData)
-    } else if (auth.user?.role === 'DM' && cListForDmData) {
-      setCList(cListForDmData)
+    if (clientList) {
+      console.log('Client list is on modal is', clientList)
     }
-  }, [cListData, cListForBaData, cListForDmData, auth])
-
-  useEffect(() => {
-    if (cList) {
-      console.log('Client list is on modal is', cList)
-    }
-  }, [cList])
+  }, [clientList])
 
   // ** Hooks
   const theme = useTheme()
@@ -110,8 +108,8 @@ const ConnectionModal = ({ account }: inputProps) => {
         </DialogTitle>
 
         <DialogContent>
-          {cList
-            ? cList.map(client => (
+          {clientList
+            ? clientList.map(client => (
                 <Button
                   onClick={() => login(client._id)}
                   key={client._id}

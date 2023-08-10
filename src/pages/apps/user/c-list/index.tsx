@@ -5,7 +5,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 import { AuthContext } from 'src/context/AuthContext'
-import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert } from 'src/utils/swal'
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
 import TableHeader from 'src/views/apps/user/list/TableHeader'
@@ -46,75 +46,46 @@ function a11yProps(index: number) {
 
 // ** renders client column
 
-
-
 const CList = () => {
-  
   // ** State
-  const [cList, setCList] = useState<UsersType[]>([])
+
   const [value, setValue] = useState(0)
 
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
-const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
   // ** Hooks
 
   const auth = useContext(AuthContext)
 
-
-
   const {
-    isLoading :isLoadingCList, 
+    isLoading: isLoadingCList,
 
-    isError: isErrorCList, 
-    error : cListError, 
-    data: cListData} = useFetchCListQuery()
-  const {
-    isLoading :isLoadingCListForBa, 
+    isError: isErrorCList,
+    error: cListError,
+    data: clientList
+  } = useFetchCListQuery()
 
-    isError: isErrorCListForBa, 
-    error : cListForBaError, 
-    data: cListForBaData} = useFetchCListForBAQuery()
-  const {
-    isLoading :isLoadingCListForDm, 
-    isError: isErrorCListForDm, 
-    error : cListForDmError, 
-    data: cListForDmData} = useFetchCListForDMQuery()
-  
-
-  useEffect(() => {
-    console.log(auth.user?.role)
-    if(auth.user?.role === 'A' && cListData) {
-      setCList(cListData)
-    } else if(auth.user?.role === 'BA' && cListForBaData) {
-      setCList(cListForBaData)
-    } else if(auth.user?.role === 'DM' && cListForDmData) {
-      setCList(cListForDmData)
-    }
-  }, [cListData, cListForBaData, cListForDmData, auth])
-
-  // **Functions 
+  // **Functions
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
 
-  if ((auth.user?.role === 'A' && isErrorCList) || (auth.user?.role === 'BA' && isErrorCListForBa) || (auth.user?.role === 'DM' && isErrorCListForDm)) {
-    showErrorAlert({error: cListError || cListForBaError || cListForDmError})
-  } 
-
+  if (isErrorCList) {
+    showErrorAlert({ error: cListError })
+  }
 
   return (
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
-          {auth.user!.role === 'BA' ||  auth.user!.role === 'DM'? 
-          <CardHeader title='Clients' action={
-            <TableHeader toggle={toggleAddUserDrawer} /> }
-            /> :
-            <CardHeader title='Clients' />
-          }
-            
+            {auth.user!.role === 'BA' || auth.user!.role === 'DM' ? (
+              <CardHeader title='Clients' action={<TableHeader toggle={toggleAddUserDrawer} />} />
+            ) : (
+              <CardHeader title='Clients' />
+            )}
+
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -123,14 +94,15 @@ const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
                     {/* <Tab label='Inactive Clients' {...a11yProps(1)} /> */}
                   </Tabs>
                 </Box>
-                {cList && cList.length !== 0 && (
+                {clientList && clientList.length !== 0 && (
                   <TabPanel value={value} index={0}>
-                    <UserListTable 
-                      title={'Active Clients'} 
-                      userList={cList.filter(user => (user.active))} 
-                      showLoading={isLoadingCList || isLoadingCListForBa || isLoadingCListForDm}
-                      showEditBtn={auth.user!.role === "BA" || auth.user!.role === "DM"}
-                      showDeleteBtn={auth.user!.role === "BA" }/>
+                    <UserListTable
+                      title={'Active Clients'}
+                      userList={clientList.filter(user => user.active)}
+                      showLoading={isLoadingCList}
+                      showEditBtn={auth.user!.role === 'BA' || auth.user!.role === 'DM'}
+                      showDeleteBtn={auth.user!.role === 'BA'}
+                    />
                   </TabPanel>
                 )}
 
@@ -147,7 +119,11 @@ const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
             </CardContent>
           </Card>
         </Grid>
-        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addClient={auth.user!.role=== 'BA' || auth.user!.role=== 'DM'}/>
+        <AddUserDrawer
+          open={addUserOpen}
+          toggle={toggleAddUserDrawer}
+          addClient={auth.user!.role === 'BA' || auth.user!.role === 'DM'}
+        />
       </Grid>
     </>
   )
