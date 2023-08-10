@@ -10,6 +10,7 @@ const userApi = baseApi.injectEndpoints({
       query: () => '/API/auth/get-total-of-c',
       providesTags: [{ type: 'User', id: 'C' }]
     }),
+
     //Admin
     baCount: build.query<StatusResponse, void>({
       query: () => '/API/auth/total-of-ba',

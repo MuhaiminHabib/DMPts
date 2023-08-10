@@ -40,7 +40,7 @@ const socialAccountsArr: SocialAccountsType[] = [
 const TabConnections = () => {
   //Hooks
 
-  const { isLoading, isError, error, data: FbPageList } = useFetchFbPageListQuery()
+  const { isLoading, data: FbPageList } = useFetchFbPageListQuery()
   const [deleteFbPage] = useDeleteFbPageMutation()
 
   //Functions
