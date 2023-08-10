@@ -36,7 +36,7 @@ import {
 } from 'src/store/query/fbApi'
 import { AuthContext } from 'src/context/AuthContext'
 import { UsersType } from 'src/types/apps/userTypes'
-import { useFetchCListForBAQuery, useFetchCListForDMQuery, useFetchCListQuery } from 'src/store/query/userApi'
+import { useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 const defaultValues = {
@@ -51,8 +51,6 @@ const defaultValues = {
 
 const NewPost = () => {
   // ** State
-
-  const [addPostOpen, setAddPostOpen] = useState<boolean>(false)
 
   // ** Hooks
 
@@ -148,26 +146,11 @@ const NewPost = () => {
     return selectedDate >= minDate && selectedDate <= maxDate
   }
 
-  const toggleAddPostDrawer = () => setAddPostOpen(!addPostOpen)
-
   const auth = useContext(AuthContext)
-  const [cList, setCList] = useState<UsersType[]>([])
-  const { data: cListData } = useFetchCListQuery()
-  const { data: cListForBaData } = useFetchCListForBAQuery()
-  const { data: cListForDmData } = useFetchCListForDMQuery()
+
+  const { data: clientList } = useFetchCListQuery()
   const clientValue = watch('client')
   const publishOptionSelected = watch('publishOption')
-
-  useEffect(() => {
-    console.log(auth.user?.role)
-    if (auth.user?.role === 'A' && cListData) {
-      setCList(cListData)
-    } else if (auth.user?.role === 'BA' && cListForBaData) {
-      setCList(cListForBaData)
-    } else if (auth.user?.role === 'DM' && cListForDmData) {
-      setCList(cListForDmData)
-    }
-  }, [cListData, cListForBaData, cListForDmData, auth])
 
   //Fetch Client List
   useEffect(() => {
@@ -222,8 +205,8 @@ const NewPost = () => {
                         <MenuItem value=''>Go to Client Page</MenuItem>
                       </Link>
 
-                      {cList
-                        ? cList.map(client => (
+                      {clientList
+                        ? clientList.map(client => (
                             <MenuItem key={client._id} value={client._id}>
                               {client.username}
                             </MenuItem>
@@ -419,8 +402,6 @@ const NewPost = () => {
           </Box>
         </Card>
       </Grid>
-
-      <AddPostDrawer open={addPostOpen} toggle={toggleAddPostDrawer} />
     </Grid>
   )
 }

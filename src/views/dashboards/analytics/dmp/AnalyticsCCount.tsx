@@ -1,38 +1,20 @@
 import CardStatisticsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 
-import { useCCountQuery, useCCountforBAQuery, useCCountforDmQuery,  } from 'src/store/query/statusApi'
-
-
+import { useCCountQuery } from 'src/store/query/statusApi'
 
 const AnalyticsCCount = () => {
   // ** Hook
-  const {
-    isLoading, 
-    data} = useCCountQuery()
-  const {
-    isLoading : CCountforBaIsLoading, 
-    data: CCountforBaData} = useCCountforBAQuery()
-  const {
-    isLoading: isLoadingCCountforDm, 
-    data: CCountforDmData} = useCCountforDmQuery()
-  
-
-    if((isLoading || isLoadingCCountforDm)) {
-      console.log('isLoading')
-    } else if(CCountforDmData) {
-      console.log(CCountforDmData)
-    }
+  const { isLoading, data } = useCCountQuery()
 
   return (
     <CardStatisticsVertical
-    isLoading={isLoading || CCountforBaIsLoading || isLoadingCCountforDm}
+      isLoading={isLoading}
       title='Active Clients'
-      stats={ data ? data.toString() : CCountforBaData ? CCountforBaData.toString() : CCountforDmData ? CCountforDmData.toString() : '0'}
+      stats={data ? data.toString() : '0'}
       trendNumber={28.14}
       avatarSrc='/images/cards/stats-vertical-wallet.pnga'
     />
   )
 }
-
 
 export default AnalyticsCCount

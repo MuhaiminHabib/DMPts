@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 // ** MUI Imports
 import { Box, Card, CardContent, CardHeader, Grid, Pagination, TextField } from '@mui/material'
 
-import { useDeletePostMutation, useFetchPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
+import { useDeletePostMutation, useFetchPublishedPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
@@ -28,7 +28,7 @@ const PublishedPost = () => {
     }
   ] = useSearchPostsMutation()
 
-  const { isFetching, isError, error, data: posts } = useFetchPostsQuery(page)
+  const { isFetching, isError, error, data: posts } = useFetchPublishedPostsQuery(page)
 
   const [
     deletePost,

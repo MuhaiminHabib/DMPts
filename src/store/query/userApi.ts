@@ -16,7 +16,7 @@ const userApi = baseApi.injectEndpoints({
           body: data
         }
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'User', id: arg.role }]
+      invalidatesTags: arg => [{ type: 'User', id: arg.role }]
     }),
     editUser: build.mutation<User, Partial<User>>({
       query(data) {
@@ -26,9 +26,12 @@ const userApi = baseApi.injectEndpoints({
           body: data
         }
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'User', id: arg.role }]
+      invalidatesTags: arg => [{ type: 'User', id: arg.role }]
     }),
-
+    fetchCList: build.query<User[], void>({
+      query: () => '/API/auth/get-c',
+      providesTags: [{ type: 'User', id: 'C' }]
+    }),
     //============Admin============
     fetchBaList: build.query<User[], void>({
       query: () => '/API/auth/ba-list',
@@ -42,10 +45,10 @@ const userApi = baseApi.injectEndpoints({
       query: () => '/API/auth/dm-list',
       providesTags: [{ type: 'User', id: 'DM' }]
     }),
-    fetchCList: build.query<User[], void>({
-      query: () => '/API/auth/c-list',
-      providesTags: [{ type: 'User', id: 'C' }]
-    }),
+    // fetchCList: build.query<User[], void>({
+    //   query: () => '/API/auth/c-list',
+    //   providesTags: [{ type: 'User', id: 'C' }]
+    // }),
     fetchCmList: build.query<User[], void>({
       query: () => '/API/auth/cm-list',
       providesTags: [{ type: 'User', id: 'CM' }]
@@ -107,10 +110,10 @@ const userApi = baseApi.injectEndpoints({
       },
       invalidatesTags: [{ type: 'User', id: 'DM' }]
     }),
-    fetchCListForBA: build.query<User[], void>({
-      query: () => '/API/auth/ba-gets-all-c',
-      providesTags: [{ type: 'User', id: 'C' }]
-    }),
+    // fetchCListForBA: build.query<User[], void>({
+    //   query: () => '/API/auth/ba-gets-all-c',
+    //   providesTags: [{ type: 'User', id: 'C' }]
+    // }),
     baDeletesC: build.mutation<User, string>({
       query(id) {
         return {
@@ -123,10 +126,10 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //============DM============
-    fetchCListForDM: build.query<User[], void>({
-      query: () => '/API/auth/dm-gets-c',
-      providesTags: [{ type: 'User', id: 'C' }]
-    }),
+    // fetchCListForDM: build.query<User[], void>({
+    //   query: () => '/API/auth/dm-gets-c',
+    //   providesTags: [{ type: 'User', id: 'C' }]
+    // }),
     dmDeletesC: build.mutation<User, string>({
       query(id) {
         return {
@@ -171,9 +174,9 @@ export const {
   useActivateBaMutation,
   useFetchDmListForBaQuery,
   useBaDeletesDmMutation,
-  useFetchCListForBAQuery,
+  // useFetchCListForBAQuery,
   useBaDeletesCMutation,
-  useFetchCListForDMQuery,
+  // useFetchCListForDMQuery,
   useDmDeletesCMutation,
   useFetchCmListForCQuery,
   useCDeletesCmMutation

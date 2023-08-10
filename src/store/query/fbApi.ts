@@ -15,6 +15,7 @@ const fbApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['FbPages']
     }),
+
     publishToFb: build.mutation<Post, Partial<Post>>({
       query: body => ({
         url: `/API/fb-api/publish-to-fb`,
@@ -45,6 +46,13 @@ const fbApi = baseApi.injectEndpoints({
         method: 'GET'
       }),
       invalidatesTags: ['FbPages']
+    }),
+    deleteFbPage: build.mutation<FbPage[], string>({
+      query: pageId => ({
+        url: `/API/fb-api/${pageId}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['FbPages']
     })
   }),
   overrideExisting: false
@@ -56,5 +64,6 @@ export const {
   usePublishToFbMutation,
   useScheduleToFbMutation,
   useDraftToFbMutation,
-  useAddFbPageMutation
+  useAddFbPageMutation,
+  useDeleteFbPageMutation
 } = fbApi
