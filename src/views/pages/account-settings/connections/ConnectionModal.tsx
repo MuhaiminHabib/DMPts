@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useContext, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // ** Config
 
@@ -12,9 +12,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import { Box, Typography } from '@mui/material'
-import { UsersType } from 'src/types/apps/userTypes'
 import { useFetchCListQuery } from 'src/store/query/userApi'
-import { AuthContext } from 'src/context/AuthContext'
 import { useAddFbPageMutation } from 'src/store/query/fbApi'
 
 type account = {
@@ -30,8 +28,7 @@ const ConnectionModal = ({ account }: inputProps) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
-  const auth = useContext(AuthContext)
-  // const [cList, setCList] = useState<UsersType[]>([])
+  // ** Hooks
   const { data: clientList } = useFetchCListQuery()
 
   // useEffect(() => {

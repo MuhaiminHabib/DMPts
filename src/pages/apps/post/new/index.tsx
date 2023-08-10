@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
@@ -24,7 +24,7 @@ import {
   RadioGroup,
   Typography
 } from '@mui/material'
-import AddPostDrawer from 'src/views/apps/post/list/AddPostDrawer'
+
 import { Controller, useForm } from 'react-hook-form'
 import { Post } from 'src/types/apps/postSchema'
 import Link from 'next/link'
@@ -34,8 +34,7 @@ import {
   usePublishToFbMutation,
   useScheduleToFbMutation
 } from 'src/store/query/fbApi'
-import { AuthContext } from 'src/context/AuthContext'
-import { UsersType } from 'src/types/apps/userTypes'
+
 import { useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
@@ -145,8 +144,6 @@ const NewPost = () => {
 
     return selectedDate >= minDate && selectedDate <= maxDate
   }
-
-  const auth = useContext(AuthContext)
 
   const { data: clientList } = useFetchCListQuery()
   const clientValue = watch('client')
