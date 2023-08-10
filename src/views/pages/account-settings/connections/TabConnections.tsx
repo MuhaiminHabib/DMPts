@@ -16,6 +16,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { useDeleteFbPageMutation, useFetchFbPageListQuery } from 'src/store/query/fbApi'
 import ConnectionModal from './ConnectionModal'
 import Loader from 'src/shared-components/Loader'
+import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 
 interface SocialAccountsType {
   id: number
@@ -40,8 +41,8 @@ const socialAccountsArr: SocialAccountsType[] = [
 const TabConnections = () => {
   //Hooks
 
-  const { isLoading, data: FbPageList } = useFetchFbPageListQuery()
-  const [deleteFbPage] = useDeleteFbPageMutation()
+  const { isFetching, data: FbPageList } = useFetchFbPageListQuery()
+  const [deleteFbPage, { isLoading, isError, error, data: pageDeleteData }] = useDeleteFbPageMutation()
 
   //Functions
   const handleDelete = (pageId: string) => {
@@ -83,7 +84,7 @@ const TabConnections = () => {
               Display content from your connected accounts on your site
             </Typography>
 
-            {isLoading ? (
+            {isFetching ? (
               <Loader />
             ) : FbPageList ? (
               FbPageList.map(fbPage => (
