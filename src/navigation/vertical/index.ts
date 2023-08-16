@@ -15,19 +15,19 @@ const navigation = (): VerticalNavItemsType => {
       subject: 'users-navItem',
       children: [
         {
-          title: 'Businesses',
+          title: 'Business',
           path: '/apps/user/ba-list',
           action: 'read',
           subject: 'businesses-navItem'
         },
         {
-          title: 'Digital Managers',
+          title: 'Digital Manager',
           path: '/apps/user/dm-list',
           action: 'read',
           subject: 'dm-navItem'
         },
         {
-          title: 'Clients',
+          title: 'Client',
           path: '/apps/user/c-list',
           action: 'read',
           subject: 'c-navItem'
@@ -41,7 +41,7 @@ const navigation = (): VerticalNavItemsType => {
       ]
     },
     {
-      title: 'Posts',
+      title: 'Post',
       icon: 'bx:food-menu',
       children: [
         {

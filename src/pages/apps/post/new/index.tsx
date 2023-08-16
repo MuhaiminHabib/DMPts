@@ -11,9 +11,11 @@ import FormHelperText from '@mui/material/FormHelperText'
 
 // ** MUI Imports
 import {
+  Badge,
   Card,
   CardHeader,
   Checkbox,
+  Divider,
   FormControlLabel,
   FormLabel,
   Grid,
@@ -76,6 +78,16 @@ const NewPost = () => {
     defaultValues,
     mode: 'onChange'
   })
+
+  const clientValue = watch('client')
+  const pageIdValue = watch('pageId')
+  const bodyValue = watch('body')
+
+  const isClientValid = !!clientValue
+  const isPageIdValid = !!pageIdValue
+  const isBodyValid = !!bodyValue
+
+  const isFormValid = isClientValid && isPageIdValid && isBodyValid
 
   // ** Functions
   const onSubmit = async (data: Post) => {
@@ -163,7 +175,6 @@ const NewPost = () => {
   }
 
   const { data: clientList } = useFetchCListQuery()
-  const clientValue = watch('client')
   const publishOptionSelected = watch('publishOption')
 
   //Fetch Client List
@@ -215,6 +226,8 @@ const NewPost = () => {
                       labelId='client-select'
                       aria-describedby='client-select'
                     >
+                      <MenuItem value=''>none</MenuItem>
+
                       <Link href='/apps/user/c-list/' style={{ textDecoration: 'none', color: 'inherit' }}>
                         <MenuItem value=''>Go to Client Page</MenuItem>
                       </Link>
@@ -253,6 +266,7 @@ const NewPost = () => {
                       error={Boolean(errors.pageId)}
                       labelId='platform-select'
                       aria-describedby='platform-select'
+                      disabled={getValues('client') === '' ? true : false}
                     >
                       <MenuItem value=''>none</MenuItem>
                       {fbPageListOfClient
@@ -293,7 +307,7 @@ const NewPost = () => {
               </FormControl>
 
               {/* file */}
-              <Controller
+              {/* <Controller
                 name='file'
                 control={control}
                 render={({ field: { onChange } }) => (
@@ -323,17 +337,80 @@ const NewPost = () => {
                     )}
                   </div>
                 )}
+              /> */}
+
+              <Controller
+                name='file'
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+                      <Box>
+                        <input
+                          accept='image/*'
+                          style={{ display: 'none' }}
+                          id='contained-button-file'
+                          multiple
+                          type='file'
+                          onChange={e => {
+                            onChange(e.target.files)
+                          }}
+                        />
+
+                        <label htmlFor='contained-button-file'>
+                          <Button variant='contained' component='span'>
+                            Select Image
+                          </Button>
+                        </label>
+                      </Box>
+
+                      <Box sx={{}}>
+                        <Badge badgeContent='Coming Soon' color='error'>
+                          <input
+                            accept='video/*'
+                            style={{ display: 'none' }}
+                            id='contained-button-video'
+                            multiple
+                            type='file'
+                          />
+
+                          <label htmlFor='contained-button-video'>
+                            <Button variant='contained' component='span'>
+                              Select Video
+                            </Button>
+                          </label>
+                        </Badge>
+                      </Box>
+                    </Box>
+                    {/* Display selected file name */}
+                    {getValues().file && getValues().file![0] ? (
+                      <Box sx={{ py: '10' }}>
+                        <Typography>{getValues().file![0].name}</Typography>
+                      </Box>
+                    ) : (
+                      'No file selected'
+                    )}
+                  </>
+                )}
               />
 
+              <Divider sx={{ my: theme => `${theme.spacing(5)} !important` }} />
+
               {/* RadioGroup for selecting publish option */}
-              <FormControl fullWidth sx={{ py: 5 }}>
-                <FormLabel id='publish-option-label'>Publish Option</FormLabel>
+              <FormControl fullWidth sx={{ pt: 2, pb: 6 }}>
+                <FormLabel id='publish-option-label'>Publishing Options</FormLabel>
                 <Controller
                   name='publishOption'
                   control={control}
                   defaultValue='publish' // Set a default value here if needed
                   render={({ field: { value, onChange } }) => (
-                    <RadioGroup aria-label='publish-option' name='publishOption' value={value} onChange={onChange}>
+                    <RadioGroup
+                      aria-label='publish-option'
+                      name='publishOption'
+                      value={value}
+                      onChange={onChange}
+                      sx={{ flexDirection: 'row' }} // Add this line to style the RadioGroup
+                    >
                       <FormControlLabel value='publish' control={<Radio />} label='Publish' />
                       <FormControlLabel value='draft' control={<Radio />} label='Draft' />
                       <FormControlLabel value='schedule' control={<Radio />} label='Schedule' />
@@ -345,7 +422,7 @@ const NewPost = () => {
               {publishOptionSelected === 'schedule' ? (
                 <>
                   {/* Schedule Date */}
-                  <FormControl fullWidth sx={{ mb: 6 }}>
+                  <FormControl sx={{ mb: 6 }}>
                     <Controller
                       name='scheduledDate'
                       control={control}
@@ -403,12 +480,12 @@ const NewPost = () => {
               <Box
                 sx={{
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  justifyContent: 'center',
                   alignItems: 'center',
                   marginTop: '20px'
                 }}
               >
-                <Button size='large' variant='contained' type='submit'>
+                <Button size='large' variant='contained' type='submit' disabled={!isFormValid}>
                   Create Post
                 </Button>
               </Box>

@@ -110,9 +110,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     reset,
     control,
 
-    // setValue,
-    // setError,
-
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -120,6 +117,21 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log('Loading')
+      showLoadingAlert()
+    } else if (isError) {
+      console.log(error)
+      showErrorAlert({ error: error })
+    } else if (data) {
+      showSuccessAlert({ text: 'User Created' })
+      handleClose()
+    }
+  }, [isLoading, isError, error, data])
+
+  // ** Functions
   const onSubmit = async (data: UserData) => {
     console.log('from form:', data)
     createUser(data)
@@ -129,22 +141,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     toggle()
     reset()
   }
-
-  if (isLoading) {
-    console.log('Loading')
-    showLoadingAlert()
-  } else if (isError) {
-    console.log(error)
-    showErrorAlert({ error: error })
-  } else if (data) {
-    showSuccessAlert({ text: 'User Created' })
-  }
-
-  useEffect(() => {
-    if (data) {
-      handleClose()
-    }
-  }, [data])
 
   return (
     <Drawer

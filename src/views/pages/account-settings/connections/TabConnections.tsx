@@ -20,15 +20,13 @@ import Loader from 'src/shared-components/Loader'
 interface SocialAccountsType {
   id: number
   title: string
-  logo: string
 }
 
 //States
 const socialAccountsArr: SocialAccountsType[] = [
   {
     id: 1,
-    title: 'Facebook',
-    logo: '/images/logos/facebook.png'
+    title: 'Add Facebook Page'
   }
 
   // {
@@ -40,7 +38,7 @@ const socialAccountsArr: SocialAccountsType[] = [
 const TabConnections = () => {
   //Hooks
 
-  const { isFetching, data: FbPageList } = useFetchFbPageListQuery()
+  const { isFetching, data: socialAccountsList } = useFetchFbPageListQuery()
   const [deleteFbPage] = useDeleteFbPageMutation()
 
   //Functions
@@ -49,8 +47,8 @@ const TabConnections = () => {
     deleteFbPage(pageId)
   }
 
-  if (FbPageList) {
-    console.log('list is:', FbPageList)
+  if (socialAccountsList) {
+    console.log('list is:', socialAccountsList)
   }
 
   return (
@@ -58,10 +56,8 @@ const TabConnections = () => {
       {/* Social Accounts Cards */}
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Social Accounts' />
+          <CardHeader title='Add a new social account' />
           <CardContent>
-            <Typography sx={{ mb: 4, color: 'text.secondary' }}>Choose a social network to add an account</Typography>
-
             {socialAccountsArr.map(account => (
               <Box
                 key={account.id}
@@ -78,20 +74,16 @@ const TabConnections = () => {
           <Divider sx={{ my: theme => `${theme.spacing(1)} !important` }} />
 
           {/* Connected Accounts Cards */}
+          <CardHeader title='Connected social accounts' />
           <CardContent>
-            <Typography sx={{ mb: 4, color: 'text.secondary' }}>
-              Display content from your connected accounts on your site
-            </Typography>
-
             {isFetching ? (
               <Loader />
-            ) : FbPageList ? (
-              FbPageList.map(fbPage => (
+            ) : socialAccountsList ? (
+              socialAccountsList.map(socialAccount => (
                 <Button
-                  key={fbPage._id}
+                  key={socialAccount._id}
                   variant='outlined'
                   sx={{
-                    px: 2,
                     marginRight: 5,
                     marginBottom: 5
                   }}
@@ -104,17 +96,30 @@ const TabConnections = () => {
                       width: 360
                     }}
                   >
-                    <Box sx={{ mr: 4, display: 'flex', justifyContent: 'center' }}>
-                      <img src={'/images/logos/facebook.png'} alt={fbPage.name} height='30' width='30' />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <img src={'/images/logos/facebook.png'} alt={socialAccount.name} height='30' />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'start',
+                          justifyContent: 'start',
+                          flexDirection: 'column',
+                          textTransform: 'none'
+                        }}
+                      >
+                        <Typography>{socialAccount.name}</Typography>
+                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                          Facebook Page
+                        </Typography>
+                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                          Client: {socialAccount.client.username}
+                        </Typography>
+                      </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'start', flexDirection: 'column' }}>
-                      <Typography>{fbPage.name}</Typography>
-                      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                        FaceBook Page
-                      </Typography>
-                    </Box>
-                    <Button onClick={() => handleDelete(fbPage._id)}>
-                      <DeleteForeverIcon />
+                    <Button onClick={() => handleDelete(socialAccount._id)}>
+                      <DeleteForeverIcon color='error' fontSize='large' />
                     </Button>
                   </Box>
                 </Button>
