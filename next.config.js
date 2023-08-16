@@ -6,6 +6,9 @@ const path = require('path')
 // Remove this if you're not using Fullcalendar features
 
 module.exports = {
+  images: {
+    domains: ['www.saicoshop.com'] // Add the domains you want to allow
+  },
   trailingSlash: true,
   reactStrictMode: false,
   webpack: config => {

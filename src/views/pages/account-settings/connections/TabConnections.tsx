@@ -40,7 +40,7 @@ const socialAccountsArr: SocialAccountsType[] = [
 const TabConnections = () => {
   //Hooks
 
-  const { isLoading, data: FbPageList } = useFetchFbPageListQuery()
+  const { isFetching, data: FbPageList } = useFetchFbPageListQuery()
   const [deleteFbPage] = useDeleteFbPageMutation()
 
   //Functions
@@ -83,7 +83,7 @@ const TabConnections = () => {
               Display content from your connected accounts on your site
             </Typography>
 
-            {isLoading ? (
+            {isFetching ? (
               <Loader />
             ) : FbPageList ? (
               FbPageList.map(fbPage => (

@@ -25,11 +25,17 @@ const defineRulesFor = (role: string, subject: string) => {
   } else if (role === 'BA') {
     can('manage', 'all')
     cannot(['read'], ['businesses-navItem', 'cm-navItem'])
-    cannot(['read'], ['analytics-aStats', 'analytics-dmStats', 'analytics-cStats', 'analytics-cmStats', 'cm-list-page'])
+    cannot(
+      ['read'],
+      ['analytics-aStats', 'analytics-dmStats', 'analytics-cStats', 'analytics-cmStats', 'cm-list-page', 'filter-ba']
+    )
   } else if (role === 'DM') {
     can('manage', 'all')
     cannot(['read'], ['businesses-navItem', 'dm-navItem'])
-    cannot(['read'], ['analytics-aStats', 'analytics-baStats', 'analytics-cStats', 'analytics-cmStats'])
+    cannot(
+      ['read'],
+      ['analytics-aStats', 'analytics-baStats', 'analytics-cStats', 'analytics-cmStats', 'filter-ba', 'filter-dm']
+    )
   } else if (role === 'C') {
     can(['manage'], 'all')
     cannot(
@@ -44,7 +50,10 @@ const defineRulesFor = (role: string, subject: string) => {
         'c-navItem',
         'edit-post',
         'delete-post',
-        'add-post'
+        'add-post',
+        'filter-ba',
+        'filter-dm',
+        'filter-c'
       ]
     )
   } else if (role === 'CM') {

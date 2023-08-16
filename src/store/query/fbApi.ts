@@ -16,7 +16,7 @@ const fbApi = baseApi.injectEndpoints({
       invalidatesTags: ['FbPages']
     }),
 
-    publishToFb: build.mutation<Post, Partial<Post>>({
+    publishToFb: build.mutation<Post, any>({
       query: body => ({
         url: `/API/fb-api/publish-to-fb`,
         method: 'POST',

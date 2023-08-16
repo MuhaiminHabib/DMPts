@@ -1,12 +1,9 @@
 // ** React Imports
 import { useEffect } from 'react'
-
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
-
 import TextField from '@mui/material/TextField'
-
 import InputLabel from '@mui/material/InputLabel'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
@@ -26,7 +23,7 @@ import {
 } from '@mui/material'
 
 import { Controller, useForm } from 'react-hook-form'
-import { Post } from 'src/types/apps/postSchema'
+import { Post, zPostForPostCreate } from 'src/types/apps/postSchema'
 import Link from 'next/link'
 import {
   useDraftToFbMutation,
@@ -42,10 +39,11 @@ const defaultValues = {
   client: '',
   pageId: '',
   body: '',
+  permissionLevel: 'C',
   publishOption: 'publish',
   scheduledDate: '',
   visibleToClient: false,
-  content: null
+  file: null
 }
 
 const NewPost = () => {
@@ -77,61 +75,80 @@ const NewPost = () => {
   } = useForm<Post>({
     defaultValues,
     mode: 'onChange'
-
-    // resolver: zodResolver(SidebarAddPostSchema)
   })
 
   // ** Functions
-  const onSubmit = async (data: Post, errors: any) => {
-    console.log(data, errors)
-    const selectedOption = data.publishOption
+  const onSubmit = async (data: Post) => {
+    zPostForPostCreate.safeParse(data)
+    const formData = new FormData()
 
+    Object.keys(data).forEach((key: any) => {
+      console.log('key is: ', key)
+      console.log('value is: ', data[key])
+      const value = data[key as keyof Post]
+      if (value === undefined) return
+
+      // Skip undefined values
+      if (key === 'file' && value instanceof FileList) {
+        // If value is a FileList, append the first file
+        data[key][0]['mimetype'] = data[key][0]['type']
+        formData.append(key, data[key][0])
+
+        console.log('form data after:', formData.get(key))
+      } else if (key === 'scheduledDate' && data[key] !== '') {
+        const localDate = new Date(data.scheduledDate)
+
+        // Get the local timezone offset in minutes
+        const timezoneOffset = localDate.getTimezoneOffset()
+
+        // Convert the local datetime to UTC by subtracting the offset
+        const utcTimestamp = localDate.getTime() - timezoneOffset * 60 * 1000
+
+        // Create a new Date object using the UTC timestamp
+        const utcDate = new Date(utcTimestamp)
+
+        // Get the components of the UTC date
+        const year = utcDate.getUTCFullYear()
+        const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0')
+        const day = String(utcDate.getUTCDate()).padStart(2, '0')
+        const hours = String(utcDate.getUTCHours()).padStart(2, '0')
+        const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0')
+
+        // Create the formatted datetime string
+        const formattedDatetime = `${year}-${month}-${day}T${hours}:${minutes}`
+
+        // Append the formatted UTC datetime to the FormData object
+        formData.append(key, formattedDatetime)
+      } else if (typeof value === 'string' || value instanceof Blob) {
+        // If value is a string or a Blob, append it directly
+        formData.append(key, value)
+      } else if (value instanceof Array) {
+        // If value is an array, convert it to a JSON string
+        formData.append(key, JSON.stringify(value))
+      } else if (typeof value === 'object') {
+        // If value is an object, convert it to a JSON string
+        formData.append(key, JSON.stringify(value))
+      } else {
+        // If value is a number or boolean, convert it to a string
+        formData.append(key, String(value))
+      }
+    })
+    console.log('formData before sumbitting is: ', formData)
+
+    const selectedOption = data.publishOption
     if (selectedOption === 'publish') {
       // Handle publish
-      publishToFb(data)
+      publishToFb(formData as any)
       console.log('will handle publish')
     } else if (selectedOption === 'draft') {
       // Handle draft
       console.log('will handle draft')
-      draftToFb(data)
+      draftToFb(formData as any)
     } else if (selectedOption === 'schedule') {
       // Handle schedule
       console.log('will handle schedule')
-      scheduleToFb(data)
+      scheduleToFb(formData as any)
     }
-
-    // if (errors) {
-    //   console.log(errors)
-    // }
-    // zPostForPostCreate.safeParse(data)
-    // const formData = new FormData()
-    // Object.keys(data).forEach((key: any) => {
-    //   const value = data[key as keyof Post]
-    //   if (value === undefined) return
-    //   // Skip undefined values
-    //   if (key === 'content' && value instanceof FileList) {
-    //     // If value is a FileList, append the first file
-    //     formData.append('content', value[0])
-    //   } else if (typeof value === 'string' || value instanceof Blob) {
-    //     // If value is a string or a Blob, append it directly
-    //     formData.append(key, value)
-    //   } else if (value instanceof Array) {
-    //     // If value is an array, convert it to a JSON string
-    //     formData.append(key, JSON.stringify(value))
-    //   } else if (typeof value === 'object') {
-    //     // If value is an object, convert it to a JSON string
-    //     formData.append(key, JSON.stringify(value))
-    //   } else {
-    //     // If value is a number or boolean, convert it to a string
-    //     formData.append(key, String(value))
-    //   }
-    // })
-    // console.log('formData before sumbitting is: ', formData)
-
-    // for (const pair of formData.entries()) {
-    //   console.log(pair[0], pair[1])
-    // }
-    // publishToFb(formData as any)
   }
 
   //Validate schudule date
@@ -277,7 +294,7 @@ const NewPost = () => {
 
               {/* file */}
               <Controller
-                name='content'
+                name='file'
                 control={control}
                 render={({ field: { onChange } }) => (
                   <div>
@@ -297,9 +314,9 @@ const NewPost = () => {
                         Select File
                       </Button>
                     </label>
-                    {getValues().content && getValues().content![0] ? (
+                    {getValues().file && getValues().file![0] ? (
                       <Box sx={{ py: '10' }}>
-                        <Typography>{getValues().content![0].name}</Typography>
+                        <Typography>{getValues().file![0].name}</Typography>
                       </Box>
                     ) : (
                       'No file selected'

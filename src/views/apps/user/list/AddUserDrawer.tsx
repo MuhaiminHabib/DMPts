@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -62,29 +62,29 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
   backgroundColor: theme.palette.background.default
 }))
 
-
 const schema = yup.object().shape({
-  username: yup.string().min(4).matches(
-    /^[a-zA-Z0-9]{4,}$/,
-    'Must contain 4 characters of letters and digits only'
-    ).required(),
+  username: yup
+    .string()
+    .min(4)
+    .matches(/^[a-zA-Z0-9]{4,}$/, 'Must contain 4 characters of letters and digits only')
+    .required(),
   email: yup.string().email().required(),
   firstName: yup.string().required(),
   lastName: yup.string().required(),
   role: yup.string().required(),
   password: yup
-  .string()
-  .min(8)
-  .max(16)
-  .matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,16})/,
-    'Must contain 8 to 16 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
+    .string()
+    .min(8)
+    .max(16)
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,16})/,
+      'Must contain 8 to 16 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
     )
     .required(),
   passwordVerify: yup
-  .string()
-  .required()
-  .oneOf([yup.ref('password')], 'Passwords must match')
+    .string()
+    .required()
+    .oneOf([yup.ref('password')], 'Passwords must match')
 })
 
 const defaultValues = {
@@ -97,8 +97,6 @@ const defaultValues = {
   role: ''
 }
 
-
-
 const SidebarAddUser = (props: SidebarAddUserType) => {
   // ** Props
   const { open, toggle, addClient, addDm, addCm } = props
@@ -107,7 +105,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
 
   // ** Hooks
   const auth = useContext(AuthContext)
-  const [createUser, {isLoading, isError, error, data}] = useCreateUserMutation()
+  const [createUser, { isLoading, isError, error, data }] = useCreateUserMutation()
   const {
     reset,
     control,
@@ -125,7 +123,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   const onSubmit = async (data: UserData) => {
     console.log('from form:', data)
     createUser(data)
-    handleClose()
   }
 
   const handleClose = () => {
@@ -133,15 +130,21 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     reset()
   }
 
-  if(isLoading) {
+  if (isLoading) {
     console.log('Loading')
     showLoadingAlert()
-  } else if(isError) {
+  } else if (isError) {
     console.log(error)
-    showErrorAlert({error: error })
-  } else if(data) {
-    showSuccessAlert({text: 'User Created'})
+    showErrorAlert({ error: error })
+  } else if (data) {
+    showSuccessAlert({ text: 'User Created' })
   }
+
+  useEffect(() => {
+    if (data) {
+      handleClose()
+    }
+  }, [data])
 
   return (
     <Drawer
@@ -167,7 +170,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <TextField
-                
                   value={value}
                   label='First Name'
                   onChange={onChange}
@@ -280,28 +282,18 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                   labelId='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 >
-                  <option aria-label="None" value="" />
-                  {auth.user?.role === 'A' ?
-                   <MenuItem value='BA'>
-                   Business
-                 </MenuItem> : 
-                  (auth.user?.role === 'BA' && addDm)  ?
-                  <MenuItem value='DM'>
-                   Digital Manager
-                 </MenuItem> : 
-                 (auth.user?.role === 'BA' && addClient)  ?
-                 <MenuItem value='C'>
-                  Client
-                </MenuItem> :
-                 (auth.user?.role === 'DM' && addClient)  ?
-                 <MenuItem value='C'>
-                  Client
-                </MenuItem> :
-                 (auth.user?.role === 'C' && addCm)  ?
-                 <MenuItem value='CM'>
-                  Client Manager
-                </MenuItem> : null
-                 }
+                  <option aria-label='None' value='' />
+                  {auth.user?.role === 'A' ? (
+                    <MenuItem value='BA'>Business</MenuItem>
+                  ) : auth.user?.role === 'BA' && addDm ? (
+                    <MenuItem value='DM'>Digital Manager</MenuItem>
+                  ) : auth.user?.role === 'BA' && addClient ? (
+                    <MenuItem value='C'>Client</MenuItem>
+                  ) : auth.user?.role === 'DM' && addClient ? (
+                    <MenuItem value='C'>Client</MenuItem>
+                  ) : auth.user?.role === 'C' && addCm ? (
+                    <MenuItem value='CM'>Client Manager</MenuItem>
+                  ) : null}
                 </Select>
               )}
             />
