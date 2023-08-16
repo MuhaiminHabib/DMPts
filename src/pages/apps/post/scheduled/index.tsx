@@ -9,11 +9,14 @@ import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/sw
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
 import FilterModal from 'src/views/apps/post/list/FilterModal'
+import { Post } from 'src/types/apps/postSchema'
 
-const ScheduledPost = () => {
+const PublishedPost = () => {
   // ** State
 
   const [page, setPage] = useState<number>(1)
+  const [postList, setPostList] = useState<Post[]>([])
+  const [nowShowing, setNowShowing] = useState<'pagePosts' | 'searchPosts' | 'filteredPosts'>('pagePosts')
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
@@ -55,10 +58,18 @@ const ScheduledPost = () => {
 
   useEffect(() => {
     if (posts) {
-      console.log('posts is ho ho ho:', posts.postings)
+      setNowShowing('pagePosts')
+      setPostList(posts.postings)
     }
-    console.log('hiii there')
   }, [posts])
+
+  useEffect(() => {
+    if (searchPost) {
+      setPage(1)
+      setNowShowing('searchPosts')
+      setPostList(searchPost)
+    }
+  }, [searchPost])
 
   if (isLoadingDeletePost) {
     showLoadingAlert()
@@ -74,7 +85,8 @@ const ScheduledPost = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Scheduled Posts' />
+          <CardHeader title='Published Posts' />
+
           {/* <TableHeader /> */}
           <Box
             justifyItems={'center'}
@@ -96,26 +108,23 @@ const ScheduledPost = () => {
               onChange={e => handleSearchTextChange(e.target.value)}
             />
 
-            <FilterModal />
+            <FilterModal setPostList={setPostList} setNowShowing={setNowShowing} setPage={setPage} />
           </Box>
-          <PostListTable
-            isFetching={isFetching}
-            posts={searchPost ? searchPost : posts && posts.postings?.length > 0 ? posts.postings : []}
-            page={page}
-            handlePostDelete={handlePostDelete}
-          />
+          <PostListTable isFetching={isFetching} posts={postList} page={page} handlePostDelete={handlePostDelete} />
 
-          <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Pagination
-              count={posts ? Math.ceil(posts.info.totalNumberOfPostings / 10) : 1}
-              page={page}
-              onChange={handleChange}
-            />
-          </CardContent>
+          {nowShowing === 'pagePosts' ? (
+            <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Pagination
+                count={posts ? Math.ceil(posts.info.totalNumberOfPostings / 10) : 1}
+                page={page}
+                onChange={handleChange}
+              />
+            </CardContent>
+          ) : null}
         </Card>
       </Grid>
     </Grid>
   )
 }
 
-export default ScheduledPost
+export default PublishedPost

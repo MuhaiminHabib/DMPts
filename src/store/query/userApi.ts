@@ -32,6 +32,10 @@ const userApi = baseApi.injectEndpoints({
       query: () => '/API/auth/get-c',
       providesTags: [{ type: 'User', id: 'C' }]
     }),
+    fetchDmList: build.query<User[], void>({
+      query: () => '/API/auth/get-dm',
+      providesTags: [{ type: 'User', id: 'DM' }]
+    }),
 
     //============Admin============
     fetchBaList: build.query<User[], void>({
@@ -41,10 +45,6 @@ const userApi = baseApi.injectEndpoints({
     fetchInactiveBaList: build.query<User[], void>({
       query: () => '/API/auth/inactive-users',
       providesTags: [{ type: 'User', id: 'BA' }]
-    }),
-    fetchDmList: build.query<User[], void>({
-      query: () => '/API/auth/dm-list',
-      providesTags: [{ type: 'User', id: 'DM' }]
     }),
     fetchCmList: build.query<User[], void>({
       query: () => '/API/auth/cm-list',
@@ -93,10 +93,6 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //============BA============
-    fetchDmListForBa: build.query<User[], void>({
-      query: () => '/API/auth/ba-gets-all-dms',
-      providesTags: [{ type: 'User', id: 'DM' }]
-    }),
     baDeletesDm: build.mutation<User, string>({
       query(id) {
         return {
@@ -119,10 +115,16 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //============DM============
-    // fetchCListForDM: build.query<User[], void>({
-    //   query: () => '/API/auth/dm-gets-c',
-    //   providesTags: [{ type: 'User', id: 'C' }]
-    // }),
+    cBelongToDm: build.mutation<User[], string>({
+      query(DMID) {
+        return {
+          url: `/API/auth/c-belongs-to-dm`,
+          method: 'POST',
+          body: { DMID }
+        }
+      },
+      invalidatesTags: [{ type: 'User', id: 'C' }]
+    }),
     dmDeletesC: build.mutation<User, string>({
       query(id) {
         return {
@@ -165,9 +167,9 @@ export const {
   useCBelongToBaMutation,
   useInactivateBaMutation,
   useActivateBaMutation,
-  useFetchDmListForBaQuery,
   useBaDeletesDmMutation,
   useBaDeletesCMutation,
+  useCBelongToDmMutation,
   useDmDeletesCMutation,
   useFetchCmListForCQuery,
   useCDeletesCmMutation

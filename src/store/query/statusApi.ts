@@ -11,14 +11,15 @@ const userApi = baseApi.injectEndpoints({
       providesTags: [{ type: 'User', id: 'C' }]
     }),
 
+    dmCount: build.query<StatusResponse, void>({
+      query: () => '/API/auth/get-total-of-dm',
+      providesTags: [{ type: 'User', id: 'DM' }]
+    }),
+
     //Admin
     baCount: build.query<StatusResponse, void>({
       query: () => '/API/auth/total-of-ba',
       providesTags: [{ type: 'User', id: 'BA' }]
-    }),
-    dmCount: build.query<StatusResponse, void>({
-      query: () => '/API/auth/a-gets-total-of-dm',
-      providesTags: [{ type: 'User', id: 'DM' }]
     }),
     cmCount: build.query<StatusResponse, void>({
       query: () => '/API/auth/a-gets-total-of-cm',
@@ -30,11 +31,6 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //BA
-    dmCountforBA: build.query<StatusResponse, void>({
-      query: () => 'API/auth/ba-gets-total-of-dm',
-      providesTags: [{ type: 'User', id: 'DM' }]
-    }),
-
     cmCountforBA: build.query<StatusResponse, void>({
       query: () => '/API/auth/ba-gets-total-of-cm',
       providesTags: [{ type: 'User', id: 'CM' }]
@@ -75,7 +71,6 @@ export const {
   useDmCountQuery,
   useCmCountQuery,
   usePostCountQuery,
-  useDmCountforBAQuery,
   useCmCountforBAQuery,
   usePostCountforBAQuery,
   usePostCountforDmQuery,

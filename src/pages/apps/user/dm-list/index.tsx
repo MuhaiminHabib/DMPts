@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
-import { useState, useEffect, useContext, SyntheticEvent } from 'react'
-import { ThemeColor } from 'src/@core/layouts/types'
-import { UsersType } from 'src/types/apps/userTypes'
+import { useState, useContext, SyntheticEvent } from 'react'
 import UserListTable from 'src/views/apps/user/list/UserListTable'
 import { AuthContext } from 'src/context/AuthContext'
-import { useFetchDmListForBaQuery, useFetchDmListQuery } from 'src/store/query/userApi'
+import { useFetchDmListQuery } from 'src/store/query/userApi'
 import { showErrorAlert } from 'src/utils/swal'
 import { Box, Card, CardContent, CardHeader, Grid, Tab, Tabs, Typography } from '@mui/material'
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-
-
-
-
 
 // ** Vars
 interface TabPanelProps {
@@ -49,66 +43,44 @@ function a11yProps(index: number) {
   }
 }
 
-
-
 const DmList = () => {
   // ** State
 
-const [dmList, setDmList] = useState<UsersType[]>([])
-const [value, setValue] = useState(0)
+  const [value, setValue] = useState(0)
 
-const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
-const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
+  const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
+  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
   // ** Hooks
 
   const auth = useContext(AuthContext)
 
-
   const {
     isLoading: isLoadingFetchDmList,
-    isError: isErrorFetchDmList, 
+    isError: isErrorFetchDmList,
     error: errorFetchDmListError,
-    data : fetchDmListData} = useFetchDmListQuery()
-  const {
-    isLoading: isLoadingFetchDmListForBa, 
-    isError: isErrorFetchDmListForBa, 
-    error: errorFetchDmListForBa, 
-    data : fetchDmListforBaData} = useFetchDmListForBaQuery()
-
-
-  useEffect(() => {
-    if(auth.user?.role === 'A' && fetchDmListData) {
-      setDmList(fetchDmListData)
-    } else if(auth.user?.role === 'BA' && fetchDmListforBaData) {
-      setDmList(fetchDmListforBaData)
-    }
-  }, [fetchDmListforBaData, auth.user?.role, fetchDmListData ])
-
-
-
+    data: dmList
+  } = useFetchDmListQuery()
 
   // **Functions
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
 
-  if ((isErrorFetchDmList && auth.user?.role === 'A') || (isErrorFetchDmListForBa && auth.user?.role === 'BA')) {
-    showErrorAlert({error: errorFetchDmListError || errorFetchDmListForBa})
-  } 
-
+  if (isErrorFetchDmList) {
+    showErrorAlert({ error: errorFetchDmListError })
+  }
 
   return (
-      <>
+    <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
-          {auth.user!.role === 'BA' ? 
-          <CardHeader title='Digital Managers' action={
-            <TableHeader toggle={toggleAddUserDrawer} /> }
-            /> :
-          <CardHeader title='Digital Managers' />
-          }
+            {auth.user!.role === 'BA' ? (
+              <CardHeader title='Digital Managers' action={<TableHeader toggle={toggleAddUserDrawer} />} />
+            ) : (
+              <CardHeader title='Digital Managers' />
+            )}
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -119,16 +91,18 @@ const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
                 </Box>
                 {dmList && dmList.length !== 0 && (
                   <TabPanel value={value} index={0}>
-                    <UserListTable 
-                      title={'Active Digital Managers'} 
-                      userList={dmList.filter(user => (user.active))} 
-                      showLoading={isLoadingFetchDmList || isLoadingFetchDmListForBa}
-                      showHeader={auth.user!.role === "BA"}
-                      showEditBtn={auth.user!.role === "BA"}
-                      showDeleteBtn={auth.user!.role === "BA"}/>
+                    <UserListTable
+                      title={'Active Digital Managers'}
+                      userList={dmList.filter(user => user.active)}
+                      showLoading={isLoadingFetchDmList}
+                      showHeader={auth.user!.role === 'BA'}
+                      showEditBtn={auth.user!.role === 'BA'}
+                      showDeleteBtn={auth.user!.role === 'BA'}
+                    />
                   </TabPanel>
                 )}
-{/* 
+
+                {/* 
                 {dmList && dmList.length !== 0 && (
                 <TabPanel value={value} index={1}>
                   <UserListTable 
@@ -142,7 +116,7 @@ const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
             </CardContent>
           </Card>
         </Grid>
-        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addDm={auth.user!.role=== 'BA'}/>
+        <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} addDm={auth.user!.role === 'BA'} />
       </Grid>
     </>
   )

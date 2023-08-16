@@ -7,6 +7,14 @@ type PostObj = {
   }
   postings: Post[]
 }
+type FilterParams = {
+  platform: string
+  start_date: string
+  end_date: string
+  ba_id: string
+  dm_id: string
+  client_id: string
+}
 
 const postApi = baseApi.injectEndpoints({
   endpoints: build => ({
@@ -42,6 +50,14 @@ const postApi = baseApi.injectEndpoints({
           url: `/API/posting/${data._id}`,
           method: 'PUT',
           body: data
+        }
+      },
+      invalidatesTags: ['Post']
+    }),
+    filterPosts: build.mutation<Post, FilterParams>({
+      query({ platform, start_date, end_date, ba_id, dm_id, client_id }) {
+        return {
+          url: `/API/posting/filter?platform=${platform}&start_date=${start_date}&end_date=${end_date}&client_id=${client_id}&ba_id=${ba_id}&dm_id=${dm_id}`
         }
       },
       invalidatesTags: ['Post']
@@ -82,6 +98,7 @@ export const {
   useFetchPostDetailsQuery,
   useCreatePostMutation,
   useEditPostMutation,
+  useFilterPostsMutation,
   useDeletePostMutation,
   useDownloadAttachmentMutation,
   useSearchPostsMutation

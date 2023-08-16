@@ -58,13 +58,7 @@ const CList = () => {
 
   const auth = useContext(AuthContext)
 
-  const {
-    isLoading: isLoadingCList,
-
-    isError: isErrorCList,
-    error: cListError,
-    data: clientList
-  } = useFetchCListQuery()
+  const { isLoading: isLoadingCList, isError: isErrorCList, error: cListError, data: clientList } = useFetchCListQuery()
 
   // **Functions
   const handleChange = (event: SyntheticEvent, newValue: number) => {
