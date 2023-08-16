@@ -11,13 +11,13 @@ import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
-import { Box, Typography } from '@mui/material'
+import { Box, Divider, Typography } from '@mui/material'
 import { useFetchCListQuery } from 'src/store/query/userApi'
 import { useAddFbPageMutation } from 'src/store/query/fbApi'
+import AddIcon from '@mui/icons-material/Add'
 
 type account = {
   title: string
-  logo: string
 }
 
 type inputProps = {
@@ -30,17 +30,6 @@ const ConnectionModal = ({ account }: inputProps) => {
 
   // ** Hooks
   const { data: clientList } = useFetchCListQuery()
-
-  // useEffect(() => {
-  //   console.log(auth.user?.role)
-  //   if (auth.user?.role === 'A' && cListData) {
-  //     setCList(cListData)
-  //   } else if (auth.user?.role === 'BA' && cListForBaData) {
-  //     setCList(cListForBaData)
-  //   } else if (auth.user?.role === 'DM' && cListForDmData) {
-  //     setCList(cListForDmData)
-  //   }
-  // }, [cListData, cListForBaData, cListForDmData, auth])
 
   useEffect(() => {
     if (clientList) {
@@ -55,6 +44,7 @@ const ConnectionModal = ({ account }: inputProps) => {
 
   //Functions
   const login = async (cid: string) => {
+    setOpen(false)
     try {
       await window.FB.login(
         res => {
@@ -89,9 +79,10 @@ const ConnectionModal = ({ account }: inputProps) => {
           marginBottom: 5
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', width: 200 }}>
-          <Box sx={{ mr: 4, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
-            <img src={account.logo} alt={'img_alt'} height='30' />
+        <Box sx={{ display: 'flex', alignItems: 'center', width: 250 }}>
+          <Box sx={{ mr: 1, minWidth: 45, display: 'flex', justifyContent: 'center' }}>
+            {/* <img src={account.logo} alt={'img_alt'} height='30' /> */}
+            <AddIcon sx={{ ml: -4 }} fontSize='large' />
           </Box>
           <div>
             <Typography sx={{ fontWeight: 500 }}>{account.title}</Typography>
@@ -100,10 +91,11 @@ const ConnectionModal = ({ account }: inputProps) => {
       </Button>
 
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>
-        <DialogTitle>
-          <Typography variant={'h4'}>{account.title}</Typography>
+        <DialogTitle sx={{ background: '#f5f5f9' }}>
+          <Typography variant={'h4'}>Select a client</Typography>
         </DialogTitle>
 
+        <Divider sx={{ my: theme => `${theme.spacing(0)} !important` }} />
         <DialogContent>
           {clientList
             ? clientList.map(client => (

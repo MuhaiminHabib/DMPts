@@ -7,7 +7,10 @@ export const zFbPage = z.object({
   name: z.string(),
   tasks: z.array(z.string()),
   user: z.string(),
-  _id: z.string()
+  _id: z.string(),
+  client: z.object({
+    username: z.string()
+  })
 })
 
 export type FbPage = z.infer<typeof zFbPage>

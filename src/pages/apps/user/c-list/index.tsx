@@ -74,7 +74,7 @@ const CList = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
-            {auth.user!.role === 'BA' || auth.user!.role === 'DM' ? (
+            {auth.user!.role === 'BA' ? (
               <CardHeader title='Clients' action={<TableHeader toggle={toggleAddUserDrawer} />} />
             ) : (
               <CardHeader title='Clients' />
