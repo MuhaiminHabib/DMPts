@@ -110,14 +110,8 @@ const NewPost = () => {
       } else if (key === 'scheduledDate' && data[key] !== '') {
         const localDate = new Date(data.scheduledDate)
 
-        // Get the local timezone offset in minutes
-        const timezoneOffset = localDate.getTimezoneOffset()
-
-        // Convert the local datetime to UTC by subtracting the offset
-        const utcTimestamp = localDate.getTime() - timezoneOffset * 60 * 1000
-
-        // Create a new Date object using the UTC timestamp
-        const utcDate = new Date(utcTimestamp)
+        // Convert to UTC
+        const utcDate = new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000)
 
         // Get the components of the UTC date
         const year = utcDate.getUTCFullYear()
