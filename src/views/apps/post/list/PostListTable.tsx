@@ -62,7 +62,7 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     {typeof post.platform !== 'string'
                       ? post.platform.map((item, i) => (
                           <TableCell key={i} align='center' component='th' scope='row'>
-                            {item.platform === 'fb' ? 'Facebook' : 'Unidentifid'}
+                            {item.platform === 'fb' ? 'Facebook' : 'Unidentified'}
                           </TableCell>
                         ))
                       : 'Unknown'}
