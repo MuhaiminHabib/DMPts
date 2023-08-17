@@ -110,8 +110,14 @@ const NewPost = () => {
       } else if (key === 'scheduledDate' && data[key] !== '') {
         const localDate = new Date(data.scheduledDate)
 
-        // Convert to UTC
-        const utcDate = new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000)
+        // Get the local timezone offset in minutes
+        const timezoneOffset = localDate.getTimezoneOffset()
+
+        // Convert the local datetime to UTC by subtracting the offset
+        const utcTimestamp = localDate.getTime() - timezoneOffset * 60 * 1000
+
+        // Create a new Date object using the UTC timestamp
+        const utcDate = new Date(utcTimestamp)
 
         // Get the components of the UTC date
         const year = utcDate.getUTCFullYear()
@@ -121,7 +127,7 @@ const NewPost = () => {
         const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0')
 
         // Create the formatted datetime string
-        const formattedDatetime = `${year}-${month}-${day}T${hours}:${minutes}`
+        const formattedDatetime = `${year}-${month}-${day}T${hours}:${minutes}Z`
 
         // Append the formatted UTC datetime to the FormData object
         formData.append(key, formattedDatetime)
