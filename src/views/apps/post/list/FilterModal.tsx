@@ -180,10 +180,8 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
 
   return (
     <Fragment>
-      <Button sx={{ height: '100%' }} size={'medium'} onClick={handleClickOpen} key={acnt.title} variant='outlined'>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 200 }}>
-          <Typography sx={{ fontWeight: 500 }}>Filter</Typography>
-        </Box>
+      <Button size={'medium'} onClick={handleClickOpen} key={acnt.title} variant='outlined'>
+        <Typography sx={{ fontWeight: 500 }}>Filter</Typography>
       </Button>
 
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>
