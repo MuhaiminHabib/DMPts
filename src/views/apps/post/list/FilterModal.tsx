@@ -95,13 +95,19 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   const onSubmit = async (data: any, errors: any) => {
     console.log(data, errors)
     filterPost(data)
+    handleClose()
   }
 
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => {
     setOpen(false)
+  }
+
+  const handleReset = () => {
+    setOpen(false)
     reset()
+    location.reload()
   }
 
   const baId = watch('ba_id')
@@ -386,8 +392,8 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
             ) : null}
           </DialogContent>
           <DialogActions>
-            <Button variant='outlined' color='secondary' onClick={handleClose}>
-              Close
+            <Button variant='outlined' color='secondary' onClick={handleReset}>
+              Reset
             </Button>
             <Button variant='contained' type='submit'>
               Apply
