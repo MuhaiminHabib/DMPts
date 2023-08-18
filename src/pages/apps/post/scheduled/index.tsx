@@ -100,11 +100,11 @@ const PublishedPost = () => {
             }}
           >
             <TextField
-              size={'medium'}
+              size={'small'}
               id='outlined-basic'
               label='Search by post title or client name'
               variant='outlined'
-              sx={{ width: 400 }}
+              sx={{ width: '100%' }}
               onChange={e => handleSearchTextChange(e.target.value)}
             />
 
