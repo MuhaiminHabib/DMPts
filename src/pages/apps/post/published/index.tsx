@@ -38,11 +38,12 @@ const PublishedPost = () => {
     searchPosts(searchStr)
   }
 
-  const showDeleteConfirmationPopup = (postId: string, title: string) => {
+  const showDeleteConfirmationPopup = (postId: string) => {
     Swal.fire({
-      title: `Do you want to delete ${title}?`,
+      title: 'Do you really want to delete this post?',
       showCancelButton: true,
       confirmButtonText: 'Proceed',
+      confirmButtonColor: '#ff0000',
       denyButtonText: `Cancel`
     }).then(result => {
       if (result.isConfirmed) {
@@ -51,9 +52,8 @@ const PublishedPost = () => {
     })
   }
 
-  const handlePostDelete = (postId: string, title: string) => {
-    console.log('postId', postId)
-    showDeleteConfirmationPopup(postId, title)
+  const handlePostDelete = (postId: string) => {
+    showDeleteConfirmationPopup(postId)
   }
 
   useEffect(() => {

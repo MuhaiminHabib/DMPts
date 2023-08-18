@@ -11,7 +11,7 @@ type inputProps = {
   isFetching: boolean
   posts: Post[]
   page: number
-  handlePostDelete: (postId: string, title: string) => void
+  handlePostDelete: (postId: string) => void
 }
 
 const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps) => {
@@ -76,15 +76,16 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                       <Tooltip title='Post Details' placement='top-start'>
                         {/* <PostDetailsModal post={post} /> */}
                         {/* <DetailsPage /> */}
-                        <Button startIcon={<MenuBookIcon />} href={`/apps/post/details/${post._id}`}></Button>
+                        <a href={`/apps/post/details/${post._id}`} style={{ marginRight: '.5rem' }}>
+                          <MenuBookIcon color='primary' />
+                        </a>
                       </Tooltip>
 
                       {ability?.can('read', 'delete-post') ? (
                         <Tooltip title='Post Delete' placement='top-start'>
-                          <Button
-                            startIcon={<DeleteForeverIcon />}
-                            onClick={() => handlePostDelete(post._id!, post.title)}
-                          ></Button>
+                          <a onClick={() => handlePostDelete(post._id!)}>
+                            <DeleteForeverIcon color='error' />
+                          </a>
                         </Tooltip>
                       ) : null}
                     </TableCell>
