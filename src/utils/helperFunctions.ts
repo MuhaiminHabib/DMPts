@@ -46,12 +46,44 @@
 //   return `${estHours}:${String(minutes).padStart(2, '0')} ${ampm}`
 // }
 
-type ExtractedDateTime = {
-  date: Date
-  time: Date
+interface ExtractedDateTime {
+  date?: string
+  time?: string
 }
 
-export const extractDateTime = (input: string, extract: 'date' | 'time'): ExtractedDateTime | null => {
+// export const extractDateTime = (input: string, extract: 'date' | 'time'): ExtractedDateTime | null => {
+//   const parts = input.split(' at ')
+
+//   if (parts.length !== 2) {
+//     return null // Invalid input format
+//   }
+
+//   const datePart = parts[0]
+//   const timePart = parts[1].split(' GMT')[0]
+
+//   const formattedDate = new Date(datePart)
+//   const formattedTime = new Date(`1970-01-01T${timePart}`)
+
+//   if (extract === 'date') {
+//     return {
+//       date: formattedDate,
+//       time: formattedTime
+//     }
+//   } else if (extract === 'time') {
+//     return {
+//       date: formattedTime,
+//       time: formattedTime
+//     }
+//   } else {
+//     return null // Invalid extract parameter
+//   }
+// }
+
+export const extractDateTime = (
+  input: string,
+  extract: 'date' | 'time',
+  timeZone: string
+): ExtractedDateTime | null => {
   const parts = input.split(' at ')
 
   if (parts.length !== 2) {
@@ -59,23 +91,24 @@ export const extractDateTime = (input: string, extract: 'date' | 'time'): Extrac
   }
 
   const datePart = parts[0]
-  const timePart = parts[1].split(' GMT')[0]
+  const timePart = parts[1].split(' ' + timeZone)[0] // Extract time part before time zone
 
   const formattedDate = new Date(datePart)
-  const formattedTime = new Date(`1970-01-01T${timePart}`)
+  const formattedTime = new Date(`1970-01-01T${timePart} ${timeZone}`)
 
   if (extract === 'date') {
     return {
-      date: formattedDate,
-      time: formattedTime
+      date: formattedDate.toLocaleDateString(undefined, { timeZone })
     }
   } else if (extract === 'time') {
     return {
-      date: formattedTime,
-      time: formattedTime
+      time: formattedTime.toLocaleTimeString(undefined, { timeZone })
     }
   } else {
-    return null // Invalid extract parameter
+    return {
+      date: formattedDate.toLocaleDateString(undefined, { timeZone }),
+      time: formattedTime.toLocaleTimeString(undefined, { timeZone })
+    }
   }
 }
 
@@ -92,4 +125,32 @@ export const convertToLocal = (utcTimestamp: string): string => {
 
   const localDate = new Date(utcTimestamp)
   return localDate.toLocaleString(undefined, options)
+}
+
+// export const convertToSpecificLocalDateTime = (utcTimeString: string, extract: 'date' | 'time'): string => {
+//   const utcDate = new Date(utcTimeString)
+//   const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000)
+
+//   if (extract === 'date') {
+//     return localDate.toLocaleDateString()
+//   } else if (extract === 'time') {
+//     return localDate.toLocaleTimeString()
+//   } else {
+//     throw new Error("Invalid 'extract' parameter. Use 'date' or 'time'.")
+//   }
+// }
+
+export const convertToFormattedLocalDateTime = (utcTimeString: string, extract: 'date' | 'time'): string => {
+  const utcDate = new Date(utcTimeString)
+  const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000)
+
+  if (extract === 'date') {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' }
+    return localDate.toLocaleDateString(undefined, options)
+  } else if (extract === 'time') {
+    const options = { hour: 'numeric', minute: 'numeric', hour12: true }
+    return localDate.toLocaleTimeString(undefined, options)
+  } else {
+    throw new Error("Invalid 'extract' parameter. Use 'date' or 'time'.")
+  }
 }

@@ -5,7 +5,7 @@ import Loader from 'src/shared-components/Loader'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { convertToLocal, extractDateTime } from 'src/utils/helperFunctions'
+import { convertToLocal, convertToSpecificLocalDateTime, extractDateTime } from 'src/utils/helperFunctions'
 
 type inputProps = {
   isFetching: boolean
@@ -54,8 +54,8 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     }}
                   >
                     <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
-                    <TableCell>{convertToLocal(post.postingDate)}</TableCell>
-                    <TableCell>{convertToLocal(post.postingDate)}</TableCell>
+                    <TableCell>{convertToSpecificLocalDateTime(post.postingDate, 'date')}</TableCell>
+                    <TableCell>{convertToSpecificLocalDateTime(post.postingDate, 'time')}</TableCell>
                     <TableCell align='center' component='th' scope='row'>
                       {post.body.length > 50 ? `${post.body.substring(0, 50)}...` : post.body}
                     </TableCell>
