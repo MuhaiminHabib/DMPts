@@ -35,7 +35,7 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell align='left'>Index</TableCell>
+              <TableCell align='left'>#</TableCell>
               <TableCell align='left'>Date</TableCell>
               <TableCell align='left'>Time</TableCell>
               <TableCell align='center'>Post Body</TableCell>
