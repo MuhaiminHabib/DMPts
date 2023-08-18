@@ -53,7 +53,10 @@ export const zPost = z.object({
   content: z.string().optional().nullable(),
   publishOption: z.string(),
   visibleToClient: z.boolean(),
-  fbUrl: z.string()
+  fbUrl: z.string(),
+  fbPage: z.object({
+    name: z.string()
+  })
 })
 
 // export const zPostForPostCreate = z.object({
