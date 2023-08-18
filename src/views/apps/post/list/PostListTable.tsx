@@ -41,6 +41,7 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
               <TableCell align='center'>Post Body</TableCell>
               <TableCell align='center'>Platform</TableCell>
               <TableCell align='center'>Client</TableCell>
+              <TableCell align='center'>Page</TableCell>
               <TableCell align='center'>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -56,7 +57,7 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
                     <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'date')}</TableCell>
                     <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'time')}</TableCell>
-                    <TableCell align='center' component='th' scope='row'>
+                    <TableCell component='th' scope='row'>
                       {post.body.length > 50 ? `${post.body.substring(0, 50)}...` : post.body}
                     </TableCell>
                     {typeof post.platform !== 'string'
@@ -70,6 +71,7 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     <TableCell align='center'>
                       {typeof post.client !== 'string' ? post.client.username : 'Unknown'}
                     </TableCell>
+                    <TableCell align='center'>{post.fbPage.name}</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
                         {/* <PostDetailsModal post={post} /> */}

@@ -8,6 +8,8 @@ import InputLabel from '@mui/material/InputLabel'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
+import ImageIcon from '@mui/icons-material/Image'
+import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack'
 
 // ** MUI Imports
 import {
@@ -36,6 +38,7 @@ import {
 
 import { useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
+import { convertToLocalToUTC } from 'src/utils/helperFunctions'
 
 const defaultValues = {
   client: '',
@@ -108,26 +111,7 @@ const NewPost = () => {
 
         console.log('form data after:', formData.get(key))
       } else if (key === 'scheduledDate' && data[key] !== '') {
-        const localDate = new Date(data.scheduledDate)
-
-        // Get the local timezone offset in minutes
-        const timezoneOffset = localDate.getTimezoneOffset()
-
-        // Convert the local datetime to UTC by subtracting the offset
-        const utcTimestamp = localDate.getTime() - timezoneOffset * 60 * 1000
-
-        // Create a new Date object using the UTC timestamp
-        const utcDate = new Date(utcTimestamp)
-
-        // Get the components of the UTC date
-        const year = utcDate.getUTCFullYear()
-        const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0')
-        const day = String(utcDate.getUTCDate()).padStart(2, '0')
-        const hours = String(utcDate.getUTCHours()).padStart(2, '0')
-        const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0')
-
-        // Create the formatted datetime string
-        const formattedDatetime = `${year}-${month}-${day}T${hours}:${minutes}Z`
+        const formattedDatetime = convertToLocalToUTC(data.scheduledDate)
 
         // Append the formatted UTC datetime to the FormData object
         formData.append(key, formattedDatetime)
@@ -145,7 +129,7 @@ const NewPost = () => {
         formData.append(key, String(value))
       }
     })
-    console.log('formData before sumbitting is: ', formData)
+    console.log('formData before submitting is: ', formData)
 
     const selectedOption = data.publishOption
     if (selectedOption === 'publish') {
@@ -163,7 +147,7 @@ const NewPost = () => {
     }
   }
 
-  //Validate schudule date
+  //Validate schedule date
   const isScheduledDateValid = value => {
     const currentDate = new Date()
     const minDate = new Date(currentDate.getTime() + 10 * 60 * 1000) // 10 minutes from now
@@ -339,60 +323,65 @@ const NewPost = () => {
                 )}
               /> */}
 
-              <Controller
-                name='file'
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-                      <Box>
-                        <input
-                          accept='image/*'
-                          style={{ display: 'none' }}
-                          id='contained-button-file'
-                          multiple
-                          type='file'
-                          onChange={e => {
-                            onChange(e.target.files)
-                          }}
-                        />
+              <Divider sx={{ my: theme => `${theme.spacing(5)} !important` }} />
 
-                        <label htmlFor='contained-button-file'>
-                          <Button variant='contained' component='span'>
-                            Select Image
-                          </Button>
-                        </label>
-                      </Box>
-
-                      <Box sx={{}}>
-                        <Badge badgeContent='Coming Soon' color='error'>
+              <FormControl fullWidth>
+                <FormLabel id='publish-option-label' sx={{ pb: '.5rem' }}>
+                  Upload Files
+                </FormLabel>
+                <Controller
+                  name='file'
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <>
+                      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+                        <Box>
                           <input
-                            accept='video/*'
+                            accept='image/*'
                             style={{ display: 'none' }}
-                            id='contained-button-video'
+                            id='contained-button-file'
                             multiple
                             type='file'
+                            onChange={e => {
+                              onChange(e.target.files)
+                            }}
                           />
 
-                          <label htmlFor='contained-button-video'>
-                            <Button variant='contained' component='span'>
-                              Select Video
+                          <label htmlFor='contained-button-file'>
+                            <Button variant='outlined' component='span'>
+                              <ImageIcon />
                             </Button>
                           </label>
-                        </Badge>
+                        </Box>
+
+                        <Box sx={{}}>
+                          <Badge badgeContent='Coming Soon' color='error' sx={{ width: '6rem' }}>
+                            <input
+                              accept='video/*'
+                              style={{ display: 'none' }}
+                              id='contained-button-video'
+                              multiple
+                              type='file'
+                            />
+
+                            <label htmlFor='contained-button-video'>
+                              <Button variant='outlined' component='span'>
+                                <VideoCameraBackIcon />
+                              </Button>
+                            </label>
+                          </Badge>
+                        </Box>
                       </Box>
-                    </Box>
-                    {/* Display selected file name */}
-                    {getValues().file && getValues().file![0] ? (
-                      <Box sx={{ py: '10' }}>
-                        <Typography>{getValues().file![0].name}</Typography>
-                      </Box>
-                    ) : (
-                      'No file selected'
-                    )}
-                  </>
-                )}
-              />
+                      {/* Display selected file name */}
+                      {getValues().file && getValues().file![0] ? (
+                        <Box sx={{ py: '10' }}>
+                          <Typography>{getValues().file![0].name}</Typography>
+                        </Box>
+                      ) : null}
+                    </>
+                  )}
+                />
+              </FormControl>
 
               <Divider sx={{ my: theme => `${theme.spacing(5)} !important` }} />
 

@@ -11,3 +11,10 @@ export const convertToFormattedLocalDateTime = (utcTimeString: string, extract: 
     throw new Error("Invalid 'extract' parameter. Use 'date' or 'time'.")
   }
 }
+
+export const convertToLocalToUTC = (localDateTimeString: string): string => {
+  const localDateTime = DateTime.fromISO(localDateTimeString, { zone: 'local' })
+  const utcDateTime = localDateTime.toUTC()
+
+  return utcDateTime.toISO()
+}
