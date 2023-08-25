@@ -1,4 +1,4 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material'
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material'
 import React, { useContext } from 'react'
 import { Post } from 'src/types/apps/postSchema'
 import Loader from 'src/shared-components/Loader'
@@ -6,6 +6,7 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { convertToFormattedLocalDateTime } from 'src/utils/helperFunctions'
+import { useRouter } from 'next/router'
 
 type inputProps = {
   isFetching: boolean
@@ -18,6 +19,10 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
   // **States
 
   // **Hooks
+  const router = useRouter()
+
+  // Access the route
+  const currentRoute = router.pathname
 
   const ability = useContext(AbilityContext)
 
@@ -55,8 +60,17 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     }}
                   >
                     <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
-                    <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'date')}</TableCell>
-                    <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'time')}</TableCell>
+                    {currentRoute.toString().includes('scheduled') ? (
+                      <>
+                        <TableCell>{convertToFormattedLocalDateTime(post.scheduledDate, 'date')}</TableCell>
+                        <TableCell>{convertToFormattedLocalDateTime(post.scheduledDate, 'time')}</TableCell>
+                      </>
+                    ) : (
+                      <>
+                        <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'date')}</TableCell>
+                        <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'time')}</TableCell>
+                      </>
+                    )}
                     <TableCell component='th' scope='row'>
                       {post.body.length > 50 ? `${post.body.substring(0, 50)}...` : post.body}
                     </TableCell>
