@@ -31,7 +31,7 @@ const defineRulesFor = (role: string, subject: string) => {
     )
   } else if (role === 'DM') {
     can('manage', 'all')
-    cannot(['read'], ['businesses-navItem', 'dm-navItem'])
+    cannot(['read'], ['businesses-navItem', 'dm-navItem', 'cm-navItem'])
     cannot(
       ['read'],
       ['analytics-aStats', 'analytics-baStats', 'analytics-cStats', 'analytics-cmStats', 'filter-ba', 'filter-dm']
