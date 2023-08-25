@@ -13,7 +13,6 @@ import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack'
 
 // ** MUI Imports
 import {
-  Badge,
   Card,
   CardHeader,
   Checkbox,
@@ -39,6 +38,7 @@ import {
 import { useFetchCListQuery } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import { convertToLocalToUTC } from 'src/utils/helperFunctions'
+import Loader from 'src/shared-components/Loader'
 
 const defaultValues = {
   client: '',
@@ -76,6 +76,7 @@ const NewPost = () => {
     handleSubmit,
     watch,
     getValues,
+    setError,
     formState: { errors }
   } = useForm<Post>({
     defaultValues,
@@ -90,7 +91,13 @@ const NewPost = () => {
   const isPageIdValid = !!pageIdValue
   const isBodyValid = !!bodyValue
 
-  const isFormValid = isClientValid && isPageIdValid && isBodyValid
+  const isFormValid =
+    isClientValid &&
+    isPageIdValid &&
+    isBodyValid &&
+    !publishedPostIsLoading &&
+    !scheduleToFbIsLoading &&
+    !draftToFbIsLoading
 
   // ** Functions
   const onSubmit = async (data: Post) => {
@@ -172,18 +179,29 @@ const NewPost = () => {
     if (publishedPost || scheduleToFbPost || draftToFbPost) {
       showSuccessAlert({ text: 'Post Created' })
       reset()
+    } else if (publishedPostIsLoading || scheduleToFbIsLoading || draftToFbIsLoading) {
+      showLoadingAlert()
+    } else if (publishedPostIsError) {
+      showErrorAlert({ error: publishedPostError })
+    } else if (scheduleToFbIsError) {
+      showErrorAlert({ error: scheduleToFbError })
+    } else if (draftToFbIsError) {
+      showErrorAlert({ error: draftToFbError })
     }
-  }, [publishedPost, scheduleToFbPost, draftToFbPost])
-
-  if (publishedPostIsLoading || scheduleToFbIsLoading || draftToFbIsLoading) {
-    showLoadingAlert()
-  } else if (publishedPostIsError) {
-    showErrorAlert({ error: publishedPostError })
-  } else if (scheduleToFbIsError) {
-    showErrorAlert({ error: scheduleToFbError })
-  } else if (draftToFbIsError) {
-    showErrorAlert({ error: draftToFbError })
-  }
+  }, [
+    publishedPost,
+    scheduleToFbPost,
+    draftToFbPost,
+    publishedPostIsLoading,
+    scheduleToFbIsLoading,
+    draftToFbIsLoading,
+    publishedPostIsError,
+    publishedPostError,
+    scheduleToFbIsError,
+    scheduleToFbError,
+    draftToFbIsError,
+    draftToFbError
+  ])
 
   return (
     <Grid container spacing={6}>
@@ -291,41 +309,11 @@ const NewPost = () => {
               </FormControl>
 
               {/* file */}
-              {/* <Controller
-                name='file'
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <div>
-                    <input
-                      accept='image/*'
-                      style={{ display: 'none' }}
-                      id='contained-button-file'
-                      multiple
-                      type='file'
-                      onChange={e => {
-                        onChange(e.target.files)
-                      }}
-                    />
-
-                    <label htmlFor='contained-button-file' style={{ display: 'flex', flexDirection: 'column' }}>
-                      <Button variant='contained' component='span' style={{ marginBottom: '10px' }}>
-                        Select File
-                      </Button>
-                    </label>
-                    {getValues().file && getValues().file![0] ? (
-                      <Box sx={{ py: '10' }}>
-                        <Typography>{getValues().file![0].name}</Typography>
-                      </Box>
-                    ) : (
-                      'No file selected'
-                    )}
-                  </div>
-                )}
-              /> */}
 
               <Divider sx={{ my: theme => `${theme.spacing(5)} !important` }} />
 
-              <FormControl fullWidth>
+              {/* File upload */}
+              {/* <FormControl fullWidth>
                 <FormLabel id='publish-option-label' sx={{ pb: '.5rem' }}>
                   Upload Files
                 </FormLabel>
@@ -357,11 +345,14 @@ const NewPost = () => {
                         <Box sx={{}}>
                           <Badge badgeContent='Coming Soon' color='error' sx={{ width: '6rem' }}>
                             <input
-                              accept='video/*'
+                              accept='.mp4,video/quicktime,video/x-matroska,video/x-ms-wmv,video/x-msvideo'
                               style={{ display: 'none' }}
                               id='contained-button-video'
                               multiple
                               type='file'
+                              onChange={e => {
+                                onChange(e.target.files)
+                              }}
                             />
 
                             <label htmlFor='contained-button-video'>
@@ -372,12 +363,89 @@ const NewPost = () => {
                           </Badge>
                         </Box>
                       </Box>
-                      {/* Display selected file name */}
+                      
                       {getValues().file && getValues().file![0] ? (
                         <Box sx={{ py: '10' }}>
                           <Typography>{getValues().file![0].name}</Typography>
                         </Box>
                       ) : null}
+                    </>
+                  )}
+                />
+              </FormControl> */}
+              <FormControl fullWidth>
+                <FormLabel id='publish-option-label' sx={{ pb: '.5rem' }}>
+                  Upload Files
+                </FormLabel>
+
+                <Controller
+                  name='file'
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <>
+                      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+                        <Box>
+                          <input
+                            accept='image/*'
+                            style={{ display: 'none' }}
+                            id='contained-button-file'
+                            multiple
+                            type='file'
+                            onChange={e => {
+                              onChange(e.target.files)
+                            }}
+                          />
+
+                          <label htmlFor='contained-button-file'>
+                            <Button variant='outlined' component='span'>
+                              <ImageIcon />
+                            </Button>
+                          </label>
+                        </Box>
+                        <Box sx={{}}>
+                          <input
+                            accept='.mp4,video/quicktime,video/x-matroska,video/x-ms-wmv,video/x-msvideo'
+                            style={{ display: 'none' }}
+                            id='contained-button-video'
+                            multiple
+                            type='file'
+                            onChange={e => {
+                              const selectedFiles = e.target.files
+                              const unsupportedFiles = Array.from(selectedFiles).filter(
+                                file =>
+                                  ![
+                                    'video/mp4',
+                                    'video/quicktime',
+                                    'video/x-matroska',
+                                    'video/x-ms-wmv',
+                                    'video/x-msvideo'
+                                  ].includes(file.type)
+                              )
+
+                              if (unsupportedFiles.length > 0) {
+                                setError('file', {
+                                  type: 'manual',
+                                  message: 'Unsupported video format selected'
+                                })
+                              } else {
+                                onChange(selectedFiles)
+                              }
+                            }}
+                          />
+
+                          <label htmlFor='contained-button-video'>
+                            <Button variant='outlined' component='span'>
+                              <VideoCameraBackIcon />
+                            </Button>
+                          </label>
+                        </Box>
+                      </Box>
+                      {value && value[0] && (
+                        <Box sx={{ py: '10' }}>
+                          <Typography>{value[0].name}</Typography>
+                        </Box>
+                      )}
+                      {errors.file && <Typography sx={{ color: 'red' }}>{errors.file.message}</Typography>}
                     </>
                   )}
                 />
@@ -476,6 +544,7 @@ const NewPost = () => {
               >
                 <Button size='large' variant='contained' type='submit' disabled={!isFormValid}>
                   Create Post
+                  {publishedPostIsLoading && scheduleToFbIsLoading && draftToFbIsLoading ? <Loader /> : null}
                 </Button>
               </Box>
             </form>
