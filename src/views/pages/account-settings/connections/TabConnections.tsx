@@ -16,6 +16,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { useDeleteFbPageMutation, useFetchFbPageListQuery } from 'src/store/query/fbApi'
 import ConnectionModal from './ConnectionModal'
 import Loader from 'src/shared-components/Loader'
+import Swal from 'sweetalert2'
 
 interface SocialAccountsType {
   id: number
@@ -42,6 +43,19 @@ const TabConnections = () => {
   const [deleteFbPage] = useDeleteFbPageMutation()
 
   //Functions
+  const showDeleteConfirmationPopup = (postId: string) => {
+    Swal.fire({
+      title: `Do you really want to delete this post?`,
+      showCancelButton: true,
+      confirmButtonText: 'Proceed',
+      denyButtonText: `Cancel`
+    }).then(result => {
+      if (result.isConfirmed) {
+        handleDelete(postId)
+      }
+    })
+  }
+
   const handleDelete = (pageId: string) => {
     console.log('i will delete', pageId)
     deleteFbPage(pageId)
@@ -118,7 +132,7 @@ const TabConnections = () => {
                         </Typography>
                       </Box>
                     </Box>
-                    <Button onClick={() => handleDelete(socialAccount._id)}>
+                    <Button onClick={() => showDeleteConfirmationPopup(socialAccount._id)}>
                       <DeleteForeverIcon color='error' fontSize='large' />
                     </Button>
                   </Box>
