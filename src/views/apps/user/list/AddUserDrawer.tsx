@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
@@ -26,6 +26,7 @@ import Icon from 'src/@core/components/icon'
 import { AuthContext } from 'src/context/AuthContext'
 import { useCreateUserMutation } from 'src/store/query/userApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
+import { InputAdornment, OutlinedInput } from '@mui/material'
 
 interface SidebarAddUserType {
   open: boolean
@@ -75,10 +76,10 @@ const schema = yup.object().shape({
   password: yup
     .string()
     .min(8)
-    .max(16)
+    .max(64)
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,16})/,
-      'Must contain 8 to 16 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,64})/,
+      'Must contain 8 to 64 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
     )
     .required(),
   passwordVerify: yup
@@ -102,6 +103,10 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   const { open, toggle, addClient, addDm, addCm } = props
 
   // ** State
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    passwordVerify: false
+  })
 
   // ** Hooks
   const auth = useContext(AuthContext)
@@ -134,12 +139,21 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   // ** Functions
   const onSubmit = async (data: UserData) => {
     console.log('from form:', data)
+
     createUser(data)
   }
 
   const handleClose = () => {
     toggle()
     reset()
+  }
+
+  const handleClickTogglePassword = (field: string) => {
+    console.log('i am working', field)
+    setShowPassword(prevState => ({
+      ...prevState,
+      [field]: !prevState[field]
+    }))
   }
 
   return (
@@ -212,6 +226,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
             />
             {errors.username && <FormHelperText sx={{ color: 'error.main' }}>{errors.username.message}</FormHelperText>}
           </FormControl>
+          {/* Email */}
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
               name='email'
@@ -231,28 +246,66 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
             {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
           </FormControl>
 
+          {/* Password */}
           <FormControl fullWidth sx={{ mb: 6 }}>
+            <InputLabel htmlFor='icons-adornment-password'>Password</InputLabel>
             <Controller
               name='password'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
-                <TextField value={value} label='Password' onChange={onChange} error={Boolean(errors.password)} />
+                <OutlinedInput
+                  label='Password'
+                  value={value}
+                  id='icons-adornment-password'
+                  onChange={onChange}
+                  type={showPassword.password ? 'text' : 'password'}
+                  error={Boolean(errors.password)}
+                  endAdornment={
+                    <InputAdornment position='end'>
+                      <IconButton
+                        edge='end'
+                        onClick={() => handleClickTogglePassword('password')}
+                        onMouseDown={e => e.preventDefault()}
+                        aria-label='toggle password visibility'
+                      >
+                        <Icon fontSize={20} icon={showPassword.password ? 'bx:show' : 'bx:hide'} />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
               )}
             />
             {errors.password && <FormHelperText sx={{ color: 'error.main' }}>{errors.password.message}</FormHelperText>}
           </FormControl>
+
+          {/* Verify Password */}
           <FormControl fullWidth sx={{ mb: 6 }}>
+            <InputLabel htmlFor='icons-adornment-password'>Verify Password</InputLabel>
             <Controller
               name='passwordVerify'
               control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
-                <TextField
+                <OutlinedInput
+                  label='Verify Password'
                   value={value}
-                  label='Password Verify'
+                  id='icons-adornment-password'
                   onChange={onChange}
+                  type={showPassword.passwordVerify ? 'text' : 'password'}
                   error={Boolean(errors.passwordVerify)}
+                  endAdornment={
+                    <InputAdornment position='end'>
+                      <IconButton
+                        edge='end'
+                        onClick={() => handleClickTogglePassword('passwordVerify')}
+                        onMouseDown={e => e.preventDefault()}
+                        aria-label='toggle password visibility'
+                      >
+                        <Icon fontSize={20} icon={showPassword.passwordVerify ? 'bx:show' : 'bx:hide'} />
+                      </IconButton>
+                    </InputAdornment>
+                  }
                 />
               )}
             />
