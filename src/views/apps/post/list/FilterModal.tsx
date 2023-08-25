@@ -10,17 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
-import {
-  Box,
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography
-} from '@mui/material'
+import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import {
   useCBelongToBaMutation,
@@ -32,6 +22,7 @@ import {
 } from 'src/store/query/userApi'
 import { UsersType as User } from 'src/types/apps/userTypes'
 import { useFilterPostsMutation } from 'src/store/query/postApi'
+import { useRouter } from 'next/router'
 
 type inputProps = {
   setPostList: any
@@ -54,7 +45,8 @@ const defaultValues = {
   end_date: '',
   ba_id: '',
   dm_id: '',
-  client_id: ''
+  client_id: '',
+  type: ''
 }
 const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   // ** State
@@ -63,6 +55,7 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   const [clientList, setClientList] = useState<User[]>([])
 
   // ** Hooks
+  const router = useRouter()
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const ability = useContext(AbilityContext)
@@ -85,6 +78,7 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors }
   } = useForm({
     defaultValues,
@@ -93,7 +87,8 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
 
   //Functions
   const onSubmit = async (data: any, errors: any) => {
-    console.log(data, errors)
+    setValue('type', router.pathname.split('/')[3].charAt(0).toUpperCase())
+    console.log('ha ha is', data, errors)
     filterPost(data)
     handleClose()
   }
@@ -173,6 +168,8 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   console.log('dmList', dmList)
   console.log('dmId is: ', dmId)
   console.log('clientList', clientList)
+
+  console.log('router.pathname in modal is:', router.pathname.split('/')[3])
 
   if (filteredPosts) {
     console.log('filteredPosts are:', filteredPosts)
