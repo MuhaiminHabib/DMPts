@@ -34,8 +34,11 @@ const PublishedPost = () => {
 
   // ** Functions
 
-  const handleSearchTextChange = (searchStr: string) => {
-    searchPosts(searchStr)
+  const handleSearchTextChange = (criteria: string) => {
+    searchPosts({
+      criteria,
+      type: 'P'
+    })
   }
 
   const showDeleteConfirmationPopup = (postId: string) => {
@@ -61,25 +64,24 @@ const PublishedPost = () => {
       setNowShowing('pagePosts')
       setPostList(posts.postings)
     }
-  }, [posts])
-
-  useEffect(() => {
     if (searchPost) {
       setPage(1)
       setNowShowing('searchPosts')
       setPostList(searchPost)
     }
-  }, [searchPost])
+  }, [searchPost, posts])
 
-  if (isLoadingDeletePost) {
-    showLoadingAlert()
-  } else if (isDeletePostError) {
-    showErrorAlert({ error: deletePostError })
-  } else if (deletePostData) {
-    showSuccessAlert({ text: 'Post Deleted' })
-  } else if (isError) {
-    showErrorAlert({ error: error })
-  }
+  useEffect(() => {
+    if (isLoadingDeletePost) {
+      showLoadingAlert()
+    } else if (isDeletePostError) {
+      showErrorAlert({ error: deletePostError })
+    } else if (deletePostData) {
+      showSuccessAlert({ text: 'Post Deleted' })
+    } else if (isError) {
+      showErrorAlert({ error: error })
+    }
+  }, [isLoadingDeletePost, isDeletePostError, deletePostData, isError])
 
   return (
     <Grid container spacing={6}>
