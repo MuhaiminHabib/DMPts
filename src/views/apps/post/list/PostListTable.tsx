@@ -41,9 +41,9 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
           <TableHead>
             <TableRow>
               <TableCell align='left'>#</TableCell>
-              <TableCell align='left'>Date</TableCell>
-              <TableCell align='left'>Time</TableCell>
-              <TableCell align='center'>Post Body</TableCell>
+              <TableCell align='left'>Publish Date</TableCell>
+              <TableCell align='left'>Publish Time</TableCell>
+              <TableCell align='left'>Post Body</TableCell>
               <TableCell align='center'>Platform</TableCell>
               <TableCell align='center'>Client</TableCell>
               <TableCell align='center'>Page</TableCell>
@@ -60,7 +60,8 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     }}
                   >
                     <TableCell>{(page - 1) * 10 + i + 1}</TableCell>
-                    {currentRoute.toString().includes('scheduled') ? (
+
+                    {/* {currentRoute.toString().includes('scheduled') ? (
                       <>
                         <TableCell>{convertToFormattedLocalDateTime(post.scheduledDate, 'date')}</TableCell>
                         <TableCell>{convertToFormattedLocalDateTime(post.scheduledDate, 'time')}</TableCell>
@@ -70,7 +71,20 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                         <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'date')}</TableCell>
                         <TableCell>{convertToFormattedLocalDateTime(post.postingDate, 'time')}</TableCell>
                       </>
-                    )}
+                    )} */}
+
+                    <TableCell>
+                      {convertToFormattedLocalDateTime(
+                        post.scheduledDate ? post.scheduledDate : post.postingDate,
+                        'date'
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {convertToFormattedLocalDateTime(
+                        post.scheduledDate ? post.scheduledDate : post.postingDate,
+                        'time'
+                      )}
+                    </TableCell>
                     <TableCell component='th' scope='row'>
                       {post.body.length > 50 ? `${post.body.substring(0, 50)}...` : post.body}
                     </TableCell>
