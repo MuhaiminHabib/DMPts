@@ -98,7 +98,7 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
                     <TableCell align='center'>
                       {typeof post.client !== 'string' ? post.client.username : 'Unknown'}
                     </TableCell>
-                    <TableCell align='center'>{post.fbPage.name}</TableCell>
+                    <TableCell align='center'>{post.fbPage ? post.fbPage.name : 'Unknown'}</TableCell>
                     <TableCell align='right'>
                       <Tooltip title='Post Details' placement='top-start'>
                         {/* <PostDetailsModal post={post} /> */}
