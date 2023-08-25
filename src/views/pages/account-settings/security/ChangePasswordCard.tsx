@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -39,10 +39,10 @@ const defaultValues = {
 }
 
 interface FormData {
-  currentPassword: string, 
-  newPassword:  string, 
+  currentPassword: string
+  newPassword: string
   newPasswordVerify: string
-} 
+}
 
 const schema = yup.object().shape({
   currentPassword: yup.string().min(8).required(),
@@ -54,7 +54,7 @@ const schema = yup.object().shape({
       'Must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special case character'
     )
     .required(),
-    newPasswordVerify: yup
+  newPasswordVerify: yup
     .string()
     .required()
     .oneOf([yup.ref('newPassword')], 'Passwords must match')
@@ -69,7 +69,7 @@ const ChangePasswordCard = () => {
   })
 
   // ** Hooks
-  const [changePassword, {isLoading, isError, error, data}] = useChangePasswordMutation()
+  const [changePassword, { isLoading, isError, error, data }] = useChangePasswordMutation()
   const {
     reset,
     control,
@@ -94,15 +94,17 @@ const ChangePasswordCard = () => {
     changePassword(data)
   }
 
-  if(isLoading) {
-    console.log('Loading')
-    showLoadingAlert()
-  } else if(isError) {
-    console.log(error)
-    showErrorAlert({error: error})
-  } else if(data) {
-    console.log(data)
-  }
+  useEffect(() => {
+    if (isLoading) {
+      console.log('Loading')
+      showLoadingAlert()
+    } else if (isError) {
+      console.log(error)
+      showErrorAlert({ error: error })
+    } else if (data) {
+      console.log(data)
+    }
+  }, [isLoading, isError, error, data])
 
   return (
     <Card>
