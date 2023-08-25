@@ -14,6 +14,12 @@ type FilterParams = {
   ba_id: string
   dm_id: string
   client_id: string
+  type: 'P' | 'D' | 'S'
+}
+
+type SearchParams = {
+  criteria: string
+  type: 'P' | 'D' | 'S'
 }
 
 const postApi = baseApi.injectEndpoints({
@@ -55,9 +61,10 @@ const postApi = baseApi.injectEndpoints({
       invalidatesTags: ['Post']
     }),
     filterPosts: build.mutation<Post, FilterParams>({
-      query({ platform, start_date, end_date, ba_id, dm_id, client_id }) {
+      query({ platform, start_date, end_date, ba_id, dm_id, client_id, type }) {
         return {
-          url: `/API/posting/filter?platform=${platform}&start_date=${start_date}&end_date=${end_date}&client_id=${client_id}&ba_id=${ba_id}&dm_id=${dm_id}`
+          url: `/API/posting/v2/filter`,
+          params: { platform, start_date, end_date, ba_id, dm_id, client_id, type }
         }
       },
       invalidatesTags: ['Post']
@@ -79,10 +86,11 @@ const postApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Post']
     }),
-    searchPosts: build.mutation<Post[], string>({
-      query(searchStr) {
+    searchPosts: build.mutation<Post[], SearchParams>({
+      query({ criteria, type }) {
         return {
-          url: `/API/posting/search?criteria=${searchStr}`
+          url: `/API/posting/v2/search`,
+          params: { criteria, type }
         }
       },
       invalidatesTags: ['Post']
