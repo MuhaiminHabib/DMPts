@@ -6,7 +6,6 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { convertToFormattedLocalDateTime } from 'src/utils/helperFunctions'
-import { useRouter } from 'next/router'
 
 type inputProps = {
   isFetching: boolean
@@ -19,10 +18,10 @@ const PostListTable = ({ isFetching, posts, page, handlePostDelete }: inputProps
   // **States
 
   // **Hooks
-  const router = useRouter()
+  // const router = useRouter()
 
   // Access the route
-  const currentRoute = router.pathname
+  // const currentRoute = router.pathname
 
   const ability = useContext(AbilityContext)
 
