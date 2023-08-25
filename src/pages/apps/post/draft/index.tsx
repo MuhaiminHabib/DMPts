@@ -2,14 +2,13 @@
 import { useEffect, useState } from 'react'
 
 // ** MUI Imports
-import { Box, Card, CardContent, CardHeader, Grid, Pagination, TextField } from '@mui/material'
-
+import { Card, CardContent, CardHeader, Grid, Pagination } from '@mui/material'
 import { useDeletePostMutation, useFetchDraftPostsQuery, useSearchPostsMutation } from 'src/store/query/postApi'
 import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
 import Swal from 'sweetalert2'
 import PostListTable from 'src/views/apps/post/list/PostListTable'
-import FilterModal from 'src/views/apps/post/list/FilterModal'
 import { Post } from 'src/types/apps/postSchema'
+import TableHeader from 'src/views/apps/post/list/TableHeader'
 
 const PublishedPost = () => {
   // ** State
@@ -23,6 +22,7 @@ const PublishedPost = () => {
   }
 
   // ** Hooks
+
   const [searchPosts, { data: searchPost }] = useSearchPostsMutation()
 
   const { isFetching, isError, error, data: posts } = useFetchDraftPostsQuery(page)
@@ -33,13 +33,6 @@ const PublishedPost = () => {
   ] = useDeletePostMutation()
 
   // ** Functions
-
-  const handleSearchTextChange = (criteria: string) => {
-    searchPosts({
-      criteria,
-      type: 'P'
-    })
-  }
 
   const showDeleteConfirmationPopup = (postId: string) => {
     Swal.fire({
@@ -90,29 +83,13 @@ const PublishedPost = () => {
         <Card>
           <CardHeader title='Draft Posts' />
 
-          {/* <TableHeader /> */}
-          <Box
-            justifyItems={'center'}
-            alignItems={'center'} // Add this line to vertically center-align the items
-            sx={{
-              px: 4,
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 4,
-              justifyContent: 'space-between'
-            }}
-          >
-            <TextField
-              size={'small'}
-              id='outlined-basic'
-              label='Search by post title or client name'
-              variant='outlined'
-              sx={{ width: '100%' }}
-              onChange={e => handleSearchTextChange(e.target.value)}
-            />
+          <TableHeader
+            setPostList={setPostList}
+            setNowShowing={setNowShowing}
+            setPage={setPage}
+            searchPosts={searchPosts}
+          />
 
-            <FilterModal setPostList={setPostList} setNowShowing={setNowShowing} setPage={setPage} />
-          </Box>
           <PostListTable isFetching={isFetching} posts={postList} page={page} handlePostDelete={handlePostDelete} />
 
           {nowShowing === 'pagePosts' ? (
