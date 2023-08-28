@@ -1,27 +1,27 @@
 // ** React Imports
 import { useEffect } from 'react'
-import Select from '@mui/material/Select'
-import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
-import Box from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
+
 import ImageIcon from '@mui/icons-material/Image'
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack'
 
 // ** MUI Imports
 import {
+  Button,
   Card,
   CardHeader,
   Checkbox,
   Divider,
+  FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   Grid,
+  InputLabel,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select,
+  TextField,
   Typography
 } from '@mui/material'
 
@@ -36,9 +36,10 @@ import {
 } from 'src/store/query/fbApi'
 
 import { useFetchCListQuery } from 'src/store/query/userApi'
-import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
+import { showErrorAlert, showSuccessAlert } from 'src/utils/swal'
 import { convertToLocalToUTC } from 'src/utils/helperFunctions'
-import Loader from 'src/shared-components/Loader'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { Box } from '@mui/system'
 
 const defaultValues = {
   client: '',
@@ -179,8 +180,6 @@ const NewPost = () => {
     if (publishedPost || scheduleToFbPost || draftToFbPost) {
       showSuccessAlert({ text: 'Post Created' })
       reset()
-    } else if (publishedPostIsLoading || scheduleToFbIsLoading || draftToFbIsLoading) {
-      showLoadingAlert()
     } else if (publishedPostIsError) {
       showErrorAlert({ error: publishedPostError })
     } else if (scheduleToFbIsError) {
@@ -313,66 +312,6 @@ const NewPost = () => {
               <Divider sx={{ my: theme => `${theme.spacing(5)} !important` }} />
 
               {/* File upload */}
-              {/* <FormControl fullWidth>
-                <FormLabel id='publish-option-label' sx={{ pb: '.5rem' }}>
-                  Upload Files
-                </FormLabel>
-                <Controller
-                  name='file'
-                  control={control}
-                  render={({ field: { onChange } }) => (
-                    <>
-                      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-                        <Box>
-                          <input
-                            accept='image/*'
-                            style={{ display: 'none' }}
-                            id='contained-button-file'
-                            multiple
-                            type='file'
-                            onChange={e => {
-                              onChange(e.target.files)
-                            }}
-                          />
-
-                          <label htmlFor='contained-button-file'>
-                            <Button variant='outlined' component='span'>
-                              <ImageIcon />
-                            </Button>
-                          </label>
-                        </Box>
-
-                        <Box sx={{}}>
-                          <Badge badgeContent='Coming Soon' color='error' sx={{ width: '6rem' }}>
-                            <input
-                              accept='.mp4,video/quicktime,video/x-matroska,video/x-ms-wmv,video/x-msvideo'
-                              style={{ display: 'none' }}
-                              id='contained-button-video'
-                              multiple
-                              type='file'
-                              onChange={e => {
-                                onChange(e.target.files)
-                              }}
-                            />
-
-                            <label htmlFor='contained-button-video'>
-                              <Button variant='outlined' component='span'>
-                                <VideoCameraBackIcon />
-                              </Button>
-                            </label>
-                          </Badge>
-                        </Box>
-                      </Box>
-                      
-                      {getValues().file && getValues().file![0] ? (
-                        <Box sx={{ py: '10' }}>
-                          <Typography>{getValues().file![0].name}</Typography>
-                        </Box>
-                      ) : null}
-                    </>
-                  )}
-                />
-              </FormControl> */}
               <FormControl fullWidth>
                 <FormLabel id='publish-option-label' sx={{ pb: '.5rem' }}>
                   Upload Files
@@ -542,10 +481,19 @@ const NewPost = () => {
                   marginTop: '20px'
                 }}
               >
-                <Button size='large' variant='contained' type='submit' disabled={!isFormValid}>
+                <LoadingButton
+                  loading={publishedPostIsLoading || scheduleToFbIsLoading || draftToFbIsLoading}
+                  disabled={!isFormValid}
+                  variant='contained'
+                  type='submit'
+                >
+                  <>Create Post</>
+                </LoadingButton>
+
+                {/* <Button size='large' variant='contained' type='submit' disabled={!isFormValid}>
                   Create Post
                   {publishedPostIsLoading && scheduleToFbIsLoading && draftToFbIsLoading ? <Loader /> : null}
-                </Button>
+                </Button> */}
               </Box>
             </form>
           </Box>
