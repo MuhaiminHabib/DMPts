@@ -5,6 +5,10 @@ type InactiveBaParams = {
   BAID: string
   username: string
 }
+type associateDmtoCParams = {
+  dmId: string
+  cId: string
+}
 
 const userApi = baseApi.injectEndpoints({
   endpoints: build => ({
@@ -93,6 +97,17 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //============BA============
+    associateDmtoC: build.mutation<User, associateDmtoCParams>({
+      query({ dmId, cId }) {
+        return {
+          url: `/API/auth/ba-assign-dm-to-c`,
+          method: 'POST',
+          body: { dmId, cId }
+        }
+      },
+      invalidatesTags: [{ type: 'User', id: 'BA' }]
+    }),
+
     baDeletesDm: build.mutation<User, string>({
       query(id) {
         return {
@@ -167,6 +182,7 @@ export const {
   useCBelongToBaMutation,
   useInactivateBaMutation,
   useActivateBaMutation,
+  useAssociateDmtoCMutation,
   useBaDeletesDmMutation,
   useBaDeletesCMutation,
   useCBelongToDmMutation,
