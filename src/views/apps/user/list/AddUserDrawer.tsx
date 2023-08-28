@@ -2,18 +2,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 // ** MUI Imports
-import Drawer from '@mui/material/Drawer'
-import Select from '@mui/material/Select'
-import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
-import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
-import InputLabel from '@mui/material/InputLabel'
-import Typography from '@mui/material/Typography'
-import Box, { BoxProps } from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
 
 // ** Third Party Imports
 import * as yup from 'yup'
@@ -25,8 +13,26 @@ import Icon from 'src/@core/components/icon'
 
 import { AuthContext } from 'src/context/AuthContext'
 import { useCreateUserMutation } from 'src/store/query/userApi'
-import { showErrorAlert, showLoadingAlert, showSuccessAlert } from 'src/utils/swal'
-import { InputAdornment, OutlinedInput } from '@mui/material'
+import { showErrorAlert, showSuccessAlert } from 'src/utils/swal'
+
+import LoadingButton from '@mui/lab/LoadingButton'
+import {
+  Box,
+  BoxProps,
+  Button,
+  Drawer,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+  Typography,
+  styled
+} from '@mui/material'
 
 interface SidebarAddUserType {
   open: boolean
@@ -124,10 +130,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   })
 
   useEffect(() => {
-    if (isLoading) {
-      console.log('Loading')
-      showLoadingAlert()
-    } else if (isError) {
+    if (isError) {
       console.log(error)
       showErrorAlert({ error: error })
     } else if (data) {
@@ -353,10 +356,13 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
             )}
           </FormControl>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <LoadingButton size='large' loading={isLoading} variant='contained' type='submit'>
+              <>Add User</>
+            </LoadingButton>
+            {/* <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }}>
               Add User
-            </Button>
+            </Button> */}
             <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
               Cancel
             </Button>
