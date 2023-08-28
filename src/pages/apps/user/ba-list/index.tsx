@@ -14,7 +14,7 @@ import UserListTable from 'src/views/apps/user/list/UserListTable'
 
 //redux
 import { useFetchBaListQuery, useFetchInactiveBaListQuery } from 'src/store/query/userApi'
-import Loader from 'src/shared-components/Loader'
+import { Loader } from 'src/shared-components/Loader'
 import { showErrorAlert } from 'src/utils/swal'
 import { truncateSync } from 'fs'
 import { AuthContext } from 'src/context/AuthContext'
@@ -63,31 +63,23 @@ const BaList = (props: TabPanelProps) => {
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
   // **Hooks
-  const {user} = useContext(AuthContext)
-
+  const { user } = useContext(AuthContext)
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
-  const {isLoading : baListIsLoading,
-          isError : baListIsError,
-          error: baListError,
-          data : baList 
-        } = useFetchBaListQuery()
-
-
+  const { isLoading: baListIsLoading, isError: baListIsError, error: baListError, data: baList } = useFetchBaListQuery()
 
   return (
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Card> 
-            {user!.role === 'A' ? 
-          <CardHeader title='Businesses' action={
-            <TableHeader toggle={toggleAddUserDrawer} /> }
-            /> :
-            <CardHeader title='Businesses' />
-          }
+          <Card>
+            {user!.role === 'A' ? (
+              <CardHeader title='Businesses' action={<TableHeader toggle={toggleAddUserDrawer} />} />
+            ) : (
+              <CardHeader title='Businesses' />
+            )}
             <CardContent>
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -98,26 +90,28 @@ const BaList = (props: TabPanelProps) => {
                 </Box>
                 {baList && baList.length !== 0 && (
                   <TabPanel value={value} index={0}>
-                    <UserListTable 
-                      title={'Active Businesses'} 
-                      userList={baList.filter(user => (user.active))} 
+                    <UserListTable
+                      title={'Active Businesses'}
+                      userList={baList.filter(user => user.active)}
                       showLoading={baListIsLoading}
-                      showAccociatedBtn={true} 
+                      showAccociatedBtn={true}
                       showHeader={user!.role === 'A'}
-                      showDeleteBtn={true}/>
+                      showDeleteBtn={true}
+                    />
                   </TabPanel>
                 )}
 
                 {baList && baList.length !== 0 && (
-                <TabPanel value={value} index={1}>
-                  <UserListTable 
-                    title={'Inactive Businesses'} 
-                    userList={baList.filter(user => (!user.active))} 
-                    showLoading={baListIsLoading}
-                    showAccociatedBtn={true} 
-                    showActivateBtn= {true}
-                    showDeleteBtn={false}/>
-                </TabPanel>
+                  <TabPanel value={value} index={1}>
+                    <UserListTable
+                      title={'Inactive Businesses'}
+                      userList={baList.filter(user => !user.active)}
+                      showLoading={baListIsLoading}
+                      showAccociatedBtn={true}
+                      showActivateBtn={true}
+                      showDeleteBtn={false}
+                    />
+                  </TabPanel>
                 )}
               </Box>
             </CardContent>
@@ -126,14 +120,11 @@ const BaList = (props: TabPanelProps) => {
         <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
       </Grid>
     </>
-
   )
-  
 }
 BaList.acl = {
   action: 'read',
   subject: 'ba-list-page'
 }
-
 
 export default BaList

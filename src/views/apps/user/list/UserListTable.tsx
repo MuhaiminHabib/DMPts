@@ -21,7 +21,7 @@ import RestoreIcon from '@mui/icons-material/Restore'
 import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
 import React from 'react'
 import { UsersType } from 'src/types/apps/userTypes'
-import Loader from '../../../../shared-components/Loader'
+import { Loader } from '../../../../shared-components/Loader'
 import UserEditModal from 'src/views/apps/user/list/UserEditModal'
 import UserProfileModal from './UserProfileModal'
 import {

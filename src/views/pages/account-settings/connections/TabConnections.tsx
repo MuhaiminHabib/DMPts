@@ -15,7 +15,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 import { useDeleteFbPageMutation, useFetchFbPageListQuery } from 'src/store/query/fbApi'
 import ConnectionModal from './ConnectionModal'
-import Loader from 'src/shared-components/Loader'
+import { Loader } from 'src/shared-components/Loader'
 import Swal from 'sweetalert2'
 
 interface SocialAccountsType {
