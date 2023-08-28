@@ -9,8 +9,7 @@ import { CardStatsVerticalProps } from 'src/@core/components/card-statistics/typ
 
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
-
-import Loader from 'src/shared-components/Loader'
+import { SimpleLoader } from 'src/shared-components/Loader'
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
   // ** Props
@@ -33,7 +32,13 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
         <Typography sx={{ mb: 0.5, fontWeight: 600, color: 'text.secondary', height: 50 }}>{title}</Typography>
         {
           <Typography variant='h5' sx={{ mb: 2 }}>
-            {isLoading ? <Loader /> : stats}
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <SimpleLoader />
+              </Box>
+            ) : (
+              stats
+            )}
           </Typography>
         }
       </CardContent>
