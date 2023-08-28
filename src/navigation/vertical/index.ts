@@ -37,6 +37,12 @@ const navigation = (): VerticalNavItemsType => {
           path: '/apps/user/cm-list',
           action: 'read',
           subject: 'cm-navItem'
+        },
+        {
+          title: 'Tag DM & Client',
+          path: '/apps/user/tag',
+          action: 'read',
+          subject: 'tag-navItem'
         }
       ]
     },
