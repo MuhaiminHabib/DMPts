@@ -97,7 +97,7 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //============BA============
-    associateDmtoC: build.mutation<void, associateDmtoCParams>({
+    associateDmtoC: build.mutation<User, associateDmtoCParams>({
       query({ dmId, cId }) {
         return {
           url: `/API/auth/ba-assign-dm-to-c`,
