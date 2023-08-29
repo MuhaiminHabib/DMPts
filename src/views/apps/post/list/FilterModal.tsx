@@ -89,8 +89,8 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   //Functions
   const onSubmit = async (data: any, errors: any) => {
     setValue('type', router.pathname.split('/')[3].charAt(0).toUpperCase())
-    setValue('start_date', convertToLocalToUTC(data.start_date))
-    setValue('end_date', convertToLocalToUTC(data.end_date))
+    data.start_date = convertToLocalToUTC(data.start_date) || ''
+    data.end_date = convertToLocalToUTC(data.end_date) || ''
     console.log('ha ha is', data, errors)
     filterPost(data)
     handleClose()
