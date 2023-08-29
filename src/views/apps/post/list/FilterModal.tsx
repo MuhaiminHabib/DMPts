@@ -23,6 +23,7 @@ import {
 import { UsersType as User } from 'src/types/apps/userTypes'
 import { useFilterPostsMutation } from 'src/store/query/postApi'
 import { useRouter } from 'next/router'
+import { convertToLocalToUTC } from 'src/utils/helperFunctions'
 
 type inputProps = {
   setPostList: any
@@ -88,6 +89,8 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   //Functions
   const onSubmit = async (data: any, errors: any) => {
     setValue('type', router.pathname.split('/')[3].charAt(0).toUpperCase())
+    setValue('start_date', convertToLocalToUTC(data.start_date))
+    setValue('end_date', convertToLocalToUTC(data.end_date))
     console.log('ha ha is', data, errors)
     filterPost(data)
     handleClose()
