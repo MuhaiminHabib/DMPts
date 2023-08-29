@@ -13,6 +13,7 @@ import DialogContent from '@mui/material/DialogContent'
 import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import {
+  useBaGetsCofDmMutation,
   useCBelongToBaMutation,
   useCBelongToDmMutation,
   useDmsBelongToBaMutation,
@@ -24,6 +25,7 @@ import { UsersType as User } from 'src/types/apps/userTypes'
 import { useFilterPostsMutation } from 'src/store/query/postApi'
 import { useRouter } from 'next/router'
 import { convertToLocalToUTC } from 'src/utils/helperFunctions'
+import { AuthContext } from 'src/context/AuthContext'
 
 type inputProps = {
   setPostList: any
@@ -56,6 +58,7 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   const [clientList, setClientList] = useState<User[]>([])
 
   // ** Hooks
+  const auth = useContext(AuthContext)
   const router = useRouter()
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
@@ -71,6 +74,7 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
   const { data: clientListData } = useFetchCListQuery()
   const [cBelongToBa, { data: cBelongToBaData }] = useCBelongToBaMutation()
   const [cBelongToDm, { data: cBelongToDmData }] = useCBelongToDmMutation()
+  const [baGetsCofDm, { data: baGetsCofDmData }] = useBaGetsCofDmMutation()
 
   const [filterPost, { data: filteredPosts }] = useFilterPostsMutation()
 
@@ -123,7 +127,11 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
 
   useEffect(() => {
     if (dmId) {
-      cBelongToDm(dmId)
+      if (auth.user.role === 'BA') {
+        baGetsCofDm(dmId)
+      } else if (auth.user.role === 'DM') {
+        cBelongToDm(dmId)
+      }
     } else if (dmId === '') {
       setClientList(cBelongToBaData)
     }
@@ -150,6 +158,13 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
       setClientList(cBelongToBaData)
     }
   }, [cBelongToBaData])
+
+  useEffect(() => {
+    if (baGetsCofDmData) {
+      setClientList(baGetsCofDmData)
+    }
+  }, [baGetsCofDmData])
+
   useEffect(() => {
     if (clientListData) {
       setClientList(clientListData)
@@ -161,11 +176,6 @@ const FilterModal = ({ setPostList, setNowShowing, setPage }: inputProps) => {
     setNowShowing('filteredPosts')
     setPostList(filteredPosts)
   }, [filteredPosts])
-
-  // if (clientListData) {
-  //   console.log(clientListData)
-  //   console.log(clientList)
-  // }
 
   console.log('baid is: ', baId)
   console.log('dmList', dmList)
