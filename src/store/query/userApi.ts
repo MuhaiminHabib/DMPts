@@ -97,7 +97,7 @@ const userApi = baseApi.injectEndpoints({
     }),
 
     //============BA============
-    associateDmtoC: build.mutation<User, associateDmtoCParams>({
+    associateDmtoC: build.mutation<void, associateDmtoCParams>({
       query({ dmId, cId }) {
         return {
           url: `/API/auth/ba-assign-dm-to-c`,
@@ -106,6 +106,16 @@ const userApi = baseApi.injectEndpoints({
         }
       },
       invalidatesTags: [{ type: 'User', id: 'BA' }]
+    }),
+
+    baGetsCofDm: build.mutation<User[], string>({
+      query(dmId) {
+        return {
+          url: `/API/auth/ba-get-c-belongs-to-dm`,
+          params: { dmid: dmId }
+        }
+      },
+      invalidatesTags: [{ type: 'User', id: 'C' }]
     }),
 
     baDeletesDm: build.mutation<User, string>({
@@ -183,6 +193,7 @@ export const {
   useInactivateBaMutation,
   useActivateBaMutation,
   useAssociateDmtoCMutation,
+  useBaGetsCofDmMutation,
   useBaDeletesDmMutation,
   useBaDeletesCMutation,
   useCBelongToDmMutation,
